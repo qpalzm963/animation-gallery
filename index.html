@@ -1,0 +1,2695 @@
+<!doctype html>
+<html lang="zh-Hant" data-theme="light">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>動畫表現方式圖鑑</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#0a0b0f; --bg2:#0e1016; --surface:#13151d; --surface2:#191c26;
+  --line:#242835; --line2:#333849;
+  --tx:#e9ecf5; --tx2:#a5adc2; --tx3:#6b7389;
+  --ac:#6ee7b7; --ac2:#fbbf77; --ac3:#a78bfa; --ac4:#7dd3fc;
+  --onac:#0a0b0f;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  --r:14px;
+}
+html[data-theme=light]{
+  /* 階調順序（亮→暗）：surface #fff > surface2 > bg > bg2。
+     bg2 是示範舞台的底色，必須明顯比 surface2 暗，方塊才浮得起來。 */
+  --bg:#f2f4f9; --bg2:#e4e8f2; --surface:#fff; --surface2:#f7f9fd;
+  --line:#e0e4ee; --line2:#c3cad9;
+  --tx:#101219; --tx2:#4b5369; --tx3:#858da3; --onac:#ffffff;
+  --ac:#0d9c74; --ac2:#b8710f; --ac3:#6941e0; --ac4:#0b7ea8;
+}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);
+  font-size:15px;line-height:1.7;letter-spacing:.01em;
+  -webkit-font-smoothing:antialiased}
+a{color:var(--ac)}
+h1,h2,h3{line-height:1.25;letter-spacing:-.01em;margin:0}
+.wrap{max-width:1320px;margin:0 auto;padding:0 24px}
+
+/* ---------- header ---------- */
+.hero{position:relative;padding:76px 0 44px;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero::before{content:"";position:absolute;inset:-40% -10% auto -10%;height:520px;
+  background:radial-gradient(50% 50% at 25% 40%,color-mix(in srgb,var(--ac) 22%,transparent),transparent 70%),
+             radial-gradient(45% 45% at 78% 30%,color-mix(in srgb,var(--ac3) 20%,transparent),transparent 70%);
+  filter:blur(20px);animation:heroDrift 18s ease-in-out infinite alternate;pointer-events:none}
+@keyframes heroDrift{to{transform:translate3d(4%,3%,0) scale(1.12)}}
+.eyebrow{font:600 12px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ac);margin-bottom:18px}
+.hero h1{font-size:clamp(34px,5.2vw,58px);font-weight:800}
+.hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--ac),var(--ac4) 45%,var(--ac3));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{max-width:62ch;color:var(--tx2);margin:18px 0 0;font-size:16px}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:26px;position:relative}
+.stat b{display:block;font:700 26px/1.1 var(--sans);color:var(--tx)}
+.stat span{font:500 12px/1.6 var(--mono);color:var(--tx3);letter-spacing:.08em}
+
+/* ---------- toolbar ---------- */
+.bar{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+/* chips 佔滿整列，tools 另起一列靠右 —— 兩者並排時 chips 只分到一小塊寬度，會擠成四行 */
+.bar .wrap{display:flex;flex-direction:column;gap:9px;padding-top:10px;padding-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.tools .search{margin-right:auto}   /* 搜尋靠左、其餘靠右，中間留白 */
+.chip{border:1px solid var(--line);background:transparent;color:var(--tx2);cursor:pointer;
+  padding:6px 12px;border-radius:999px;font:500 13px/1.4 var(--sans);transition:.16s ease}
+.chip:hover{border-color:var(--line2);color:var(--tx)}
+.chip[aria-pressed=true]{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.chip i{font-style:normal;opacity:.55;font-family:var(--mono);font-size:11px;margin-left:5px}
+.search{background:var(--surface);border:1px solid var(--line);border-radius:10px;color:var(--tx);
+  padding:8px 12px;font:400 13px var(--sans);width:190px;outline:none}
+.search:focus{border-color:var(--ac)}
+.iconbtn{border:1px solid var(--line);background:var(--surface);color:var(--tx2);border-radius:10px;
+  padding:8px 12px;font:500 13px var(--sans);cursor:pointer;white-space:nowrap;transition:.16s}
+.iconbtn:hover{color:var(--tx);border-color:var(--line2)}
+.fw{background:var(--surface);border:1px solid var(--line);border-radius:10px;color:var(--tx);
+  padding:8px 10px;font:500 13px var(--sans);cursor:pointer;outline:none}
+.fw:focus{border-color:var(--ac)}
+.fwlab{font:500 12px var(--mono);color:var(--tx3);white-space:nowrap}
+
+/* ---------- sections ---------- */
+section{padding:56px 0}
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+.shead h2{font-size:22px;font-weight:700}
+.shead .n{font:600 12px var(--mono);color:var(--ac);letter-spacing:.1em}
+.sdesc{color:var(--tx2);max-width:70ch;margin:0 0 26px}
+
+/* ---------- theory ---------- */
+.theory{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.laws{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.law{background:var(--surface);padding:16px 18px}
+.law b{display:block;font-size:14px;margin-bottom:4px}
+.law b i{font-style:normal;color:var(--tx3);font:500 11px var(--mono);margin-right:7px}
+.law p{margin:0;font-size:13px;color:var(--tx2);line-height:1.65}
+.tbl{width:100%;border-collapse:collapse;margin-top:34px;font-size:13.5px;
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tbl th{text-align:left;background:var(--surface2);color:var(--tx2);font:600 12px var(--mono);
+  letter-spacing:.06em;padding:11px 14px;border-bottom:1px solid var(--line)}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--line);color:var(--tx2);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td:first-child{color:var(--tx);font-weight:600;white-space:nowrap}
+.tbl code{font:500 12.5px var(--mono);color:var(--ac2);background:color-mix(in srgb,var(--ac2) 12%,transparent);
+  padding:1px 6px;border-radius:5px}
+.tblwrap{overflow-x:auto;margin-top:34px}
+.tblwrap .tbl{margin-top:0;min-width:720px}
+.plat{display:inline-block;font:600 10px var(--mono);padding:1px 6px;border-radius:5px;
+  margin-right:7px;vertical-align:1px;letter-spacing:.03em}
+.plat.sw{color:var(--ac4);background:color-mix(in srgb,var(--ac4) 15%,transparent)}
+.plat.fl{color:var(--ac);background:color-mix(in srgb,var(--ac) 15%,transparent)}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:34px}
+.rule{border-left:2px solid var(--ac);padding:2px 0 2px 14px}
+.rule b{display:block;font-size:13.5px;margin-bottom:2px}
+.rule span{font-size:13px;color:var(--tx2)}
+
+/* ---------- gallery ---------- */
+#gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(322px,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  display:flex;flex-direction:column;overflow:hidden;transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--line2)}
+.card[hidden]{display:none}
+.stage{height:186px;position:relative;display:grid;place-items:center;overflow:hidden;
+  background:radial-gradient(circle at 1px 1px,var(--line2) 1px,transparent 0) 0 0/18px 18px,var(--bg2);
+  border-bottom:1px solid var(--line);cursor:default;touch-action:none}
+.stage>*{max-width:100%}
+.cbody{padding:15px 17px 6px;flex:1}
+.ctitle{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.ctitle h3{font-size:15.5px;font-weight:700}
+.ctitle .en{font:500 11.5px var(--mono);color:var(--tx3);letter-spacing:.03em}
+.ctitle .no{font:600 11px var(--mono);color:var(--ac);margin-right:2px}
+.cdesc{margin:8px 0 0;font-size:13.2px;color:var(--tx2);line-height:1.7}
+.cwhen{margin:9px 0 0;font-size:12.5px;color:var(--tx3);line-height:1.65;
+  padding-left:11px;border-left:2px solid var(--line2)}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:11px}
+.tag{font:500 11px var(--mono);color:var(--tx3);border:1px solid var(--line);
+  padding:2px 7px;border-radius:6px}
+.tag.trig{color:var(--ac2);border-color:color-mix(in srgb,var(--ac2) 35%,transparent)}
+.cfoot{display:flex;gap:8px;padding:11px 17px 15px;align-items:center}
+.mini{border:1px solid var(--line);background:transparent;color:var(--tx2);border-radius:8px;
+  padding:5px 11px;font:500 12px var(--sans);cursor:pointer;transition:.15s}
+.mini:hover{color:var(--tx);border-color:var(--line2);background:var(--surface2)}
+.mini.done{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 45%,transparent)}
+.mini.fail{color:var(--ac2);border-color:color-mix(in srgb,var(--ac2) 45%,transparent)}
+details.code{border-top:1px solid var(--line);background:var(--bg2)}
+details.code summary{list-style:none;cursor:pointer;padding:9px 17px;font:500 12px var(--mono);
+  color:var(--tx3);user-select:none}
+details.code summary::-webkit-details-marker{display:none}
+details.code summary:hover{color:var(--tx2)}
+details.code[open] summary{color:var(--ac);border-bottom:1px solid var(--line)}
+details.code pre{margin:0;padding:13px 17px;overflow:auto;font:400 12px/1.7 var(--mono);
+  color:var(--tx2);max-height:340px}
+details.code pre+pre{border-top:1px dashed var(--line)}
+.pre-label{font:600 10px var(--mono);letter-spacing:.12em;color:var(--tx3);
+  padding:10px 17px 0;text-transform:uppercase}
+.tk-c{color:var(--tx3);font-style:italic}
+.tk-s{color:var(--ac2)}
+.tk-n{color:var(--ac4)}
+.tk-k{color:var(--ac3)}
+.tk-a{color:var(--ac)}
+.empty{color:var(--tx3);padding:40px 0;font-size:14px}
+.copyfall{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:24px;
+  background:color-mix(in srgb,#000 62%,transparent)}
+.copyfall .box{background:var(--surface);border:1px solid var(--line2);border-radius:14px;
+  padding:16px;width:min(680px,100%);display:grid;gap:10px}
+.copyfall p{margin:0;font-size:13px;color:var(--tx2)}
+.copyfall textarea{width:100%;height:min(46vh,340px);resize:vertical;padding:10px;outline:none;
+  background:var(--bg2);border:1px solid var(--line);border-radius:9px;color:var(--tx2);
+  font:400 12px/1.6 var(--mono)}
+.copyfall .mini{justify-self:end}
+
+/* ---------- misc ---------- */
+.notice{display:flex;gap:12px;align-items:center;background:var(--surface2);border:1px solid var(--line);
+  border-radius:10px;padding:11px 15px;margin-top:22px;font-size:13px;color:var(--tx2)}
+footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--tx3);font-size:13px}
+footer b{color:var(--tx2)}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+html.no-motion .stage *{animation-play-state:paused!important;transition:none!important}
+@media (max-width:640px){
+  .hero{padding:52px 0 34px}
+  section{padding:40px 0}
+  .wrap{padding:0 16px}
+  #gallery{grid-template-columns:1fr}
+}
+</style>
+
+<svg class="defs" aria-hidden="true">
+<defs>
+  <filter id="dmGoo">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="b"/>
+    <feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="g"/>
+    <feComposite in="SourceGraphic" in2="g" operator="atop"/>
+  </filter>
+  <filter id="dmGrain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="3" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+    <!-- alpha 也是雜訊，會把底下的顏色洗白；強制設成 1 才是純亮度顆粒 -->
+    <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0 1"/>
+  </filter>
+</defs>
+</svg>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Motion Design Field Guide</div>
+    <h1>動畫表現方式<em>圖鑑</em></h1>
+    <p class="lede">從最常見的淡入位移，到 FLIP、捲動時間軸、液態融合、故障藝術這類比較少見的手法。
+      每一張卡片都是<strong>真的在動</strong>的實作，附上什麼時候該用、以及可以直接抄走的核心程式碼。</p>
+    <div class="stats">
+      <div class="stat"><b id="stCount">—</b><span>TECHNIQUES</span></div>
+      <div class="stat"><b id="stCat">—</b><span>CATEGORIES</span></div>
+      <div class="stat"><b>0</b><span>DEPENDENCIES</span></div>
+      <div class="stat"><b>0</b><span>BUILD STEP</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="chips" id="chips"></div>
+    <div class="tools">
+      <input class="search" id="search" type="search" placeholder="搜尋技法／關鍵字…" autocomplete="off">
+      <span class="fwlab">Prompt 目標</span>
+      <select class="fw" id="fw" title="複製 Prompt 時要產生哪個框架的版本"></select>
+      <button class="iconbtn" id="copyAll">複製全部</button>
+      <button class="iconbtn" id="replayAll">全部重播</button>
+      <button class="iconbtn" id="motionBtn">暫停動態</button>
+      <button class="iconbtn" id="themeBtn" title="切換深淺色">☾</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <section class="wrap">
+    <div class="shead"><span class="n">01</span><h2>技法圖鑑</h2></div>
+    <p class="sdesc">用上方分類或搜尋來過濾。滑鼠移到卡片上、或按「重播」可以重看一次；有些技法需要 hover、點擊或拖曳才會觸發，標籤會註明。</p>
+    <div id="gallery"></div>
+    <p class="empty" id="empty" hidden>找不到符合的技法。</p>
+  </section>
+
+  <section class="theory">
+    <div class="wrap">
+      <div class="shead"><span class="n">02</span><h2>動畫十二法則 → 介面對照</h2></div>
+      <p class="sdesc">1930 年代迪士尼歸納出的十二法則，是所有動畫表現的底層文法。它們不是懷舊，換成介面語彙後每一條都還在用。</p>
+      <div class="laws">
+        <div class="law"><b><i>01</i>擠壓與伸展 Squash &amp; Stretch</b><p>按鈕按下時微微變扁、放開時回彈。體積守恆的形變讓元件有材質與重量，而不是一張貼紙。</p></div>
+        <div class="law"><b><i>02</i>預備動作 Anticipation</b><p>選單展開前先反向縮一下。給眼睛一個「要發生事情了」的提示，之後的主動作才跟得上。</p></div>
+        <div class="law"><b><i>03</i>演出布局 Staging</b><p>一次只讓一件事成為主角。同時三個東西在動＝沒有東西在動，使用者的視線會不知道要放哪。</p></div>
+        <div class="law"><b><i>04</i>連續／關鍵影格 Pose to Pose</b><p>介面幾乎全是 pose to pose：定義 A 狀態與 B 狀態，中間交給補間。CSS transition 就是這個思維。</p></div>
+        <div class="law"><b><i>05</i>跟隨與重疊 Follow Through</b><p>卡片停了，裡面的文字晚 40–80ms 才停。物件不會整齊劃一地同時煞車，錯開才有生命。</p></div>
+        <div class="law"><b><i>06</i>慢進慢出 Slow In &amp; Out</b><p>現實中沒有等速運動。<code>linear</code> 只留給無限旋轉的 loading 與跑馬燈，其餘一律用 ease。</p></div>
+        <div class="law"><b><i>07</i>弧線 Arc</b><p>自然的運動走曲線。直線位移看起來機械，用 <code>offset-path</code> 或分離 X/Y 的不同 easing 就能造出弧。</p></div>
+        <div class="law"><b><i>08</i>次要動作 Secondary Action</b><p>主動作之外的小細節：卡片升起時陰影同步變深變散。它強化主動作，不能搶戲。</p></div>
+        <div class="law"><b><i>09</i>時間掌控 Timing</b><p>時長就是重量。同樣的位移，300ms 是輕巧、800ms 是笨重。改時間比改曲線更能改變個性。</p></div>
+        <div class="law"><b><i>10</i>誇張 Exaggeration</b><p>超過目標再回彈，比精準到位更有說服力。overshoot 曲線 <code>cubic-bezier(.34,1.56,.64,1)</code> 就是這條法則。</p></div>
+        <div class="law"><b><i>11</i>立體感 Solid Drawing</b><p>3D 轉場一定要給 <code>perspective</code>，否則翻轉看起來像被壓扁的紙片，不是有厚度的物件。</p></div>
+        <div class="law"><b><i>12</i>吸引力 Appeal</b><p>動畫是產品的口音。整站共用同一組 easing 與時長階梯，使用者才會覺得「這個 app 有個性」。</p></div>
+      </div>
+
+      <div class="shead" style="margin-top:52px"><span class="n">03</span><h2>跨平台對照</h2></div>
+      <p class="sdesc">同一個表現，在三個平台上叫什麼名字。這張表的用途不是查 API，而是避免「把 CSS 的寫法硬翻成 Flutter」——
+        每個平台都有自己更順的路。</p>
+      <div class="tblwrap">
+      <table class="tbl">
+        <tr><th>概念</th><th>CSS / Web</th><th>Flutter</th><th>SwiftUI</th></tr>
+        <tr><td>緩動曲線</td><td><code>cubic-bezier()</code> / <code>linear()</code></td><td><code>Curves.easeOutCubic</code>（內建 40+ 條具名曲線）</td><td><code>.easeOut</code>、語意化的 <code>.smooth</code> / <code>.snappy</code> / <code>.bouncy</code></td></tr>
+        <tr><td>關鍵影格</td><td><code>@keyframes</code>（所有屬性共用一條時間軸）</td><td><code>TweenSequence</code> + <code>Interval</code></td><td><code>KeyframeAnimator</code>（每個屬性一條 <code>KeyframeTrack</code>）</td></tr>
+        <tr><td>狀態改變自動補間</td><td><code>transition</code></td><td><code>AnimatedContainer</code> / <code>TweenAnimationBuilder</code>（implicit）</td><td><code>.animation(_:value:)</code></td></tr>
+        <tr><td>手動控制播放</td><td>Web Animations API</td><td><code>AnimationController</code>（explicit，記得 <code>dispose</code>）</td><td><code>withAnimation</code> + 自訂狀態</td></tr>
+        <tr><td>共享元素轉場</td><td>FLIP 手刻 / View Transitions API</td><td><code>Hero</code>（同一個 tag 就完成，幾乎免費）</td><td><code>matchedGeometryEffect</code>、<code>.navigationTransition(.zoom)</code></td></tr>
+        <tr><td>彈簧物理</td><td><code>linear()</code> 近似 / JS 逐幀模擬</td><td><code>SpringSimulation</code> + <code>SpringDescription</code></td><td><code>.spring(response:dampingFraction:)</code></td></tr>
+        <tr><td>錯位延遲</td><td><code>animation-delay</code></td><td>單一 controller + <code>Interval</code> 切段</td><td><code>.delay()</code> / <code>PhaseAnimator</code></td></tr>
+        <tr><td>捲動驅動</td><td><code>animation-timeline: scroll()</code> / <code>view()</code></td><td><code>ScrollController</code> + <code>AnimatedBuilder</code></td><td><code>scrollTransition</code>（三段式 phase）</td></tr>
+        <tr><td>材質模糊</td><td><code>backdrop-filter</code></td><td><code>BackdropFilter</code></td><td><code>.ultraThinMaterial</code>、<code>.glassEffect()</code>（iOS 26）</td></tr>
+        <tr><td>自訂繪圖</td><td>Canvas 2D / SVG</td><td><code>CustomPainter</code> + <code>PathMetric</code></td><td><code>Canvas</code> + <code>Path</code></td></tr>
+        <tr><td>Shader / 濾鏡</td><td>SVG filter / WebGL</td><td><code>FragmentProgram</code>（<code>.frag</code>，Impeller）</td><td><code>.colorEffect</code> / <code>.distortionEffect</code> / <code>.layerEffect</code></td></tr>
+        <tr><td>頁面轉場</td><td>View Transitions API</td><td><code>PageRouteBuilder</code> + <code>Hero</code></td><td>NavigationStack 轉場、<code>.zoom</code></td></tr>
+        <tr><td>可中斷的手勢轉場</td><td>全部手刻</td><td>要自己接手勢與 controller</td><td>系統內建，是 iOS 的招牌</td></tr>
+      </table>
+      </div>
+
+      <div class="shead" style="margin-top:52px"><span class="n">04</span><h2>其他平台獨有的表現方式</h2></div>
+      <p class="sdesc">這些在網頁上沒有對等物，不是「還沒做」而是心智模型不同。做跨平台產品時值得知道自己少了什麼、
+        或多了什麼。</p>
+      <div class="laws">
+        <div class="law"><b><span class="plat sw">SwiftUI</span>KeyframeAnimator 多軌道</b><p>每個屬性各有一條獨立時間軸。CSS 一組 <code>@keyframes</code> 綁死所有屬性，想拆只能靠巢狀元素。</p></div>
+        <div class="law"><b><span class="plat sw">SwiftUI</span>PhaseAnimator 階段序列</b><p>用一串離散階段驅動，每次切換自動補間。Web 要自己寫一個 state machine 再切 class。</p></div>
+        <div class="law"><b><span class="plat sw">SwiftUI</span>scrollTransition 的 phase</b><p><code>.topLeading</code> / <code>.identity</code> / <code>.bottomTrailing</code> 三段式，比 IntersectionObserver 的「進來了沒」細緻得多。</p></div>
+        <div class="law"><b><span class="plat sw">SwiftUI</span>.symbolEffect()</b><p>SF Symbols 內建 bounce / pulse / variableColor / replace。Web 完全沒有「圖示自帶動畫」這個概念。</p></div>
+        <div class="law"><b><span class="plat sw">SwiftUI</span>語意化 spring</b><p><code>.smooth</code> / <code>.snappy</code> / <code>.bouncy</code> 把物理參數包成設計語彙。CSS 只能用 <code>linear()</code> 逼近，沒有共同命名。</p></div>
+        <div class="law"><b><span class="plat sw">SwiftUI</span>.contentTransition(.numericText())</b><p>系統級的數字捲動。本圖鑑那張「數字滾動」是自己用 rAF 刻的。</p></div>
+        <div class="law"><b><span class="plat sw">SwiftUI</span>.sensoryFeedback 觸覺同步</b><p>動畫表現的第四個維度。Web 只有很弱的 Vibration API，而且桌機沒有。</p></div>
+        <div class="law"><b><span class="plat sw">SwiftUI</span>Liquid Glass</b><p><code>GlassEffectContainer</code> + <code>glassEffectID</code>（iOS 26）是系統級的液態融合：可互動、隨手勢折射、還會 morph。本圖鑑的「液態融合」只是用 SVG 濾鏡模擬視覺。</p></div>
+        <div class="law"><b><span class="plat fl">Flutter</span>Hero</b><p>兩個路由的元件放同一個 tag，共享元素轉場就完成了。Web 要手刻 FLIP，或用還在普及中的 View Transitions。</p></div>
+        <div class="law"><b><span class="plat fl">Flutter</span>Curves 全家族</b><p>40+ 條具名曲線（<code>easeOutBack</code>、<code>elasticIn</code>、<code>bounceOut</code>…）。不用背 cubic-bezier 的四個數字。</p></div>
+        <div class="law"><b><span class="plat fl">Flutter</span>Impeller 的 shader 預熱</b><p><code>.frag</code> 在編譯期就編好，不像 Web 首次執行 shader 會卡一下。</p></div>
+      </div>
+
+      <div class="shead" style="margin-top:52px"><span class="n">05</span><h2>時長與曲線速查</h2></div>
+      <p class="sdesc">不知道該設幾毫秒的時候，先從這張表抄，再依實際感覺微調。原則：進場快、退場更快，距離越遠時間越長但成長是次線性的。</p>
+      <table class="tbl">
+        <tr><th>情境</th><th>建議時長</th><th>曲線</th><th>為什麼</th></tr>
+        <tr><td>hover / 按下回饋</td><td>80–150ms</td><td><code>ease-out</code></td><td>必須跟手。超過 200ms 就會被感知成「卡」。</td></tr>
+        <tr><td>小元件開合<br>（tooltip、下拉）</td><td>150–250ms</td><td>進 <code>ease-out</code><br>出 <code>ease-in</code></td><td>進場要立刻可見所以先快後慢；退場使用者已不在乎，慢起快走直接讓開。</td></tr>
+        <tr><td>卡片展開 / 抽屜 / Modal</td><td>250–400ms</td><td><code>cubic-bezier(.2,.8,.2,1)</code></td><td>面積大、位移大，需要時間交代空間關係。</td></tr>
+        <tr><td>頁面轉場</td><td>400–600ms</td><td><code>cubic-bezier(.65,0,.35,1)</code></td><td>兩端都慢，中段快，像鏡頭推移而不是瞬移。</td></tr>
+        <tr><td>大物件位移 / 拖曳釋放</td><td>spring</td><td>剛性 0.08 / 阻尼 0.75</td><td>有慣性的東西不該有固定時長，物理模擬比 duration 準。</td></tr>
+        <tr><td>Loading / 跑馬燈</td><td>1.2–2.5s loop</td><td><code>linear</code></td><td>無限循環一旦有 ease 就會出現「心跳」節點，反而顯得不順。</td></tr>
+        <tr><td>列表逐項進場</td><td>每項 delay 30–60ms</td><td><code>ease-out</code></td><td>間隔太大會讓最後一項等太久；超過 8 項就該分批或改用單一群組動畫。</td></tr>
+      </table>
+
+      <div class="rules">
+        <div class="rule"><b>只動 transform 與 opacity</b><span>這兩個屬性可以完全交給 GPU 合成。動 <code>width/top/margin</code> 會觸發 layout，60fps 立刻崩。</span></div>
+        <div class="rule"><b>退場永遠比進場快</b><span>常見比例 2:1。進場是邀請、退場是讓路，使用者不想等一個他已經關掉的東西。</span></div>
+        <div class="rule"><b>可被打斷</b><span>使用者中途改變主意時，動畫要從當下狀態接續，而不是播完再反應。Web Animations API 比 CSS 好處理這件事。</span></div>
+        <div class="rule"><b>尊重 reduced-motion</b><span>前庭功能敏感者會因為視差與大位移暈眩。用 <code>@media (prefers-reduced-motion:reduce)</code> 降級成單純淡入，不要整個關掉。</span></div>
+        <div class="rule"><b>動畫是狀態的解釋</b><span>好的動畫在回答「這個東西從哪來、要去哪」。回答不出來的動畫就是裝飾，該砍。</span></div>
+        <div class="rule"><b>一致性大於精彩</b><span>整站 3 條 easing、4 個時長級距就夠了。每個元件自訂曲線＝沒有設計系統。</span></div>
+      </div>
+      <div class="notice" id="rmNotice" hidden>
+        <span>偵測到你的系統偏好「減少動態」，頁面已自動暫停所有示範動畫。</span>
+        <button class="mini" id="rmResume">還是想看</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  單一 HTML 檔、零相依套件、全部原生 CSS / Web Animations API / Canvas。<br>
+  <b>每張卡片附的程式碼就是這一頁實際套用的程式碼</b>，可以直接複製。
+</div></footer>
+
+<script>
+/* ============================================================
+   分類定義
+   ============================================================ */
+const CATS = [
+  {id:'basic',   name:'基礎變化'},
+  {id:'timing',  name:'節奏與緩動'},
+  {id:'layout',  name:'佈局過場'},
+  {id:'scroll',  name:'捲動驅動'},
+  {id:'text',    name:'文字動畫'},
+  {id:'svg',     name:'描繪與遮罩'},
+  {id:'physics', name:'物理與互動'},
+  {id:'depth',   name:'空間與 3D'},
+  {id:'surface', name:'光影與材質'},
+  {id:'special', name:'特殊實驗'},
+  {id:'modern',  name:'現代 CSS 轉場'},
+  {id:'vt',      name:'View Transitions'}
+];
+
+/* ============================================================
+   Prompt 產生器的框架設定
+
+   每個 hint 的重點是「用這個框架的慣用寫法」而不是「翻譯 CSS」。
+   翻譯出來的 Flutter 通常很難看 —— 要給 agent 的是規格與該用的 API，
+   不是叫它逐行對照。
+   ============================================================ */
+const FRAMEWORKS = {
+  flutter:{
+    label:'Flutter 3.41（stable）',
+    hint:'優先用 implicit animation（AnimatedContainer、AnimatedOpacity、TweenAnimationBuilder）；真的需要精細控制才開 AnimationController，而且一定要在 dispose() 釋放，State 要 mixin TickerProviderStateMixin。錯位延遲用「單一 controller + Interval 切段」，不要開 N 個 controller。共享元素轉場用 Hero。彈性優先挑 Curves 裡現成的具名曲線（easeOutBack、elasticOut…）或 SpringSimulation，不要自己算貝茲數字。繪圖類用 CustomPainter 搭配 PathMetric。用 AnimatedBuilder 時務必傳 child，否則整棵子樹每幀重建。'
+  },
+  swiftui:{
+    label:'SwiftUI（iOS 17+）',
+    hint:'用 .animation(_:value:)，不要用已棄用的無 value 版本（它會動到不該動的東西）。多階段動畫用 PhaseAnimator；每個屬性需要各自時間軸時用 KeyframeAnimator 的 KeyframeTrack。彈性優先用語意化預設 .smooth / .snappy / .bouncy，而不是自己填 response 與 dampingFraction。共享元素用 matchedGeometryEffect —— 兩邊的 id 與 @Namespace 必須完全一致，不一致會靜默不 morph。捲動效果用 scrollTransition 的 phase。材質用 .ultraThinMaterial，或 iOS 26 的 .glassEffect() / GlassEffectContainer，不要自刻模糊。'
+  },
+  framer:{
+    label:'React + Framer Motion',
+    hint:'用 motion 元件搭配 variants 管理狀態，不要在 style 裡手動插值。佈局變化用 layout；共享元素用 layoutId。離場動畫用 AnimatePresence，子元素一定要有穩定的 key，缺 key 離場動畫不會觸發。彈性用 type:"spring" 的 stiffness / damping，不要用 duration 去模擬。錯位用 staggerChildren 與 delayChildren。尊重 useReducedMotion()。'
+  },
+  css:{
+    label:'純 CSS / Web',
+    hint:'維持純 CSS，真的需要才動 JavaScript。優先只動 transform 與 opacity。可用的現代能力：@starting-style（進場）、transition-behavior: allow-discrete（display）、interpolate-size / calc-size()（height:auto）、linear()（彈簧與彈跳）、@property（讓自訂屬性可補間）、View Transitions API（狀態與頁面轉場）。@keyframes 與 view-transition-name 都是全域的，命名務必加專屬前綴 —— 同名會靜默覆蓋或讓轉場整個失效，而且沒有任何錯誤訊息。'
+  }
+};
+
+/* ============================================================
+   View Transitions 示範的共用啟動器
+
+   兩個必要的處理：
+   1. 轉場預設會把「整個 root」拍成快照做交叉淡入 —— 在這個有 76 張卡片的頁面上
+      會變成整頁閃一下。暫時把 :root 的 view-transition-name 設成 none，
+      就只有具名元素會轉場，其餘部分直接更新。
+   2. 同一份文件同時間只能跑一個轉場，所以示範一律做成點擊觸發，不自動播放。
+   ============================================================ */
+function vtRun(update, types){
+  if(!document.startViewTransition){ update(); return null; }
+  const root=document.documentElement;
+  root.style.viewTransitionName='none';
+  const t = types ? document.startViewTransition({update, types})
+                  : document.startViewTransition(update);
+  t.ready.catch(()=>{});   // 撞名時 ready 會 reject，先接住避免 unhandled rejection
+  t.finished.catch(()=>{}).finally(()=>{root.style.viewTransitionName='';});
+  return t;
+}
+
+/* ============================================================
+   技法資料
+   css 欄位會被原封不動注入頁面 —— 也就是你看到的程式碼就是跑起來的程式碼
+   ============================================================ */
+const DEMOS = [
+
+/* ---------- 基礎變化 ---------- */
+{
+  id:'fade', cat:'basic', title:'淡入淡出', en:'Fade', trigger:'auto',
+  tags:['opacity'],
+  desc:'只動 opacity。最便宜、最不會出錯，也是所有降級方案的終點站。',
+  when:'內容替換、不需要交代空間關係的時候。單獨使用會有點平，通常搭配微小位移。',
+  html:'<div class="dm-fade"></div>',
+  css:`.dm-fade{width:92px;height:92px;border-radius:20px;
+  background:linear-gradient(135deg,var(--ac),var(--ac3));
+  animation:dmFade 1.6s ease-in-out infinite alternate}
+@keyframes dmFade{from{opacity:.08}to{opacity:1}}`
+},
+{
+  id:'rise', cat:'basic', title:'淡入上移', en:'Fade Up', trigger:'auto',
+  tags:['opacity','translate'],
+  desc:'opacity 搭配 8–24px 的位移。位移量要小 —— 大位移會讓人覺得東西「飛進來」而不是「浮現」。',
+  when:'幾乎所有內容進場的預設值。列表、卡片、區塊標題。',
+  html:'<div class="dm-rise"><i></i><i></i><i></i></div>',
+  css:`.dm-rise{display:flex;gap:12px}
+.dm-rise i{width:54px;height:74px;border-radius:12px;background:var(--surface2);
+  border:1px solid var(--line2);animation:dmRise 2.2s cubic-bezier(.22,.9,.3,1) infinite}
+.dm-rise i:nth-child(2){animation-delay:.12s}
+.dm-rise i:nth-child(3){animation-delay:.24s}
+@keyframes dmRise{
+  0%{opacity:0;transform:translateY(20px)}
+  35%,75%{opacity:1;transform:none}
+  100%{opacity:0;transform:translateY(-6px)}}`
+},
+{
+  id:'pop', cat:'basic', title:'縮放彈出', en:'Scale Pop', trigger:'auto',
+  tags:['scale','overshoot'],
+  desc:'從 0.85 放大到 1，配上會過衝的曲線。起始值不要設 0，那會變成「從無到有」而不是「彈出來」。',
+  when:'Modal、tooltip、通知、按讚愛心。需要抓住注意力的小元件。',
+  html:'<div class="dm-pop">✓</div>',
+  css:`.dm-pop{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;
+  font-size:34px;color:var(--onac);background:var(--ac);
+  animation:dmPop 2s cubic-bezier(.34,1.56,.64,1) infinite}
+@keyframes dmPop{
+  0%{opacity:0;transform:scale(.85)}
+  30%,70%{opacity:1;transform:scale(1)}
+  100%{opacity:0;transform:scale(.92)}}`
+},
+{
+  id:'spin', cat:'basic', title:'持續旋轉', en:'Spin', trigger:'auto',
+  tags:['rotate','linear'],
+  desc:'無限旋轉是少數該用 linear 的場合。加了 ease 每一圈都會有一次「頓」，反而顯得不順。',
+  when:'不確定要等多久的 loading。若知道進度，改用進度條 —— 轉圈只代表「還活著」。',
+  html:'<div class="dm-spin"></div>',
+  css:`.dm-spin{width:64px;height:64px;border-radius:50%;
+  border:5px solid var(--line2);border-top-color:var(--ac);
+  animation:dmSpin .9s linear infinite}
+@keyframes dmSpin{to{transform:rotate(1turn)}}`
+},
+{
+  id:'blurin', cat:'basic', title:'模糊聚焦', en:'Blur In', trigger:'auto',
+  tags:['filter','opacity'],
+  desc:'從 filter:blur(12px) 收斂到 0，模擬鏡頭對焦。視覺份量重，但 blur 是耗效能的濾鏡。',
+  when:'首屏主視覺、圖片載入完成。同一畫面別超過兩個，也別放在長列表裡。',
+  html:'<div class="dm-blur">FOCUS</div>',
+  css:`.dm-blur{font:800 34px/1 var(--sans);letter-spacing:.16em;color:var(--tx);
+  animation:dmBlur 2.6s ease-out infinite}
+@keyframes dmBlur{
+  0%{opacity:0;filter:blur(14px);letter-spacing:.42em}
+  40%,80%{opacity:1;filter:blur(0);letter-spacing:.16em}
+  100%{opacity:0;filter:blur(6px)}}`
+},
+{
+  id:'flipin', cat:'basic', title:'翻轉進場', en:'Flip In', trigger:'auto',
+  tags:['rotateX','perspective'],
+  desc:'沿 X 軸翻入。關鍵是父層要有 perspective，否則會變成單純的垂直壓扁。',
+  when:'資料卡、統計數字更新、翻牌式的內容替換。',
+  html:'<div class="dm-flipwrap"><div class="dm-flipin">42</div></div>',
+  css:`.dm-flipwrap{perspective:600px}
+.dm-flipin{width:110px;height:78px;border-radius:12px;display:grid;place-items:center;
+  background:var(--surface2);border:1px solid var(--line2);color:var(--ac);
+  font:800 32px var(--mono);transform-origin:top center;
+  animation:dmFlipIn 2.4s cubic-bezier(.3,.9,.3,1.2) infinite}
+@keyframes dmFlipIn{
+  0%{opacity:0;transform:rotateX(-88deg)}
+  35%,75%{opacity:1;transform:rotateX(0)}
+  100%{opacity:0;transform:rotateX(24deg)}}`
+},
+{
+  id:'wipein', cat:'basic', title:'方向擦除', en:'Directional Wipe', trigger:'auto',
+  tags:['clip-path'],
+  desc:'用 clip-path 的 inset 逐步打開，內容本身完全不動。比 opacity 更有「被揭露」的儀式感。',
+  when:'圖片進場、標題揭露、頁籤內容切換。方向要和使用者的閱讀動線一致。',
+  html:'<div class="dm-wipe"><span>REVEAL</span></div>',
+  css:`.dm-wipe{position:relative;width:200px;height:74px;border-radius:12px;overflow:hidden;
+  background:linear-gradient(100deg,var(--ac4),var(--ac3));display:grid;place-items:center;
+  animation:dmWipe 2.6s cubic-bezier(.65,0,.35,1) infinite}
+.dm-wipe span{font:800 20px var(--mono);letter-spacing:.2em;color:var(--onac)}
+@keyframes dmWipe{
+  0%{clip-path:inset(0 100% 0 0)}
+  40%,78%{clip-path:inset(0 0 0 0)}
+  100%{clip-path:inset(0 0 0 100%)}}`
+},
+
+/* ---------- 節奏與緩動 ---------- */
+{
+  id:'easing', cat:'timing', title:'緩動曲線對照', en:'Easing Compare', trigger:'auto',
+  tags:['cubic-bezier'],
+  desc:'同樣的距離、同樣的時間，只換曲線。個性差異幾乎全部來自這條線，而不是位移量。',
+  when:'決定設計系統的 easing 階梯時，把候選曲線並排跑一次，比看數字準得多。',
+  html:`<div class="dm-ease">
+  <div><b>linear</b><i style="animation-timing-function:linear"></i></div>
+  <div><b>ease-in</b><i style="animation-timing-function:ease-in"></i></div>
+  <div><b>ease-out</b><i style="animation-timing-function:ease-out"></i></div>
+  <div><b>ease-in-out</b><i style="animation-timing-function:cubic-bezier(.65,0,.35,1)"></i></div>
+  <div><b>overshoot</b><i style="animation-timing-function:cubic-bezier(.34,1.56,.64,1)"></i></div>
+</div>`,
+  css:`.dm-ease{display:grid;gap:7px}
+.dm-ease>div{position:relative;height:15px;display:flex;align-items:center}
+.dm-ease b{font:500 10px var(--mono);color:var(--tx3);width:70px;flex:none;letter-spacing:.04em}
+.dm-ease i{position:relative;width:172px;flex:none;height:2px;background:var(--line2);border-radius:2px}
+.dm-ease i::after{content:"";position:absolute;top:50%;left:0;width:11px;height:11px;border-radius:50%;
+  background:var(--ac);margin-top:-5.5px;
+  animation:dmEaseRun 1.9s infinite;animation-timing-function:inherit}
+/* 走 transform 而不是 left —— 動 left 每幀都要重新排版 */
+@keyframes dmEaseRun{0%,8%{transform:translateX(0)}80%,100%{transform:translateX(161px)}}`
+},
+{
+  id:'spring', cat:'timing', title:'彈簧物理', en:'Spring', trigger:'click',
+  tags:['physics','rAF'],
+  desc:'不設 duration，只設剛性與阻尼，每一幀重算速度。位置被中途改變時也能自然接續。',
+  when:'拖曳釋放、手勢驅動、任何使用者可能中途改變主意的互動。',
+  html:'<div class="dm-spring"><i></i><span>點一下切換位置</span></div>',
+  css:`.dm-spring{position:relative;width:230px;height:60px;display:grid;place-items:center}
+.dm-spring i{position:absolute;left:0;top:8px;width:34px;height:34px;border-radius:11px;
+  background:var(--ac2);will-change:transform}
+.dm-spring span{position:absolute;bottom:-2px;font:500 11px var(--mono);color:var(--tx3)}`,
+  codeJs:`// 剛性 k、阻尼 d —— 沒有 duration
+let x = 0, v = 0, target = 196;
+function tick(){
+  v = (v + (target - x) * 0.08) * 0.75;   // 加速度 → 速度 → 衰減
+  x += v;
+  ball.style.transform = 'translateX(' + x + 'px)';
+  if (Math.abs(v) > 0.05 || Math.abs(target - x) > 0.4) requestAnimationFrame(tick);
+}
+stage.onclick = () => { target = target ? 0 : 196; tick(); };`,
+  js(stage,alive){
+    const ball=stage.querySelector('i');
+    let x=0,v=0,target=196,running=false;
+    function tick(){
+      if(!alive())return;
+      v=(v+(target-x)*0.08)*0.75; x+=v;
+      ball.style.transform='translateX('+x+'px)';
+      if(Math.abs(v)>0.05||Math.abs(target-x)>0.4)requestAnimationFrame(tick);
+      else running=false;
+    }
+    stage.style.cursor='pointer';
+    stage.onclick=()=>{target=target?0:196;if(!running){running=true;tick();}};
+    setTimeout(()=>{if(alive()){running=true;tick();}},400);
+  }
+},
+{
+  id:'overshoot', cat:'timing', title:'過衝回彈', en:'Overshoot', trigger:'auto',
+  tags:['cubic-bezier'],
+  desc:'cubic-bezier 的 y 值超過 1，位移就會衝過目標再拉回。上排是精準到位，下排是過衝。',
+  when:'需要「有彈性」個性的元件。文字排版類的內容不要用，字會晃到不好讀。',
+  html:`<div class="dm-os">
+  <div><b>ease-out</b><i class="a"></i></div>
+  <div><b>overshoot</b><i class="b"></i></div>
+</div>`,
+  css:`.dm-os{display:grid;gap:16px}
+.dm-os>div{position:relative;width:210px;height:38px;border-left:2px dashed var(--line2);
+  border-right:2px dashed var(--line2);display:flex;align-items:center}
+.dm-os b{position:absolute;top:-13px;left:0;font:500 10px var(--mono);color:var(--tx3)}
+.dm-os i{position:absolute;left:0;width:30px;height:30px;border-radius:9px;background:var(--ac3)}
+.dm-os .a{animation:dmOS 2.2s cubic-bezier(.22,1,.36,1) infinite}
+.dm-os .b{background:var(--ac);animation:dmOS 2.2s cubic-bezier(.34,1.8,.64,1) infinite}
+@keyframes dmOS{0%,12%{transform:translateX(0)}72%,100%{transform:translateX(180px)}}`
+},
+{
+  id:'anticipation', cat:'timing', title:'預備動作', en:'Anticipation', trigger:'auto',
+  tags:['keyframes'],
+  desc:'主動作之前先往反方向蹲一下。上排直接出發，下排先蓄力 —— 下排看起來「有意圖」。',
+  when:'重要的、一次性的轉場。列表項目不要用，重複太多次會顯得囉唆。',
+  html:`<div class="dm-ant">
+  <div><b>直接出發</b><i class="a"></i></div>
+  <div><b>先蓄力</b><i class="b"></i></div>
+</div>`,
+  css:`.dm-ant{display:grid;gap:16px;width:100%;padding:0 24px}
+.dm-ant>div{position:relative;height:38px;display:flex;align-items:center}
+.dm-ant b{position:absolute;top:-13px;left:0;font:500 10px var(--mono);color:var(--tx3)}
+.dm-ant i{position:absolute;left:22px;width:30px;height:30px;border-radius:50%;background:var(--tx3)}
+.dm-ant .a{animation:dmAntA 2.4s ease-out infinite}
+.dm-ant .b{background:var(--ac2);animation:dmAntB 2.4s infinite}
+@keyframes dmAntA{0%,20%{transform:none}70%,100%{transform:translateX(190px)}}
+@keyframes dmAntB{
+  0%,10%{transform:none;animation-timing-function:ease-in-out}
+  22%{transform:translateX(-18px) scaleX(.86)}
+  70%,100%{transform:translateX(190px);animation-timing-function:cubic-bezier(.2,.9,.3,1)}}`
+},
+{
+  id:'stagger', cat:'timing', title:'錯位延遲', en:'Stagger', trigger:'auto',
+  tags:['delay'],
+  desc:'同一個動畫，每項晚一點點開始。40ms 左右最舒服，太大會拖，太小等於同時。',
+  when:'列表、卡片牆、選單項目。超過 8 項就把後面的 delay 收斂，否則最後一項要等太久。',
+  html:'<div class="dm-stag"><i></i><i></i><i></i><i></i><i></i><i></i></div>',
+  css:`.dm-stag{display:flex;gap:9px;align-items:flex-end;height:100px}
+.dm-stag i{width:20px;background:linear-gradient(var(--ac),var(--ac4));border-radius:5px;
+  transform-origin:bottom;animation:dmStag 1.9s cubic-bezier(.22,.9,.3,1) infinite}
+.dm-stag i:nth-child(1){height:38px;animation-delay:0s}
+.dm-stag i:nth-child(2){height:58px;animation-delay:.05s}
+.dm-stag i:nth-child(3){height:86px;animation-delay:.1s}
+.dm-stag i:nth-child(4){height:70px;animation-delay:.15s}
+.dm-stag i:nth-child(5){height:100px;animation-delay:.2s}
+.dm-stag i:nth-child(6){height:46px;animation-delay:.25s}
+@keyframes dmStag{0%{transform:scaleY(0);opacity:0}
+  30%,80%{transform:scaleY(1);opacity:1}
+  100%{transform:scaleY(.05);opacity:0}}`
+},
+{
+  id:'squash', cat:'timing', title:'擠壓與伸展', en:'Squash & Stretch', trigger:'auto',
+  tags:['scale','12principles'],
+  desc:'落地瞬間壓扁、上升時拉長，體積大致守恆。這條讓物體看起來有材質，而不是剛體。',
+  when:'吉祥物、遊戲化元素、按鈕的按壓回饋（幅度要收到 3% 以內）。',
+  html:'<div class="dm-sq"><i></i><u></u></div>',
+  css:`.dm-sq{position:relative;width:120px;height:120px}
+.dm-sq i{position:absolute;left:38px;top:0;width:44px;height:44px;border-radius:50%;
+  background:var(--ac2);transform-origin:bottom center;
+  animation:dmSq 1.1s cubic-bezier(.5,0,.5,1) infinite}
+.dm-sq u{position:absolute;bottom:6px;left:34px;width:52px;height:6px;border-radius:50%;
+  background:var(--line2);animation:dmSqSh 1.1s cubic-bezier(.5,0,.5,1) infinite}
+/* 位移併進 transform，不動 top —— 落下與壓扁都在同一個合成層裡完成 */
+@keyframes dmSq{
+  0%{transform:translateY(0) scale(1.06,.94)}
+  45%{transform:translateY(66px) scale(.92,1.1)}
+  50%{transform:translateY(76px) scale(1.3,.68)}
+  55%{transform:translateY(66px) scale(.94,1.08)}
+  100%{transform:translateY(0) scale(1.06,.94)}}
+@keyframes dmSqSh{
+  0%,100%{transform:scaleX(.55);opacity:.35}
+  50%{transform:scaleX(1);opacity:.75}}`
+},
+{
+  id:'followthrough', cat:'timing', title:'跟隨與重疊', en:'Follow Through', trigger:'auto',
+  tags:['delay','12principles'],
+  desc:'容器先停，內容物晚 60ms 才停。差別很細微，但拿掉之後畫面立刻變得「硬」。',
+  when:'卡片展開、抽屜滑出、任何有父子結構的轉場。',
+  html:'<div class="dm-ft"><span>Title</span><em></em><em></em></div>',
+  css:`.dm-ft{width:190px;padding:16px;border-radius:12px;background:var(--surface2);
+  border:1px solid var(--line2);animation:dmFtBox 2.6s cubic-bezier(.2,.85,.3,1) infinite}
+.dm-ft span{display:block;font:700 14px var(--sans);color:var(--tx);margin-bottom:9px;
+  animation:dmFtIn 2.6s cubic-bezier(.2,.85,.3,1) infinite;animation-delay:.06s}
+.dm-ft em{display:block;height:7px;border-radius:4px;background:var(--line2);margin-top:6px;
+  animation:dmFtIn 2.6s cubic-bezier(.2,.85,.3,1) infinite}
+.dm-ft em:nth-of-type(1){width:88%;animation-delay:.12s}
+.dm-ft em:nth-of-type(2){width:62%;animation-delay:.18s}
+@keyframes dmFtBox{0%{opacity:0;transform:translateY(26px) scale(.96)}
+  30%,78%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-8px)}}
+@keyframes dmFtIn{0%{opacity:0;transform:translateY(12px)}
+  32%,78%{opacity:1;transform:none}100%{opacity:0}}`
+},
+
+/* ---------- 佈局過場 ---------- */
+{
+  id:'flip', cat:'layout', title:'FLIP 技巧', en:'FLIP', trigger:'click',
+  tags:['WAAPI','layout'],
+  desc:'First / Last / Invert / Play。先量測搬移前後的位置，用 transform 把它「假裝」放回原處再放行 —— 得到 layout 變化的動畫，但完全不動 layout。',
+  when:'元素在 DOM 中真的換了位置：排序、換欄、進出容器。這是佈局動畫的根技術。',
+  html:'<div class="dm-flip"><div class="s a"><b class="ball"></b></div><div class="s b"></div><span>點一下搬移</span></div>',
+  css:`.dm-flip{display:flex;gap:20px;position:relative;align-items:center}
+.dm-flip .s{width:78px;height:78px;border-radius:14px;border:1px dashed var(--line2);
+  display:grid;place-items:center}
+.dm-flip .ball{width:48px;height:48px;border-radius:12px;background:var(--ac);display:block}
+.dm-flip span{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);
+  white-space:nowrap;font:500 11px var(--mono);color:var(--tx3)}`,
+  codeJs:`const first = ball.getBoundingClientRect();      // F: 動之前量一次
+target.appendChild(ball);                        // L: 真的搬過去（瞬間跳位）
+const last = ball.getBoundingClientRect();       // L: 再量一次
+const dx = first.left - last.left, dy = first.top - last.top;
+ball.animate(                                    // I + P: 先騙回原位再放行
+  [{transform:'translate(' + dx + 'px,' + dy + 'px)'}, {transform:'none'}],
+  {duration:520, easing:'cubic-bezier(.2,.8,.2,1)'}
+);`,
+  js(stage,alive){
+    const a=stage.querySelector('.a'),b=stage.querySelector('.b'),ball=stage.querySelector('.ball');
+    let at=a;
+    stage.style.cursor='pointer';
+    const go=()=>{
+      if(!alive())return;
+      const first=ball.getBoundingClientRect();
+      const t=at===a?b:a; t.appendChild(ball); at=t;
+      const last=ball.getBoundingClientRect();
+      const dx=first.left-last.left,dy=first.top-last.top;
+      ball.animate([{transform:'translate('+dx+'px,'+dy+'px)'},{transform:'none'}],
+        {duration:520,easing:'cubic-bezier(.2,.8,.2,1)'});
+    };
+    stage.onclick=go;
+    const iv=setInterval(()=>{alive()?go():clearInterval(iv);},2600);
+  }
+},
+{
+  id:'shared', cat:'layout', title:'共享元素轉場', en:'Shared Element', trigger:'click',
+  tags:['WAAPI','magic-move'],
+  desc:'同一個東西在兩個畫面之間連續移動並改變尺寸，使用者不會覺得「換頁了」，只覺得「放大了」。',
+  when:'縮圖 → 詳情頁、清單項目 → 全螢幕。是原生 App 感的最大來源之一。',
+  html:'<div class="dm-shared"><div class="thumb" data-open="0"><i></i><b>專輯封面</b></div></div>',
+  css:`.dm-shared{position:relative;width:100%;height:100%;display:grid;place-items:center}
+.dm-shared .thumb{display:flex;align-items:center;gap:11px;padding:9px 15px 9px 9px;border-radius:12px;
+  background:var(--surface2);border:1px solid var(--line2);cursor:pointer;will-change:transform}
+.dm-shared .thumb i{width:46px;height:46px;border-radius:9px;flex:none;
+  background:linear-gradient(140deg,var(--ac2),var(--ac3))}
+.dm-shared .thumb b{font:600 13px var(--sans);color:var(--tx)}
+.dm-shared .thumb.big{flex-direction:column;padding:14px;gap:9px}
+.dm-shared .thumb.big i{width:96px;height:96px;border-radius:14px}`,
+  codeJs:`// 同一顆 DOM，只是換 class 改變佈局，中間用 FLIP 補間
+const first = el.getBoundingClientRect();
+el.classList.toggle('big');
+const last = el.getBoundingClientRect();
+el.animate([{
+  transformOrigin:'top left',
+  transform:'translate(' + (first.left-last.left) + 'px,' + (first.top-last.top) + 'px)'
+           + ' scale(' + (first.width/last.width) + ',' + (first.height/last.height) + ')'
+},{transform:'none'}],{duration:450,easing:'cubic-bezier(.2,.8,.2,1)'});`,
+  js(stage,alive){
+    const el=stage.querySelector('.thumb');
+    const go=()=>{
+      if(!alive())return;
+      const f=el.getBoundingClientRect();
+      el.classList.toggle('big');
+      const l=el.getBoundingClientRect();
+      el.animate([{transformOrigin:'top left',
+        transform:'translate('+(f.left-l.left)+'px,'+(f.top-l.top)+'px) scale('+(f.width/l.width)+','+(f.height/l.height)+')'},
+        {transformOrigin:'top left',transform:'none'}],
+        {duration:450,easing:'cubic-bezier(.2,.8,.2,1)'});
+    };
+    el.onclick=go;
+    const iv=setInterval(()=>{alive()?go():clearInterval(iv);},2400);
+  }
+},
+{
+  id:'viewtransition', cat:'layout', title:'View Transitions API', en:'View Transitions', trigger:'click',
+  tags:['native','experimental'],
+  desc:'瀏覽器原生把新舊畫面各截一張圖，自動做交叉轉場；標上 view-transition-name 的元素會自動 morph。等於內建的 FLIP。',
+  when:'SPA 換頁、狀態切換。Chrome / Edge / Safari 18+ 已支援，不支援的瀏覽器會直接跳過。',
+  html:'<div class="dm-vt"><div class="box" id="vtBox">A</div><span></span></div>',
+  css:`.dm-vt{display:grid;place-items:center;gap:12px;position:relative}
+.dm-vt .box{width:120px;height:88px;border-radius:14px;display:grid;place-items:center;
+  font:800 30px var(--mono);color:var(--onac);background:var(--ac);cursor:pointer;
+  view-transition-name:dm-vt-box}
+.dm-vt .box.alt{width:78px;height:120px;border-radius:50%;background:var(--ac2)}
+.dm-vt span{font:500 11px var(--mono);color:var(--tx3)}`,
+  codeJs:`// 只要把「改變 DOM 的那段」包起來，其餘交給瀏覽器
+document.startViewTransition(() => {
+  box.classList.toggle('alt');
+  box.textContent = box.classList.contains('alt') ? 'B' : 'A';
+});
+
+/* CSS：兩個畫面中同名的元素會自動 morph */
+.box { view-transition-name: dm-vt-box; }
+::view-transition-group(dm-vt-box){ animation-duration:.5s; }`,
+  js(stage,alive){
+    const box=stage.querySelector('.box'),tip=stage.querySelector('span');
+    const ok=!!document.startViewTransition;
+    tip.textContent=ok?'原生支援，點一下切換':'此瀏覽器不支援，已降級為 CSS transition';
+    if(!ok)box.style.transition='all .45s cubic-bezier(.2,.8,.2,1)';
+    const swap=()=>{box.classList.toggle('alt');box.textContent=box.classList.contains('alt')?'B':'A';};
+    box.onclick=()=>{if(!alive())return;vtRun(swap);};
+  }
+},
+{
+  id:'reorder', cat:'layout', title:'列表重排', en:'List Reorder', trigger:'auto',
+  tags:['FLIP','list'],
+  desc:'排序改變時，每一項都用 FLIP 從舊位置滑到新位置。沒有這個動畫，使用者會完全跟丟自己在看的那一列。',
+  when:'排序切換、篩選、拖曳排序、即時排行榜。',
+  html:'<ul class="dm-ro"></ul>',
+  css:`.dm-ro{list-style:none;margin:0;padding:0;width:186px;display:grid;gap:6px}
+.dm-ro li{display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:9px;
+  background:var(--surface2);border:1px solid var(--line);font:600 12.5px var(--sans);color:var(--tx2)}
+.dm-ro li i{width:9px;height:9px;border-radius:50%;flex:none}`,
+  codeJs:`const before = new Map([...list.children].map(el => [el, el.getBoundingClientRect()]));
+shuffleAndReappend();                                   // 隨便你怎麼改 DOM 順序
+for (const el of list.children) {
+  const dy = before.get(el).top - el.getBoundingClientRect().top;
+  if (dy) el.animate([{transform:'translateY(' + dy + 'px)'},{transform:'none'}],
+                     {duration:420, easing:'cubic-bezier(.2,.8,.2,1)'});
+}`,
+  js(stage,alive){
+    const list=stage.querySelector('.dm-ro');
+    const cols=['var(--ac)','var(--ac2)','var(--ac3)','var(--ac4)'];
+    const items=['Apple','Banana','Cherry','Durian'];
+    list.innerHTML=items.map((t,i)=>'<li><i style="background:'+cols[i]+'"></i>'+t+'</li>').join('');
+    const go=()=>{
+      if(!alive())return;
+      const kids=[...list.children];
+      const before=new Map(kids.map(el=>[el,el.getBoundingClientRect()]));
+      kids.slice().sort(()=>Math.random()-.5).forEach(el=>list.appendChild(el));
+      for(const el of list.children){
+        const dy=before.get(el).top-el.getBoundingClientRect().top;
+        if(dy)el.animate([{transform:'translateY('+dy+'px)'},{transform:'none'}],
+          {duration:420,easing:'cubic-bezier(.2,.8,.2,1)'});
+      }
+    };
+    stage.style.cursor='pointer'; stage.onclick=go;
+    const iv=setInterval(()=>{alive()?go():clearInterval(iv);},2200);
+  }
+},
+{
+  id:'morphradius', cat:'layout', title:'形狀變形', en:'Shape Morph', trigger:'auto',
+  tags:['border-radius'],
+  desc:'border-radius 的八個值可以獨立補間，不用 SVG 就能做出流動的有機形狀。',
+  when:'裝飾性的背景形狀、avatar 容器、品牌感的 blob。純 CSS、成本極低。',
+  html:'<div class="dm-morph"></div>',
+  css:`.dm-morph{width:106px;height:106px;background:linear-gradient(140deg,var(--ac),var(--ac3));
+  animation:dmMorph 8s ease-in-out infinite}
+@keyframes dmMorph{
+  0%,100%{border-radius:60% 40% 30% 70%/60% 30% 70% 40%}
+  25%{border-radius:30% 60% 70% 40%/50% 60% 30% 60%}
+  50%{border-radius:50% 50% 50% 50%/50% 50% 50% 50%}
+  75%{border-radius:70% 30% 45% 55%/35% 65% 35% 65%}}`
+},
+{
+  id:'accordion', cat:'layout', title:'高度自動展開', en:'Auto Height', trigger:'auto',
+  tags:['grid','height'],
+  desc:'height:auto 不能補間。用 grid-template-rows 從 0fr 到 1fr 就能動 —— 這是目前最乾淨的純 CSS 解法。',
+  when:'手風琴、展開更多、可折疊的表單區塊。取代量測 scrollHeight 再設 px 的老寫法。',
+  html:'<div class="dm-acc"><b>詳細資訊</b><div class="wrapx"><div class="inner">高度不是寫死的，內容多長就展開多長，而且全程可補間。</div></div></div>',
+  css:`.dm-acc{width:210px;padding:12px 14px;border-radius:12px;background:var(--surface2);
+  border:1px solid var(--line2)}
+.dm-acc b{display:block;font:600 13px var(--sans);color:var(--tx);margin-bottom:2px}
+.dm-acc .wrapx{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.2,.8,.2,1);
+  animation:dmAcc 4s ease-in-out infinite}
+.dm-acc .inner{overflow:hidden;font:400 12px/1.65 var(--sans);color:var(--tx2)}
+@keyframes dmAcc{0%,15%{grid-template-rows:0fr}45%,80%{grid-template-rows:1fr}100%{grid-template-rows:0fr}}`
+},
+
+/* ---------- 捲動驅動 ---------- */
+{
+  id:'reveal', cat:'scroll', title:'捲入顯現', en:'Scroll Reveal', trigger:'scroll',
+  tags:['IntersectionObserver'],
+  desc:'元素進入視窗才播放進場動畫。用 IntersectionObserver，不要監聽 scroll 事件 —— 前者由瀏覽器在合成執行緒判定，不會拖慢捲動。',
+  when:'長頁面的內容區塊、行銷頁。只播一次就 unobserve，來回捲動一直重播很煩人。',
+  html:'<div class="dm-rev"><p>往下捲 ↓</p><i></i><i></i><i></i><i></i><p class="end">就是這樣</p></div>',
+  css:`.dm-rev{width:100%;height:100%;overflow-y:auto;padding:0 24px;scrollbar-width:thin}
+.dm-rev p{font:500 12px var(--mono);color:var(--tx3);margin:70px 0 20px;text-align:center}
+.dm-rev p.end{margin:20px 0 80px}
+.dm-rev i{display:block;height:50px;border-radius:10px;margin:12px 0;
+  background:var(--surface2);border:1px solid var(--line2);
+  opacity:0;transform:translateY(26px);transition:opacity .6s,transform .6s cubic-bezier(.2,.8,.2,1)}
+.dm-rev i.in{opacity:1;transform:none}`,
+  codeJs:`const io = new IntersectionObserver((entries) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    e.target.classList.add('in');
+    io.unobserve(e.target);           // 播一次就好，別來回重播
+  }
+}, {root: scroller, threshold: 0.35});
+items.forEach(el => io.observe(el));`,
+  js(stage,alive){
+    const sc=stage.querySelector('.dm-rev');
+    const io=new IntersectionObserver(es=>{
+      if(!alive()){io.disconnect();return;}
+      es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+    },{root:sc,threshold:.35});
+    sc.querySelectorAll('i').forEach(el=>io.observe(el));
+  }
+},
+{
+  id:'parallax', cat:'scroll', title:'視差捲動', en:'Parallax', trigger:'scroll',
+  tags:['depth','translate'],
+  desc:'不同深度的圖層用不同倍率位移，遠的慢、近的快，造出景深。倍率差別建議控制在 0.1–0.4 之間，過大會頭暈。',
+  when:'首屏英雄區、品牌故事頁。務必在 prefers-reduced-motion 時關掉，這是最容易誘發暈眩的手法。',
+  html:'<div class="dm-plx"><div class="view"><b class="l1"></b><b class="l2"></b><b class="l3"></b><em>捲動 ↕</em></div><div class="sp"></div></div>',
+  css:`.dm-plx{width:100%;height:100%;overflow-y:auto;scrollbar-width:thin}
+.dm-plx .view{position:sticky;top:0;height:186px;overflow:hidden;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--ac3) 26%,transparent),transparent)}
+.dm-plx b{position:absolute;left:50%;border-radius:50%;display:block}
+.dm-plx .l1{width:120px;height:120px;margin-left:-60px;top:34px;background:color-mix(in srgb,var(--ac4) 45%,transparent)}
+.dm-plx .l2{width:74px;height:74px;margin-left:-110px;top:80px;background:color-mix(in srgb,var(--ac) 65%,transparent)}
+.dm-plx .l3{width:52px;height:52px;margin-left:52px;top:104px;background:var(--ac2)}
+.dm-plx em{position:absolute;left:0;right:0;bottom:10px;text-align:center;
+  font:500 11px var(--mono);color:var(--tx3);font-style:normal}
+.dm-plx .sp{height:520px}`,
+  codeJs:`scroller.addEventListener('scroll', () => {
+  const y = scroller.scrollTop;
+  l1.style.transform = 'translateY(' + (y * -0.12) + 'px)';  // 最遠 → 最慢
+  l2.style.transform = 'translateY(' + (y * -0.30) + 'px)';
+  l3.style.transform = 'translateY(' + (y * -0.55) + 'px)';  // 最近 → 最快
+}, {passive: true});`,
+  js(stage,alive){
+    const sc=stage.querySelector('.dm-plx');
+    const l1=sc.querySelector('.l1'),l2=sc.querySelector('.l2'),l3=sc.querySelector('.l3');
+    sc.addEventListener('scroll',()=>{
+      if(!alive())return;
+      const y=sc.scrollTop;
+      l1.style.transform='translateY('+(y*-0.12)+'px)';
+      l2.style.transform='translateY('+(y*-0.30)+'px)';
+      l3.style.transform='translateY('+(y*-0.55)+'px)';
+    },{passive:true});
+  }
+},
+{
+  id:'scrollprog', cat:'scroll', title:'捲動進度', en:'Scroll Progress', trigger:'scroll',
+  tags:['progress'],
+  desc:'把捲動位置映射成 0–1，再驅動任何視覺屬性。動畫的「時間軸」被換成了「位置軸」，使用者完全掌控播放。',
+  when:'長文閱讀進度、章節導覽、把捲動當成播放頭的敘事頁。',
+  html:'<div class="dm-prog"><div class="head"><svg viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="16"/><circle class="fg" cx="20" cy="20" r="16"/></svg><b>0%</b></div><div class="sp"></div></div>',
+  css:`.dm-prog{width:100%;height:100%;overflow-y:auto;scrollbar-width:thin}
+.dm-prog .head{position:sticky;top:0;height:186px;display:grid;place-items:center;gap:6px}
+.dm-prog svg{width:76px;height:76px;transform:rotate(-90deg)}
+.dm-prog circle{fill:none;stroke-width:4;stroke-linecap:round}
+.dm-prog .bg{stroke:var(--line2)}
+.dm-prog .fg{stroke:var(--ac);stroke-dasharray:100.5;stroke-dashoffset:100.5}
+.dm-prog b{position:absolute;font:700 15px var(--mono);color:var(--tx)}
+.dm-prog .sp{height:560px}`,
+  codeJs:`const p = scroller.scrollTop / (scroller.scrollHeight - scroller.clientHeight); // 0 → 1
+ring.style.strokeDashoffset = CIRCUMFERENCE * (1 - p);
+label.textContent = Math.round(p * 100) + '%';
+
+/* 純 CSS 版本（Chrome 115+ / Safari 26+）：
+   .bar { animation: grow linear; animation-timeline: scroll(nearest); } */`,
+  js(stage,alive){
+    const sc=stage.querySelector('.dm-prog');
+    const fg=sc.querySelector('.fg'),lb=sc.querySelector('b'),C=100.5;
+    const upd=()=>{
+      if(!alive())return;
+      const p=Math.min(1,sc.scrollTop/Math.max(1,sc.scrollHeight-sc.clientHeight));
+      fg.style.strokeDashoffset=C*(1-p);
+      lb.textContent=Math.round(p*100)+'%';
+    };
+    sc.addEventListener('scroll',upd,{passive:true}); upd();
+  }
+},
+{
+  id:'sticky', cat:'scroll', title:'釘住場景', en:'Sticky Scene', trigger:'scroll',
+  tags:['sticky','storytelling'],
+  desc:'畫面用 position:sticky 釘住不動，旁邊的文字繼續捲，捲到哪一段就切換畫面狀態。捲動變成了敘事的節拍器。',
+  when:'產品功能解說、資料故事、教學步驟。是 scrollytelling 的骨架。',
+  html:'<div class="dm-sticky"><div class="pin"><i data-s="0"></i><i data-s="1"></i><i data-s="2"></i></div><div class="steps"><p data-s="0">第一步</p><p data-s="1">第二步</p><p data-s="2">第三步</p></div></div>',
+  css:`.dm-sticky{width:100%;height:100%;overflow-y:auto;display:grid;
+  grid-template-columns:96px 1fr;gap:12px;padding:0 16px;scrollbar-width:thin}
+.dm-sticky .pin{position:sticky;top:0;height:186px;display:grid;place-items:center}
+.dm-sticky .pin i{position:absolute;width:62px;height:62px;border-radius:16px;
+  opacity:0;transform:scale(.7) rotate(-12deg);transition:.45s cubic-bezier(.2,.8,.2,1)}
+.dm-sticky .pin i[data-s="0"]{background:var(--ac)}
+.dm-sticky .pin i[data-s="1"]{background:var(--ac2);border-radius:50%}
+.dm-sticky .pin i[data-s="2"]{background:var(--ac3);border-radius:4px}
+.dm-sticky .pin i.on{opacity:1;transform:none}
+.dm-sticky .steps p{height:150px;display:flex;align-items:center;margin:0;
+  font:600 13px var(--sans);color:var(--tx3);transition:color .3s}
+.dm-sticky .steps p:first-child{margin-top:60px}
+.dm-sticky .steps p:last-child{margin-bottom:70px}
+.dm-sticky .steps p.on{color:var(--tx)}`,
+  js(stage,alive){
+    const sc=stage.querySelector('.dm-sticky');
+    const steps=[...sc.querySelectorAll('.steps p')],vis=[...sc.querySelectorAll('.pin i')];
+    const io=new IntersectionObserver(es=>{
+      if(!alive()){io.disconnect();return;}
+      es.forEach(e=>{
+        if(!e.isIntersecting)return;
+        const s=e.target.dataset.s;
+        steps.forEach(p=>p.classList.toggle('on',p.dataset.s===s));
+        vis.forEach(v=>v.classList.toggle('on',v.dataset.s===s));
+      });
+    },{root:sc,rootMargin:'-45% 0px -45% 0px'});
+    steps.forEach(p=>io.observe(p));
+    vis[0].classList.add('on');steps[0].classList.add('on');
+  }
+},
+{
+  id:'scrolltimeline', cat:'scroll', title:'原生捲動時間軸', en:'Scroll Timeline', trigger:'scroll',
+  tags:['CSS','animation-timeline'],
+  desc:'CSS 直接把 @keyframes 的時間軸換成捲動軸，完全不寫 JavaScript，而且跑在合成執行緒上，捲多快都不掉幀。',
+  when:'任何跟捲動綁定的視覺。這是取代大半 scroll-linked JS 的原生解，不支援時會靜靜退回原狀。',
+  html:'<div class="dm-stl"><div class="pin"><div class="bar"><span></span></div><b class="box"></b><em></em></div><div class="sp"></div></div>',
+  css:`.dm-stl{width:100%;height:100%;overflow-y:auto;scrollbar-width:thin}
+.dm-stl .pin{position:sticky;top:0;height:186px;display:grid;place-items:center;gap:14px;
+  align-content:center}
+.dm-stl .bar{width:180px;height:7px;border-radius:5px;background:var(--line2);overflow:hidden}
+.dm-stl .bar span{display:block;height:100%;background:var(--ac);transform-origin:left;transform:scaleX(0);
+  animation:dmStlBar linear both;animation-timeline:scroll(nearest)}
+.dm-stl .box{width:54px;height:54px;border-radius:12px;background:var(--ac3);display:block;
+  animation:dmStlBox linear both;animation-timeline:scroll(nearest)}
+.dm-stl em{font:500 11px var(--mono);color:var(--tx3);font-style:normal}
+.dm-stl .sp{height:560px}
+@keyframes dmStlBar{to{transform:scaleX(1)}}
+@keyframes dmStlBox{to{transform:rotate(225deg) scale(1.3);border-radius:50%}}`,
+  codeJs:`/* 沒有一行 JavaScript */
+.bar span{
+  animation: grow linear both;
+  animation-timeline: scroll(nearest);   /* 時間軸 = 最近的捲動容器 */
+}
+@keyframes grow{ to { transform: scaleX(1) } }
+
+/* 想綁「元素進出視窗」而不是整條捲軸，改用 view() ：
+   animation-timeline: view();
+   animation-range: entry 0% cover 40%;  */`,
+  js(stage,alive){
+    const tip=stage.querySelector('em');
+    tip.textContent=CSS.supports('animation-timeline','scroll()')
+      ?'原生支援 ✓ 捲動看看':'此瀏覽器不支援 animation-timeline';
+  }
+},
+
+/* ---------- 文字動畫 ---------- */
+{
+  id:'typewriter', cat:'text', title:'打字機', en:'Typewriter', trigger:'auto',
+  tags:['steps','ch'],
+  desc:'用 steps() 讓寬度一格一格跳，配上一根閃爍游標。純 CSS 版本要求等寬字型，寬度用 ch 單位算。',
+  when:'終端機介面、AI 回覆的擬真感、首頁標語。長文用它會讓人失去耐性。',
+  html:'<div class="dm-tw">npm run animate</div>',
+/* 少數該動 width 的正當例外：打字機的本質就是「可視寬度一格一格增加」，
+   transform 做不到（它會把字一起縮放）。範圍小、內容單行，成本可以接受。 */
+  css:`.dm-tw{font:600 17px var(--mono);color:var(--ac);white-space:nowrap;overflow:hidden;
+  border-right:2px solid var(--ac2);width:0;
+  animation:dmTw 3.4s steps(16) infinite, dmTwCaret .7s step-end infinite}
+@keyframes dmTw{0%{width:0}55%,85%{width:16ch}100%{width:0}}
+@keyframes dmTwCaret{0%,100%{border-color:var(--ac2)}50%{border-color:transparent}}`
+},
+{
+  id:'scramble', cat:'text', title:'亂碼解碼', en:'Text Scramble', trigger:'auto',
+  tags:['JS','glitch'],
+  desc:'每個字元先隨機跳字，再依序「鎖定」成正確的字。鎖定順序由左到右，才會有解碼的方向感。',
+  when:'科技感的標題、載入完成的揭示、密碼／代號類的 UI。',
+  html:'<div class="dm-scr">ANIMATION</div>',
+  css:`.dm-scr{font:800 26px var(--mono);letter-spacing:.1em;color:var(--tx)}
+.dm-scr span.q{color:var(--ac2);opacity:.75}`,
+  codeJs:`const CHARS = '!<>-_\\\\/[]{}—=+*^?#';
+function scramble(el, text){
+  let frame = 0;
+  const queue = [...text].map((c,i) => ({c, start: i*3, end: i*3 + 12}));
+  (function run(){
+    el.innerHTML = queue.map(q =>
+      frame >= q.end ? q.c
+      : frame >= q.start ? '<span class="q">' + rand(CHARS) + '</span>'
+      : ' '
+    ).join('');
+    if (frame++ < queue.at(-1).end) requestAnimationFrame(run);
+  })();
+}`,
+  js(stage,alive){
+    const el=stage.querySelector('.dm-scr'),text='ANIMATION';
+    const CH='!<>-_\\/[]{}—=+*^?#________';
+    const rand=()=>CH[Math.floor(Math.random()*CH.length)];
+    function run(){
+      if(!alive())return;
+      let frame=0;
+      const q=[...text].map((c,i)=>({c,s:i*3,e:i*3+14}));
+      (function step(){
+        if(!alive())return;
+        el.innerHTML=q.map(o=>frame>=o.e?o.c:frame>=o.s?'<span class="q">'+rand()+'</span>':'&nbsp;').join('');
+        if(frame++<q[q.length-1].e)requestAnimationFrame(step);
+      })();
+    }
+    run(); const iv=setInterval(()=>{alive()?run():clearInterval(iv);},2600);
+  }
+},
+{
+  id:'splittext', cat:'text', title:'逐字錯位', en:'Split Text', trigger:'auto',
+  tags:['stagger','typography'],
+  desc:'把文字拆成一個個 span，各自延遲進場。拆字要保留空白與換行語意，否則螢幕閱讀器會把整句念成散字。',
+  when:'標題揭露、品牌開場。務必給外層 aria-label 保留原句給輔助科技。',
+  html:'<div class="dm-split" aria-label="MOTION"></div>',
+  css:`.dm-split{display:flex;gap:2px;font:800 32px var(--sans);letter-spacing:.02em}
+.dm-split span{display:inline-block;animation:dmSplit 2.8s cubic-bezier(.2,.9,.3,1.2) infinite;
+  background:linear-gradient(180deg,var(--tx),var(--tx2));-webkit-background-clip:text;
+  background-clip:text;color:transparent}
+@keyframes dmSplit{
+  0%{opacity:0;transform:translateY(26px) rotate(8deg)}
+  30%,72%{opacity:1;transform:none}
+  100%{opacity:0;transform:translateY(-14px)}}`,
+  codeJs:`// aria-label 留原句，拆出來的字元對輔助科技隱藏
+el.setAttribute('aria-label', text);
+el.innerHTML = [...text].map((ch,i) =>
+  '<span aria-hidden="true" style="animation-delay:' + (i*0.055) + 's">' + ch + '</span>'
+).join('');`,
+  js(stage,alive){
+    const el=stage.querySelector('.dm-split'),t='MOTION';
+    el.innerHTML=[...t].map((c,i)=>'<span aria-hidden="true" style="animation-delay:'+(i*0.055)+'s">'+c+'</span>').join('');
+  }
+},
+{
+  id:'maskreveal', cat:'text', title:'遮罩上推', en:'Mask Reveal', trigger:'auto',
+  tags:['overflow','translate'],
+  desc:'外層 overflow:hidden，內層整行往上推。字看起來是從一條看不見的線後面「長出來」，比淡入有份量得多。',
+  when:'大標題、章節名、電影感的開場。行高要留夠，否則上緣會被切到。',
+  html:'<div class="dm-mask"><i><b>Design</b></i><i><b>in Motion</b></i></div>',
+  css:`.dm-mask{display:grid;gap:2px}
+.dm-mask i{display:block;overflow:hidden;padding:0 2px}
+.dm-mask b{display:block;font:800 27px/1.24 var(--sans);color:var(--tx);
+  animation:dmMask 3s cubic-bezier(.2,.85,.25,1) infinite}
+.dm-mask i:nth-child(2) b{color:var(--ac);animation-delay:.1s}
+@keyframes dmMask{
+  0%{transform:translateY(110%)}
+  28%,72%{transform:translateY(0)}
+  100%{transform:translateY(-110%)}}`
+},
+{
+  id:'counter', cat:'text', title:'數字滾動', en:'Number Counter', trigger:'auto',
+  tags:['JS','easing'],
+  desc:'數值從 0 補間到目標值，尾段要用 ease-out 慢下來 —— 等速的數字跳動看起來像故障而不是統計。',
+  when:'儀表板、成績揭曉、募資金額。位數要固定寬度，否則整排會抖動。',
+  html:'<div class="dm-count"><b>0</b><span>ACTIVE USERS</span></div>',
+  css:`.dm-count{text-align:center}
+.dm-count b{display:block;font:800 40px var(--mono);color:var(--ac);
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.dm-count span{font:600 10px var(--mono);letter-spacing:.18em;color:var(--tx3)}`,
+  codeJs:`const ease = t => 1 - Math.pow(1 - t, 3);      // ease-out cubic
+const t0 = performance.now(), DUR = 1600, TARGET = 128400;
+(function tick(now){
+  const p = Math.min(1, (now - t0) / DUR);
+  el.textContent = Math.round(TARGET * ease(p)).toLocaleString();
+  if (p < 1) requestAnimationFrame(tick);
+})(t0);
+
+/* CSS 也要記得 font-variant-numeric: tabular-nums，否則數字會左右抖 */`,
+  js(stage,alive){
+    const el=stage.querySelector('b'),T=128400,D=1700;
+    const ez=t=>1-Math.pow(1-t,3);
+    function run(){
+      if(!alive())return;
+      const t0=performance.now();
+      (function tick(now){
+        if(!alive())return;
+        const p=Math.min(1,(now-t0)/D);
+        el.textContent=Math.round(T*ez(p)).toLocaleString();
+        if(p<1)requestAnimationFrame(tick);
+      })(t0);
+    }
+    run(); const iv=setInterval(()=>{alive()?run():clearInterval(iv);},3000);
+  }
+},
+{
+  id:'marquee', cat:'text', title:'無限跑馬燈', en:'Infinite Marquee', trigger:'auto',
+  tags:['loop','linear'],
+  desc:'內容複製兩份，整條移動 -50% 後瞬間歸零 —— 因為兩份一模一樣，接縫完全看不出來。必須用 linear。',
+  when:'logo 牆、公告條、標籤雲。hover 時暫停是基本禮貌，不然使用者根本讀不到。',
+  html:'<div class="dm-mq"><div class="track"><span>MOTION · EASING · TIMING · STAGGER · SPRING · </span><span>MOTION · EASING · TIMING · STAGGER · SPRING · </span></div></div>',
+  css:`.dm-mq{width:100%;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.dm-mq .track{display:flex;width:max-content;animation:dmMq 14s linear infinite}
+.dm-mq:hover .track{animation-play-state:paused}
+.dm-mq span{font:700 19px var(--mono);letter-spacing:.05em;color:var(--tx2);white-space:nowrap;padding-right:0}
+@keyframes dmMq{to{transform:translateX(-50%)}}`
+},
+{
+  id:'varfont', cat:'text', title:'可變字型', en:'Variable Font', trigger:'auto',
+  tags:['font-weight','wght'],
+  desc:'可變字型的字重、字寬是連續軸，可以直接補間。以前只能在幾個離散字重之間硬切，現在能真的「長胖」。',
+  when:'需要呼吸感的標題、hover 回饋、資料視覺化的權重編碼。需要系統或載入的字型支援可變軸。',
+  html:'<div class="dm-vf">VARIABLE</div>',
+  css:`.dm-vf{font-family:system-ui,-apple-system,"Helvetica Neue",sans-serif;font-size:31px;
+  letter-spacing:.02em;color:var(--tx);animation:dmVf 3.4s ease-in-out infinite}
+@keyframes dmVf{
+  0%,100%{font-weight:200;letter-spacing:.16em;color:var(--tx3)}
+  50%{font-weight:900;letter-spacing:-.01em;color:var(--ac)}}`
+},
+{
+  id:'kinetic', cat:'text', title:'動態文字排版', en:'Kinetic Typography', trigger:'auto',
+  tags:['scale','rhythm'],
+  desc:'文字本身就是主角：尺寸、位置、節奏隨語意變化。重點是「節拍」—— 每個詞停留的長度要對上想像中的語調。',
+  when:'開場動畫、宣言頁、影片字卡。資訊密度低但情緒濃度高的場合。',
+  html:'<div class="dm-kin"><b>快</b><b>慢</b><b>停</b><b>再走</b></div>',
+  css:`.dm-kin{position:relative;width:170px;height:100px}
+.dm-kin b{position:absolute;inset:0;display:grid;place-items:center;
+  font-weight:900;color:var(--tx);opacity:0;animation:dmKin 4.4s cubic-bezier(.2,.9,.25,1) infinite}
+.dm-kin b:nth-child(1){font-size:46px;animation-delay:0s}
+.dm-kin b:nth-child(2){font-size:26px;color:var(--tx3);animation-delay:1.1s}
+.dm-kin b:nth-child(3){font-size:60px;color:var(--ac2);animation-delay:2.2s}
+.dm-kin b:nth-child(4){font-size:34px;color:var(--ac);animation-delay:3.3s}
+@keyframes dmKin{
+  0%{opacity:0;transform:scale(.55)}
+  6%{opacity:1;transform:scale(1)}
+  22%{opacity:1;transform:scale(1.04)}
+  26%,100%{opacity:0;transform:scale(1.3)}}`
+},
+
+/* ---------- 描繪與遮罩 ---------- */
+{
+  id:'linedraw', cat:'svg', title:'線條描繪', en:'Line Drawing', trigger:'auto',
+  tags:['stroke-dasharray'],
+  desc:'把 dasharray 設成路徑總長，再把 dashoffset 從總長animate 到 0，虛線的空隙就「走完」整條路徑，看起來像被畫出來。',
+  when:'logo 開場、圖表折線進場、插畫描邊。路徑長度用 path.getTotalLength() 取得。',
+  html:`<svg class="dm-draw" viewBox="0 0 160 90">
+  <polyline points="6,78 34,52 60,64 88,24 116,40 154,10"/>
+  <circle cx="34" cy="52" r="3.5"/><circle cx="88" cy="24" r="3.5"/><circle cx="154" cy="10" r="3.5"/>
+</svg>`,
+  css:`.dm-draw{width:210px;height:120px;overflow:visible}
+.dm-draw polyline{fill:none;stroke:var(--ac);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:230;stroke-dashoffset:230;animation:dmDraw 3.4s ease-in-out infinite}
+.dm-draw circle{fill:var(--ac2);opacity:0;animation:dmDrawDot 3.4s ease-out infinite}
+.dm-draw circle:nth-of-type(1){animation-delay:.5s}
+.dm-draw circle:nth-of-type(2){animation-delay:1s}
+.dm-draw circle:nth-of-type(3){animation-delay:1.5s}
+@keyframes dmDraw{0%{stroke-dashoffset:230}45%,80%{stroke-dashoffset:0}100%{stroke-dashoffset:-230}}
+@keyframes dmDrawDot{0%,10%{opacity:0;r:0}22%,72%{opacity:1;r:3.5}86%,100%{opacity:0}}`
+},
+{
+  id:'pathfollow', cat:'svg', title:'沿路徑移動', en:'Path Follow', trigger:'auto',
+  tags:['offset-path','arc'],
+  desc:'offset-path 讓元素沿任意曲線前進，offset-rotate 讓它自動轉向切線方向。這是「弧線法則」最直接的實作。',
+  when:'導覽指示、遊戲化的路徑、載入時繞圈的裝飾。純 CSS，不需要 SVG 動畫。',
+  html:'<div class="dm-path"><svg viewBox="0 0 200 100"><path d="M10,80 C50,10 110,110 190,26"/></svg><i></i></div>',
+  css:`.dm-path{position:relative;width:200px;height:100px}
+.dm-path svg{position:absolute;inset:0;width:200px;height:100px}
+.dm-path path{fill:none;stroke:var(--line2);stroke-width:2;stroke-dasharray:4 5}
+.dm-path i{position:absolute;left:0;top:0;width:20px;height:20px;margin:-10px 0 0 -10px;
+  border-radius:5px 5px 5px 14px;background:var(--ac2);
+  offset-path:path("M10,80 C50,10 110,110 190,26");
+  offset-rotate:auto;
+  animation:dmPath 3.6s cubic-bezier(.5,0,.5,1) infinite}
+@keyframes dmPath{0%{offset-distance:0%}50%{offset-distance:100%}100%{offset-distance:0%}}`
+},
+{
+  id:'clipwipe', cat:'svg', title:'幾何遮罩擴散', en:'Clip Reveal', trigger:'auto',
+  tags:['clip-path','circle'],
+  desc:'clip-path 的 circle() 從觸發點半徑 0 展開到蓋滿。這是 Material Design 的招牌轉場，也是 View Transitions 最常見的自訂效果。',
+  when:'深淺色主題切換、從按鈕展開的全螢幕選單。圓心要設在使用者剛剛點的位置。',
+  html:'<div class="dm-clip"><div class="a"></div><div class="b"></div></div>',
+  css:`.dm-clip{position:relative;width:200px;height:120px;border-radius:14px;overflow:hidden}
+.dm-clip .a{position:absolute;inset:0;background:var(--surface2);
+  background-image:radial-gradient(circle at 1px 1px,var(--line2) 1px,transparent 0);background-size:12px 12px}
+.dm-clip .b{position:absolute;inset:0;background:linear-gradient(135deg,var(--ac),var(--ac4));
+  animation:dmClip 3s cubic-bezier(.65,0,.35,1) infinite}
+@keyframes dmClip{
+  0%{clip-path:circle(0% at 18% 82%)}
+  45%,75%{clip-path:circle(140% at 18% 82%)}
+  100%{clip-path:circle(0% at 18% 82%)}}`
+},
+{
+  id:'checkmark', cat:'svg', title:'打勾繪製', en:'Checkmark Draw', trigger:'auto',
+  tags:['stroke','feedback'],
+  desc:'圓圈先畫完、打勾後畫，兩段有 150ms 的重疊。順序與重疊量決定了它是「確認」還是「慶祝」。',
+  when:'表單送出成功、付款完成、待辦勾選。是最值得花時間打磨的微互動之一。',
+  html:'<svg class="dm-ck" viewBox="0 0 52 52"><circle cx="26" cy="26" r="23"/><path d="M15 27 l8 8 l15-16"/></svg>',
+  css:`.dm-ck{width:96px;height:96px}
+.dm-ck circle{fill:none;stroke:var(--ac);stroke-width:3;
+  stroke-dasharray:145;stroke-dashoffset:145;transform-origin:center;transform:rotate(-90deg);
+  animation:dmCk 2.8s cubic-bezier(.65,0,.35,1) infinite}
+.dm-ck path{fill:none;stroke:var(--ac);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:36;stroke-dashoffset:36;
+  animation:dmCkP 2.8s cubic-bezier(.65,0,.35,1) infinite;animation-delay:.28s}
+@keyframes dmCk{0%{stroke-dashoffset:145}40%,82%{stroke-dashoffset:0}100%{stroke-dashoffset:145}}
+@keyframes dmCkP{0%{stroke-dashoffset:36}34%,80%{stroke-dashoffset:0}100%{stroke-dashoffset:36}}`
+},
+{
+  id:'gradmask', cat:'svg', title:'漸層遮罩擦除', en:'Gradient Mask', trigger:'auto',
+  tags:['mask-image'],
+  desc:'用一條漸層當遮罩並移動它，邊界是柔的而不是刀切的。比 clip-path 貴一點，但質感差很多。',
+  when:'文字逐段顯現、圖片柔性揭露、串流輸出時的漸顯尾巴。',
+  html:'<div class="dm-gm">動畫不是裝飾<br>它在解釋狀態的變化</div>',
+  css:`.dm-gm{font:700 19px/1.6 var(--sans);color:var(--tx);text-align:center;padding:0 22px;
+  -webkit-mask-image:linear-gradient(100deg,#000 25%,transparent 45%);
+  mask-image:linear-gradient(100deg,#000 25%,transparent 45%);
+  -webkit-mask-size:300% 100%;mask-size:300% 100%;
+  animation:dmGm 3.6s cubic-bezier(.5,0,.4,1) infinite}
+@keyframes dmGm{
+  0%{-webkit-mask-position:100% 0;mask-position:100% 0}
+  45%,80%{-webkit-mask-position:0% 0;mask-position:0% 0}
+  100%{-webkit-mask-position:-60% 0;mask-position:-60% 0}}`
+},
+{
+  id:'pathmorph', cat:'svg', title:'路徑變形', en:'Path Morph', trigger:'auto',
+  tags:['SMIL','morph'],
+  desc:'直接補間 path 的 d 屬性。前提是兩個形狀的指令數量與型別必須一致，否則要先做點數對齊。',
+  when:'icon 之間的轉換（播放↔暫停、選單↔關閉）、資料圖形的形狀切換。',
+  html:`<svg class="dm-pm" viewBox="0 0 100 100">
+  <path d="M50 8 L92 50 L50 92 L8 50 Z">
+    <animate attributeName="d" dur="5s" repeatCount="indefinite"
+      values="M50 8 L92 50 L50 92 L8 50 Z;
+              M50 8 L92 30 L78 92 L20 88 Z;
+              M50 12 L88 42 L72 88 L24 76 Z;
+              M50 8 L92 50 L50 92 L8 50 Z"
+      calcMode="spline" keyTimes="0;0.33;0.66;1"
+      keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/>
+  </path>
+</svg>`,
+  css:`.dm-pm{width:112px;height:112px}
+.dm-pm path{fill:none;stroke:var(--ac3);stroke-width:5;stroke-linejoin:round}`,
+  codeJs:`/* CSS 版本（Chrome / Safari 支援 d 屬性補間）： */
+.icon path{ d: path("M4 4 L20 20"); transition: d .3s cubic-bezier(.2,.8,.2,1) }
+.icon.open path{ d: path("M4 20 L20 4") }
+
+/* 形狀差太多、指令對不起來時，用 flubber 這類函式庫先做點數對齊 */`
+},
+
+/* ---------- 物理與互動 ---------- */
+{
+  id:'magnetic', cat:'physics', title:'磁吸', en:'Magnetic Hover', trigger:'hover',
+  tags:['pointer','lerp'],
+  desc:'游標進入範圍後，元件朝游標偏移一小段距離（通常是位移量的 30%）。它讓按鈕看起來「想被按」。',
+  when:'CTA 主按鈕、作品集的互動元素。一頁最多一兩個，滿版都是磁吸會變成雜訊。',
+  html:'<div class="dm-mag"><button>Hover Me</button></div>',
+  css:`.dm-mag{width:100%;height:100%;display:grid;place-items:center}
+.dm-mag button{padding:13px 26px;border-radius:999px;border:0;cursor:pointer;
+  background:var(--ac);color:var(--onac);font:700 14px var(--sans);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1)}`,
+  codeJs:`stage.addEventListener('pointermove', (e) => {
+  const r = btn.getBoundingClientRect();
+  const dx = e.clientX - (r.left + r.width/2);
+  const dy = e.clientY - (r.top  + r.height/2);
+  const near = Math.hypot(dx, dy) < 120;
+  btn.style.transform = near
+    ? 'translate(' + dx*0.34 + 'px,' + dy*0.34 + 'px) scale(1.06)'
+    : '';                      // 離開範圍就交還給 CSS transition 彈回
+});
+stage.addEventListener('pointerleave', () => btn.style.transform = '');`,
+  js(stage,alive){
+    const btn=stage.querySelector('button');
+    stage.addEventListener('pointermove',e=>{
+      if(!alive())return;
+      const r=btn.getBoundingClientRect();
+      const dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);
+      btn.style.transform=Math.hypot(dx,dy)<120
+        ?'translate('+dx*0.34+'px,'+dy*0.34+'px) scale(1.06)':'';
+    });
+    stage.addEventListener('pointerleave',()=>{btn.style.transform='';});
+  }
+},
+{
+  id:'trail', cat:'physics', title:'拖尾游標', en:'Cursor Trail', trigger:'hover',
+  tags:['lerp','follow'],
+  desc:'每一顆點都用線性插值追前一顆：pos += (target - pos) * 0.3。係數越小越黏、拖得越長。',
+  when:'作品集、實驗性網站。務必只在有精準指標時啟用（pointer: fine），觸控裝置沒有游標。',
+  html:'<div class="dm-trail"><span>在這裡移動滑鼠</span></div>',
+  css:`.dm-trail{position:relative;width:100%;height:100%;overflow:hidden;display:grid;place-items:center}
+.dm-trail span{font:500 11px var(--mono);color:var(--tx3);pointer-events:none}
+.dm-trail b{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none;
+  background:var(--ac);will-change:transform}`,
+  codeJs:`const pts = Array.from({length: 12}, () => ({x:0, y:0}));
+(function loop(){
+  let tx = mouse.x, ty = mouse.y;
+  pts.forEach((p, i) => {
+    p.x += (tx - p.x) * 0.34;          // 追上一顆，不是追滑鼠
+    p.y += (ty - p.y) * 0.34;
+    dots[i].style.transform = 'translate(' + p.x + 'px,' + p.y + 'px)';
+    tx = p.x; ty = p.y;
+  });
+  requestAnimationFrame(loop);
+})();`,
+  js(stage,alive){
+    const root=stage.querySelector('.dm-trail');
+    const N=13,pts=[],dots=[];
+    const cx=root.clientWidth/2,cy=root.clientHeight/2;
+    for(let i=0;i<N;i++){
+      const b=document.createElement('b');
+      const s=15-i*0.9;
+      b.style.width=b.style.height=s+'px';
+      b.style.marginLeft=b.style.marginTop=(-s/2)+'px';
+      b.style.opacity=(1-i/N*0.85).toFixed(2);
+      if(i%3===1)b.style.background='var(--ac2)';
+      if(i%3===2)b.style.background='var(--ac3)';
+      root.appendChild(b);dots.push(b);pts.push({x:cx,y:cy});
+    }
+    const m={x:cx,y:cy};
+    root.addEventListener('pointermove',e=>{
+      const r=root.getBoundingClientRect();m.x=e.clientX-r.left;m.y=e.clientY-r.top;
+    });
+    (function loop(){
+      if(!alive())return;
+      let tx=m.x,ty=m.y;
+      pts.forEach((p,i)=>{
+        p.x+=(tx-p.x)*0.34;p.y+=(ty-p.y)*0.34;
+        dots[i].style.transform='translate('+p.x+'px,'+p.y+'px)';
+        tx=p.x;ty=p.y;
+      });
+      requestAnimationFrame(loop);
+    })();
+  }
+},
+{
+  id:'inertia', cat:'physics', title:'慣性滑行', en:'Inertia / Momentum', trigger:'drag',
+  tags:['velocity','friction'],
+  desc:'放手時記住當下速度，之後每幀乘上摩擦係數（0.94 左右）繼續滑，直到速度小到看不見為止。',
+  when:'自訂輪播、地圖平移、可拖曳畫布。沒有慣性的拖曳會讓人覺得介面「黏在手上甩不掉」。',
+  html:'<div class="dm-in"><i></i><span>拖我，然後放開</span></div>',
+  css:`.dm-in{position:relative;width:100%;height:100%;display:grid;place-items:center;overflow:hidden}
+.dm-in i{width:58px;height:58px;border-radius:16px;background:var(--ac4);cursor:grab;
+  touch-action:none;will-change:transform}
+.dm-in i:active{cursor:grabbing}
+.dm-in span{position:absolute;bottom:12px;font:500 11px var(--mono);color:var(--tx3)}`,
+  codeJs:`let x = 0, v = 0, dragging = false, lastX = 0;
+el.onpointerdown = e => { dragging = true; lastX = e.clientX; el.setPointerCapture(e.pointerId); };
+el.onpointermove = e => {
+  if (!dragging) return;
+  v = e.clientX - lastX;            // 速度 = 每幀位移
+  x += v; lastX = e.clientX;
+  el.style.transform = 'translateX(' + x + 'px)';
+};
+el.onpointerup = () => {
+  dragging = false;
+  (function glide(){
+    v *= 0.94;                      // 摩擦
+    x += v;
+    if (x < MIN || x > MAX) v *= -0.5;   // 撞牆反彈並吃掉一半動能
+    el.style.transform = 'translateX(' + x + 'px)';
+    if (Math.abs(v) > 0.15) requestAnimationFrame(glide);
+  })();
+};`,
+  js(stage,alive){
+    const el=stage.querySelector('i');
+    let x=0,v=0,drag=false,last=0,lim=110;
+    el.addEventListener('pointerdown',e=>{drag=true;last=e.clientX;v=0;el.setPointerCapture(e.pointerId);});
+    el.addEventListener('pointermove',e=>{
+      if(!drag)return;
+      v=e.clientX-last;x+=v;last=e.clientX;
+      el.style.transform='translateX('+x+'px)';
+    });
+    const release=()=>{
+      if(!drag)return; drag=false;
+      (function glide(){
+        if(!alive())return;
+        v*=0.94;x+=v;
+        if(x<-lim){x=-lim;v*=-0.5;} if(x>lim){x=lim;v*=-0.5;}
+        el.style.transform='translateX('+x+'px)';
+        if(Math.abs(v)>0.15)requestAnimationFrame(glide);
+      })();
+    };
+    el.addEventListener('pointerup',release);
+    el.addEventListener('pointercancel',release);
+  }
+},
+{
+  id:'rubber', cat:'physics', title:'橡皮筋阻尼', en:'Rubber Band', trigger:'drag',
+  tags:['damping','iOS'],
+  desc:'超出邊界之後，位移量被開根號式地壓縮 —— 拖得越遠、增加得越少，放手彈回。iOS 捲到底的手感就是這個。',
+  when:'自訂捲動容器、抽屜下拉關閉、輪播的頭尾。它在「還能繼續嗎」這個問題上給出觸覺式的答案。',
+  html:'<div class="dm-rb"><div class="track"><i></i><span>往左右拖出邊界</span></div></div>',
+  css:`.dm-rb{width:100%;height:100%;display:grid;place-items:center}
+.dm-rb .track{position:relative;width:220px;height:64px;border-radius:14px;
+  border:1px dashed var(--line2);display:grid;place-items:center}
+.dm-rb i{width:54px;height:54px;border-radius:13px;background:var(--ac2);cursor:grab;
+  touch-action:none;will-change:transform}
+.dm-rb span{position:absolute;bottom:-22px;font:500 11px var(--mono);color:var(--tx3);white-space:nowrap}`,
+  codeJs:`const LIMIT = 78;
+function damp(x){
+  if (Math.abs(x) <= LIMIT) return x;
+  const over = Math.abs(x) - LIMIT;
+  return Math.sign(x) * (LIMIT + over / (1 + over / 60));  // 越拖越沉
+}
+// 放手：用 spring 彈回 0，別用固定 duration 的 transition`,
+  js(stage,alive){
+    const el=stage.querySelector('i');
+    const LIM=78; let sx=0,x=0,drag=false;
+    const damp=v=>{
+      if(Math.abs(v)<=LIM)return v;
+      const o=Math.abs(v)-LIM;
+      return Math.sign(v)*(LIM+o/(1+o/60));
+    };
+    el.addEventListener('pointerdown',e=>{drag=true;sx=e.clientX-x;el.setPointerCapture(e.pointerId);el.style.transition='';});
+    el.addEventListener('pointermove',e=>{
+      if(!drag)return;
+      x=e.clientX-sx;
+      el.style.transform='translateX('+damp(x)+'px)';
+    });
+    const up=()=>{
+      if(!drag)return; drag=false;
+      let v=0,pos=damp(x);
+      x=0;
+      (function spring(){
+        if(!alive())return;
+        v=(v+(0-pos)*0.14)*0.72;pos+=v;
+        el.style.transform='translateX('+pos+'px)';
+        if(Math.abs(v)>0.05||Math.abs(pos)>0.4)requestAnimationFrame(spring);
+        else el.style.transform='';
+      })();
+    };
+    el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+  }
+},
+{
+  id:'particles', cat:'physics', title:'粒子系統', en:'Particles', trigger:'auto',
+  tags:['canvas','rAF'],
+  desc:'幾百個各自有速度的點，在 canvas 上每幀重畫。DOM 撐不住這種數量，超過 ~60 個元素就該換 canvas。',
+  when:'背景氛圍、慶祝彩帶、資料點的粒子化。記得在離開視窗時 cancelAnimationFrame，否則背景一直吃電。',
+  html:'<canvas class="dm-par"></canvas>',
+  css:`.dm-par{width:100%;height:100%;display:block}`,
+  codeJs:`const P = Array.from({length: 70}, () => ({
+  x: Math.random()*w, y: Math.random()*h,
+  vx: (Math.random()-.5)*0.5, vy: (Math.random()-.5)*0.5,
+  r: Math.random()*2 + 0.8
+}));
+(function frame(){
+  ctx.clearRect(0,0,w,h);
+  for (const p of P){
+    p.x = (p.x + p.vx + w) % w;      // 出界從另一邊回來
+    p.y = (p.y + p.vy + h) % h;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.284); ctx.fill();
+  }
+  raf = requestAnimationFrame(frame);
+})();
+// 卸載時務必 cancelAnimationFrame(raf)`,
+  js(stage,alive){
+    const cv=stage.querySelector('canvas'),ctx=cv.getContext('2d');
+    const dpr=Math.min(2,devicePixelRatio||1);
+    const w=stage.clientWidth,h=stage.clientHeight;
+    cv.width=w*dpr;cv.height=h*dpr;ctx.scale(dpr,dpr);
+    const P=Array.from({length:70},()=>({x:Math.random()*w,y:Math.random()*h,
+      vx:(Math.random()-.5)*0.5,vy:(Math.random()-.5)*0.5,r:Math.random()*2+0.8}));
+    const col=getComputedStyle(document.documentElement).getPropertyValue('--ac').trim();
+    (function frame(){
+      if(!alive())return;
+      ctx.clearRect(0,0,w,h);
+      for(const p of P){
+        p.x=(p.x+p.vx+w)%w;p.y=(p.y+p.vy+h)%h;
+        ctx.globalAlpha=0.25+p.r/4;ctx.fillStyle=col;
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.284);ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    })();
+  }
+},
+{
+  id:'ripple', cat:'physics', title:'觸點波紋', en:'Ripple', trigger:'click',
+  tags:['material','feedback'],
+  desc:'從實際觸點擴散的圓，同時放大與淡出。關鍵是圓心用點擊座標，而不是元件中心 —— 那才叫回饋。',
+  when:'按鈕、列表項、任何可點擊的大面積區塊。是「我收到了」最低成本的表達。',
+  html:'<div class="dm-rip"><button>點我任何位置</button></div>',
+  css:`.dm-rip{width:100%;height:100%;display:grid;place-items:center}
+.dm-rip button{position:relative;overflow:hidden;border:0;cursor:pointer;
+  padding:19px 30px;border-radius:14px;background:var(--surface2);border:1px solid var(--line2);
+  color:var(--tx);font:600 14px var(--sans)}
+.dm-rip .rp{position:absolute;border-radius:50%;transform:translate(-50%,-50%) scale(0);
+  background:color-mix(in srgb,var(--ac) 55%,transparent);pointer-events:none}`,
+  codeJs:`btn.addEventListener('pointerdown', (e) => {
+  const r = btn.getBoundingClientRect();
+  const size = Math.max(r.width, r.height) * 2.2;
+  const rp = document.createElement('span');
+  rp.className = 'rp';
+  rp.style.cssText = 'width:'+size+'px;height:'+size+'px;'
+                   + 'left:'+(e.clientX-r.left)+'px;top:'+(e.clientY-r.top)+'px';
+  btn.appendChild(rp);
+  rp.animate([{transform:'translate(-50%,-50%) scale(0)',   opacity:.55},
+              {transform:'translate(-50%,-50%) scale(1)',   opacity:0}],
+             {duration:620, easing:'cubic-bezier(.2,.7,.3,1)'})
+    .onfinish = () => rp.remove();     // 用完就清掉，別讓 DOM 長胖
+});`,
+  js(stage,alive){
+    const btn=stage.querySelector('button');
+    const fire=(cx,cy)=>{
+      if(!alive())return;
+      const r=btn.getBoundingClientRect();
+      const size=Math.max(r.width,r.height)*2.2;
+      const rp=document.createElement('span');
+      rp.className='rp';
+      rp.style.cssText='width:'+size+'px;height:'+size+'px;left:'+(cx-r.left)+'px;top:'+(cy-r.top)+'px';
+      btn.appendChild(rp);
+      rp.animate([{transform:'translate(-50%,-50%) scale(0)',opacity:.55},
+                  {transform:'translate(-50%,-50%) scale(1)',opacity:0}],
+                 {duration:620,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>rp.remove();
+    };
+    btn.addEventListener('pointerdown',e=>fire(e.clientX,e.clientY));
+    const iv=setInterval(()=>{
+      if(!alive()){clearInterval(iv);return;}
+      const r=btn.getBoundingClientRect();
+      fire(r.left+r.width*(0.2+Math.random()*0.6),r.top+r.height*(0.25+Math.random()*0.5));
+    },2200);
+  }
+},
+
+/* ---------- 空間與 3D ---------- */
+{
+  id:'tilt', cat:'depth', title:'3D 傾斜卡片', en:'Tilt Card', trigger:'hover',
+  tags:['perspective','glare'],
+  desc:'依游標位置給 rotateX / rotateY，同時讓一道高光沿反方向移動。高光才是讓它看起來像實體材質的關鍵。',
+  when:'作品卡、商品卡、會員卡。角度控制在 ±12° 以內，超過就會從「立體」變成「歪掉」。',
+  html:'<div class="dm-tilt"><div class="card3"><b>TILT</b><i class="glare"></i></div></div>',
+  css:`.dm-tilt{perspective:800px;width:100%;height:100%;display:grid;place-items:center}
+.dm-tilt .card3{position:relative;width:150px;height:104px;border-radius:16px;overflow:hidden;
+  background:linear-gradient(140deg,var(--ac3),var(--ac4));display:grid;place-items:center;
+  transform-style:preserve-3d;transition:transform .35s cubic-bezier(.2,.8,.2,1);
+  box-shadow:0 12px 30px -12px rgba(0,0,0,.6)}
+.dm-tilt b{font:800 20px var(--mono);color:var(--onac);letter-spacing:.12em;transform:translateZ(26px)}
+.dm-tilt .glare{position:absolute;inset:-40%;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.55),transparent 55%)}
+.dm-tilt:hover .glare{opacity:1}`,
+  codeJs:`stage.onpointermove = (e) => {
+  const r = card.getBoundingClientRect();
+  const px = (e.clientX - r.left) / r.width  - .5;   // -0.5 → 0.5
+  const py = (e.clientY - r.top)  / r.height - .5;
+  card.style.transition = 'none';                    // 跟手時關掉 transition
+  card.style.transform  = 'rotateY(' + (px*22) + 'deg) rotateX(' + (-py*22) + 'deg) scale(1.05)';
+  glare.style.transform = 'translate(' + (px*60) + '%,' + (py*60) + '%)';
+};
+stage.onpointerleave = () => { card.style.transition = ''; card.style.transform = ''; };`,
+  js(stage,alive){
+    const card=stage.querySelector('.card3'),gl=stage.querySelector('.glare');
+    stage.addEventListener('pointermove',e=>{
+      if(!alive())return;
+      const r=card.getBoundingClientRect();
+      const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+      card.style.transition='none';
+      card.style.transform='rotateY('+(px*22)+'deg) rotateX('+(-py*22)+'deg) scale(1.05)';
+      gl.style.transform='translate('+(px*60)+'%,'+(py*60)+'%)';
+    });
+    stage.addEventListener('pointerleave',()=>{card.style.transition='';card.style.transform='';});
+  }
+},
+{
+  id:'cardflip', cat:'depth', title:'翻牌', en:'Card Flip', trigger:'auto',
+  tags:['backface','preserve-3d'],
+  desc:'兩面疊在一起，背面預先轉 180°，容器整個轉。backface-visibility:hidden 負責藏起背對鏡頭的那一面。',
+  when:'記憶遊戲、正反資訊切換、統計卡的「看細節」。翻轉軸選 Y 比 X 自然，因為書就是這樣翻的。',
+  html:'<div class="dm-flip3"><div class="inner"><div class="f front">?</div><div class="f back">★</div></div></div>',
+  css:`.dm-flip3{perspective:900px;width:120px;height:150px}
+.dm-flip3 .inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;
+  animation:dmFlip3 4s cubic-bezier(.5,0,.3,1) infinite}
+.dm-flip3 .f{position:absolute;inset:0;border-radius:14px;display:grid;place-items:center;
+  backface-visibility:hidden;font-size:40px;font-weight:800}
+.dm-flip3 .front{background:var(--surface2);border:1px solid var(--line2);color:var(--tx3)}
+.dm-flip3 .back{background:linear-gradient(140deg,var(--ac2),var(--ac));color:var(--onac);
+  transform:rotateY(180deg)}
+@keyframes dmFlip3{0%,12%{transform:rotateY(0)}50%,62%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}`
+},
+{
+  id:'cube', cat:'depth', title:'立方體旋轉', en:'Cube', trigger:'auto',
+  tags:['translateZ','preserve-3d'],
+  desc:'六個面各自 rotate 再 translateZ 半個邊長，父層 preserve-3d。這是 CSS 3D 最基本的組裝方式。',
+  when:'loading、logo、資料多面向的切換。手機上要注意：3D 合成層很吃記憶體。',
+  html:'<div class="dm-cube"><div class="c"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i><i class="f5"></i><i class="f6"></i></div></div>',
+  css:`.dm-cube{perspective:600px;width:120px;height:120px;display:grid;place-items:center}
+.dm-cube .c{position:relative;width:70px;height:70px;transform-style:preserve-3d;
+  animation:dmCube 9s linear infinite}
+.dm-cube i{position:absolute;width:70px;height:70px;border:1px solid var(--line2);
+  background:color-mix(in srgb,var(--ac3) 22%,var(--surface))}
+.dm-cube .f1{transform:translateZ(35px)}
+.dm-cube .f2{transform:rotateY(90deg) translateZ(35px);background:color-mix(in srgb,var(--ac) 24%,var(--surface))}
+.dm-cube .f3{transform:rotateY(180deg) translateZ(35px)}
+.dm-cube .f4{transform:rotateY(-90deg) translateZ(35px);background:color-mix(in srgb,var(--ac2) 24%,var(--surface))}
+.dm-cube .f5{transform:rotateX(90deg) translateZ(35px)}
+.dm-cube .f6{transform:rotateX(-90deg) translateZ(35px)}
+@keyframes dmCube{to{transform:rotateX(360deg) rotateY(720deg)}}`
+},
+{
+  id:'layerdepth', cat:'depth', title:'滑鼠分層視差', en:'Layered Depth', trigger:'hover',
+  tags:['pointer','translateZ'],
+  desc:'游標移動時，不同深度的圖層以不同幅度反向偏移。等於用二維畫面偽造出視角變化。',
+  when:'首屏插畫、產品照、卡片內部的層次。位移幅度分配要跟視覺上的遠近一致，否則會覺得怪。',
+  html:'<div class="dm-ld"><b class="a"></b><b class="b"></b><b class="c"></b><b class="d">3D</b></div>',
+  css:`.dm-ld{position:relative;width:100%;height:100%;overflow:hidden;display:grid;place-items:center}
+.dm-ld b{position:absolute;border-radius:50%;display:block;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.dm-ld .a{width:126px;height:126px;background:color-mix(in srgb,var(--ac3) 30%,transparent)}
+.dm-ld .b{width:80px;height:80px;background:color-mix(in srgb,var(--ac4) 55%,transparent);
+  margin:-40px 0 0 -70px}
+.dm-ld .c{width:44px;height:44px;background:var(--ac2);margin:44px 0 0 62px}
+.dm-ld .d{width:auto;height:auto;font:800 24px var(--mono);color:var(--tx);border-radius:0}`,
+  codeJs:`const DEPTH = [4, 12, 22, 34];              // 越前面的圖層動越多
+stage.onpointermove = (e) => {
+  const r = stage.getBoundingClientRect();
+  const px = (e.clientX - r.left) / r.width  - .5;
+  const py = (e.clientY - r.top)  / r.height - .5;
+  layers.forEach((el, i) => {
+    el.style.transform = 'translate(' + (px*DEPTH[i]) + 'px,' + (py*DEPTH[i]) + 'px)';
+  });
+};`,
+  js(stage,alive){
+    const ls=[...stage.querySelectorAll('b')],D=[5,14,24,36];
+    stage.addEventListener('pointermove',e=>{
+      if(!alive())return;
+      const r=stage.getBoundingClientRect();
+      const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+      ls.forEach((el,i)=>{el.style.transform='translate('+(px*D[i])+'px,'+(py*D[i])+'px)';});
+    });
+    stage.addEventListener('pointerleave',()=>ls.forEach(el=>el.style.transform=''));
+  }
+},
+{
+  id:'coverflow', cat:'depth', title:'透視列表', en:'Perspective List', trigger:'auto',
+  tags:['rotateY','carousel'],
+  desc:'項目沿 Y 軸旋轉並往後推，形成弧形排列。深度差讓「現在選中哪一個」不需要任何額外標示。',
+  when:'封面瀏覽、卡片選擇器、日期滾輪。是 iOS picker 的視覺原型。',
+  html:'<div class="dm-cf"><div class="row"><i></i><i></i><i></i><i></i><i></i></div></div>',
+  css:`.dm-cf{perspective:520px;width:100%;height:100%;display:grid;place-items:center}
+.dm-cf .row{display:flex;gap:8px;transform-style:preserve-3d;
+  animation:dmCfRow 8s cubic-bezier(.5,0,.3,1) infinite}
+.dm-cf i{width:52px;height:76px;border-radius:9px;flex:none;
+  background:linear-gradient(150deg,var(--ac4),var(--ac3));border:1px solid var(--line2)}
+.dm-cf i:nth-child(1){transform:rotateY(46deg) translateZ(-42px);opacity:.45}
+.dm-cf i:nth-child(2){transform:rotateY(30deg) translateZ(-16px);opacity:.7}
+.dm-cf i:nth-child(3){transform:none;box-shadow:0 10px 26px -10px rgba(0,0,0,.65)}
+.dm-cf i:nth-child(4){transform:rotateY(-30deg) translateZ(-16px);opacity:.7}
+.dm-cf i:nth-child(5){transform:rotateY(-46deg) translateZ(-42px);opacity:.45}
+@keyframes dmCfRow{0%,30%{transform:translateX(0)}55%,85%{transform:translateX(-60px)}100%{transform:translateX(0)}}`
+},
+
+/* ---------- 光影與材質 ---------- */
+{
+  id:'shimmer', cat:'surface', title:'骨架屏微光', en:'Skeleton Shimmer', trigger:'auto',
+  tags:['loading','gradient'],
+  desc:'灰塊上掃過一道斜向高光。它的作用不是好看，而是宣告「這裡正在載入，不是空的」。',
+  when:'資料載入中。骨架的形狀要接近真實內容，否則內容進來時會有一次難看的重排。',
+  html:'<div class="dm-sk"><div class="av"></div><div class="ln"><i></i><i></i></div></div>',
+  css:`.dm-sk{display:flex;gap:12px;align-items:center;width:210px}
+.dm-sk .av,.dm-sk i{position:relative;overflow:hidden;background:var(--surface2);border-radius:8px}
+.dm-sk .av{width:50px;height:50px;border-radius:50%;flex:none}
+.dm-sk .ln{flex:1;display:grid;gap:9px}
+.dm-sk i{display:block;height:11px}
+.dm-sk i:nth-child(2){width:64%}
+.dm-sk .av::after,.dm-sk i::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(100deg,transparent 20%,color-mix(in srgb,var(--tx) 12%,transparent) 50%,transparent 80%);
+  transform:translateX(-100%);animation:dmSk 1.5s linear infinite}
+@keyframes dmSk{to{transform:translateX(100%)}}`
+},
+{
+  id:'gradflow', cat:'surface', title:'流動漸層', en:'Gradient Flow', trigger:'auto',
+  tags:['background-position'],
+  desc:'漸層做得比容器大好幾倍，再移動 background-position。沒有任何元素在動，卻感覺整片在呼吸。',
+  when:'英雄區背景、AI 生成中的狀態、品牌氛圍。速度要慢（8s 以上），快了會很吵。',
+  html:'<div class="dm-gf"><span>generating…</span></div>',
+  css:`.dm-gf{width:210px;height:118px;border-radius:16px;display:grid;place-items:center;
+  background:linear-gradient(115deg,var(--ac),var(--ac4),var(--ac3),var(--ac2),var(--ac));
+  background-size:340% 340%;animation:dmGf 9s ease-in-out infinite}
+.dm-gf span{font:700 13px var(--mono);color:color-mix(in srgb,var(--onac) 76%,transparent);letter-spacing:.06em}
+@keyframes dmGf{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}`
+},
+{
+  id:'glow', cat:'surface', title:'呼吸光暈', en:'Glow Pulse', trigger:'auto',
+  tags:['box-shadow','loop'],
+  desc:'box-shadow 的模糊半徑與透明度同步變化。節奏刻意接近人的呼吸（3–4 秒一次）才會覺得平靜而非焦慮。',
+  when:'錄音中、AI 聆聽中、待機的語音助理。急促的閃爍是警告，緩慢的呼吸是等待。',
+  html:'<div class="dm-glow"></div>',
+  css:`.dm-glow{width:76px;height:76px;border-radius:50%;background:var(--ac);
+  animation:dmGlow 3.4s ease-in-out infinite}
+@keyframes dmGlow{
+  0%,100%{transform:scale(.9);box-shadow:0 0 0 0 color-mix(in srgb,var(--ac) 45%,transparent),
+                                         0 0 22px 2px color-mix(in srgb,var(--ac) 30%,transparent)}
+  50%{transform:scale(1);box-shadow:0 0 0 20px color-mix(in srgb,var(--ac) 0%,transparent),
+                                    0 0 46px 8px color-mix(in srgb,var(--ac) 55%,transparent)}}`
+},
+{
+  id:'grain', cat:'surface', title:'顆粒噪點', en:'Film Grain', trigger:'auto',
+  tags:['feTurbulence','SVG'],
+  desc:'用 SVG 的 feTurbulence 生成雜訊圖層疊在上面，再讓它輕微位移。數位漸層太乾淨，加了顆粒才有實體感。',
+  when:'編輯風格的版面、音樂／影像類產品。透明度壓在 6–12%，過了就變髒。',
+  html:'<div class="dm-gr"><i></i><b>GRAIN</b></div>',
+  css:`.dm-gr{position:relative;width:200px;height:118px;border-radius:14px;overflow:hidden;
+  background:linear-gradient(140deg,var(--ac3),var(--ac2));display:grid;place-items:center}
+.dm-gr i{position:absolute;inset:-60%;filter:url(#dmGrain);opacity:.32;mix-blend-mode:overlay;
+  animation:dmGrain .6s steps(3) infinite}
+.dm-gr b{position:relative;font:800 22px var(--mono);color:color-mix(in srgb,var(--onac) 82%,transparent);letter-spacing:.2em}
+@keyframes dmGrain{
+  0%{transform:translate(0,0)}33%{transform:translate(-3%,2%)}66%{transform:translate(2%,-3%)}
+  100%{transform:translate(0,0)}}`
+},
+{
+  id:'glass', cat:'surface', title:'玻璃模糊', en:'Glassmorphism', trigger:'auto',
+  tags:['backdrop-filter'],
+  desc:'backdrop-filter 模糊的是「身後」的東西。它建立了層級關係：模糊的那層在後面、清楚的在前面。',
+  when:'浮動工具列、彈窗背景、iOS 風格的 sheet。backdrop-filter 很貴，別在捲動中的長列表用。',
+  html:'<div class="dm-gl"><i class="b1"></i><i class="b2"></i><div class="panel">Glass</div></div>',
+  css:`.dm-gl{position:relative;width:210px;height:126px;border-radius:16px;overflow:hidden;
+  background:var(--surface2)}
+.dm-gl i{position:absolute;border-radius:50%;display:block;top:50%;left:0}
+.dm-gl .b1{width:74px;height:74px;margin-top:-37px;background:var(--ac2);
+  animation:dmGlA 6s ease-in-out infinite}
+.dm-gl .b2{width:56px;height:56px;margin-top:-28px;background:var(--ac3);
+  animation:dmGlB 6s ease-in-out infinite}
+.dm-gl .panel{position:absolute;left:0;right:0;top:41px;height:44px;z-index:2;
+  display:grid;place-items:center;
+  background:color-mix(in srgb,var(--surface) 30%,transparent);
+  border-top:1px solid color-mix(in srgb,var(--tx) 20%,transparent);
+  border-bottom:1px solid color-mix(in srgb,var(--tx) 20%,transparent);
+  backdrop-filter:blur(9px) saturate(170%);-webkit-backdrop-filter:blur(9px) saturate(170%);
+  font:700 15px var(--sans);color:var(--tx)}
+@keyframes dmGlA{0%,100%{transform:translateX(-30px)}50%{transform:translateX(170px)}}
+@keyframes dmGlB{0%,100%{transform:translateX(180px)}50%{transform:translateX(-24px)}}`
+},
+{
+  id:'goo', cat:'surface', title:'液態融合', en:'Gooey / Metaball', trigger:'auto',
+  tags:['SVG filter','blur'],
+  desc:'先高斯模糊、再用 feColorMatrix 把 alpha 對比拉到極限，模糊的邊緣就被「切」回硬邊，靠近的形狀因此黏在一起。',
+  when:'展開式的浮動按鈕、有機感的載入、品牌裝飾。濾鏡成本高，範圍越小越好。',
+  html:'<div class="dm-goo"><i></i><i></i><i></i></div>',
+  css:`.dm-goo{position:relative;width:200px;height:120px;filter:url(#dmGoo);
+  display:grid;place-items:center}
+.dm-goo i{position:absolute;border-radius:50%;background:var(--ac);display:block}
+.dm-goo i:nth-child(1){width:48px;height:48px;animation:dmGooA 3.6s ease-in-out infinite}
+.dm-goo i:nth-child(2){width:36px;height:36px;animation:dmGooB 3.6s ease-in-out infinite}
+.dm-goo i:nth-child(3){width:28px;height:28px;animation:dmGooC 3.6s ease-in-out infinite}
+@keyframes dmGooA{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,0)}}
+@keyframes dmGooB{0%,100%{transform:translate(0,0)}50%{transform:translate(46px,-24px)}}
+@keyframes dmGooC{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}`
+},
+
+/* ---------- 特殊實驗 ---------- */
+{
+  id:'glitch', cat:'special', title:'故障藝術', en:'Glitch', trigger:'auto',
+  tags:['clip-path','::before'],
+  desc:'同一段文字疊三層，兩層偽元素用 clip-path 切成不同的水平帶並左右錯位，再讓切法快速跳動。',
+  when:'遊戲、音樂、駭客風格的視覺。務必短促且不常出現，長時間閃動會讓人不適甚至誘發光敏反應。',
+  html:'<div class="dm-glitch" data-t="GLITCH">GLITCH</div>',
+  css:`.dm-glitch{position:relative;font:900 40px var(--mono);color:var(--tx);letter-spacing:.06em}
+.dm-glitch::before,.dm-glitch::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%}
+.dm-glitch::before{color:var(--ac4);animation:dmGlitchA 2.6s steps(2,end) infinite}
+.dm-glitch::after{color:var(--ac2);animation:dmGlitchB 2.6s steps(2,end) infinite}
+@keyframes dmGlitchA{
+  0%,72%,100%{clip-path:inset(100% 0 0 0);transform:none}
+  74%{clip-path:inset(12% 0 62% 0);transform:translateX(-5px)}
+  78%{clip-path:inset(58% 0 24% 0);transform:translateX(4px)}
+  82%{clip-path:inset(32% 0 48% 0);transform:translateX(-3px)}
+  86%{clip-path:inset(78% 0 8% 0);transform:translateX(5px)}}
+@keyframes dmGlitchB{
+  0%,72%,100%{clip-path:inset(100% 0 0 0);transform:none}
+  75%{clip-path:inset(44% 0 36% 0);transform:translateX(5px)}
+  79%{clip-path:inset(8% 0 74% 0);transform:translateX(-4px)}
+  83%{clip-path:inset(66% 0 14% 0);transform:translateX(3px)}
+  87%{clip-path:inset(24% 0 58% 0);transform:translateX(-5px)}}`
+},
+{
+  id:'chromatic', cat:'special', title:'色差', en:'Chromatic Aberration', trigger:'auto',
+  tags:['text-shadow','RGB'],
+  desc:'把紅、青兩個色版往相反方向偏移幾像素，模擬鏡頭邊緣的色散。很輕的成本，很強的氛圍。',
+  when:'標題的細微躁動、hover 回饋、復古 CRT 質感。偏移量 1–3px 就夠了。',
+  html:'<div class="dm-ca">ABERRATION</div>',
+  css:`.dm-ca{font:900 27px var(--sans);letter-spacing:.04em;color:var(--tx);
+  animation:dmCa 2.8s ease-in-out infinite}
+@keyframes dmCa{
+  0%,100%{text-shadow:0 0 0 rgba(255,60,60,0),0 0 0 rgba(60,220,255,0)}
+  35%{text-shadow:-3px 0 0 rgba(255,60,60,.85),3px 0 0 rgba(60,220,255,.85)}
+  55%{text-shadow:2px 1px 0 rgba(255,60,60,.7),-2px -1px 0 rgba(60,220,255,.7)}
+  75%{text-shadow:-1px 0 0 rgba(255,60,60,.5),1px 0 0 rgba(60,220,255,.5)}}`
+},
+{
+  id:'sprite', cat:'special', title:'逐格動畫', en:'Sprite / Steps', trigger:'auto',
+  tags:['steps()','frame-by-frame'],
+  desc:'把每一格畫面排成一條，用 steps() 讓位移「跳」而不是「滑」。這是傳統賽璐珞動畫在 CSS 裡的直譯。',
+  when:'像素風、手繪逐格、GIF 的替代方案（檔案更小、可控制播放）。格數與時長要整除，否則會抖。',
+  html:'<div class="dm-sp"><div class="strip"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>',
+  css:`.dm-sp{width:70px;height:70px;overflow:hidden;border-radius:12px;
+  background:var(--surface2);border:1px solid var(--line2)}
+.dm-sp .strip{display:flex;width:560px;animation:dmSp .72s steps(8) infinite}
+.dm-sp .strip i{width:70px;height:70px;flex:none;position:relative}
+.dm-sp .strip i::after{content:"";position:absolute;left:50%;margin-left:-11px;
+  width:22px;height:22px;border-radius:50%;background:var(--ac2)}
+.dm-sp i:nth-child(1)::after{bottom:44px}
+.dm-sp i:nth-child(2)::after{bottom:38px}
+.dm-sp i:nth-child(3)::after{bottom:24px}
+.dm-sp i:nth-child(4)::after{bottom:8px;height:14px;border-radius:50%/40%;margin-top:8px}
+.dm-sp i:nth-child(5)::after{bottom:8px}
+.dm-sp i:nth-child(6)::after{bottom:24px}
+.dm-sp i:nth-child(7)::after{bottom:38px}
+.dm-sp i:nth-child(8)::after{bottom:44px}
+@keyframes dmSp{to{transform:translateX(-560px)}}`
+},
+{
+  id:'wave', cat:'special', title:'波浪網格', en:'Wave Grid', trigger:'auto',
+  tags:['delay','field'],
+  desc:'把 delay 設成跟座標有關的函數（例如 (x+y)×0.06s），一整片元素就會呈現波形擴散，而不是各自為政。',
+  when:'資料矩陣的載入、音訊視覺化、背景裝飾。是「用延遲寫方程式」最直觀的例子。',
+  html:'<div class="dm-wv"></div>',
+  css:`.dm-wv{display:grid;grid-template-columns:repeat(9,1fr);gap:7px}
+.dm-wv i{width:11px;height:11px;border-radius:3px;background:var(--ac4);display:block;
+  animation:dmWv 2.4s ease-in-out infinite}
+@keyframes dmWv{
+  0%,100%{transform:scale(.35);opacity:.28}
+  50%{transform:scale(1);opacity:1;border-radius:50%}}`,
+  codeJs:`// delay 是座標的函數 —— 換個公式就換一種波形
+for (let y = 0; y < ROWS; y++)
+  for (let x = 0; x < COLS; x++) {
+    const dot = grid.appendChild(document.createElement('i'));
+    dot.style.animationDelay = ((x + y) * 0.062) + 's';        // 斜向波
+    // 同心圓波： Math.hypot(x - cx, y - cy) * 0.09 + 's'
+  }`,
+  js(stage,alive){
+    const g=stage.querySelector('.dm-wv');
+    let h='';
+    for(let y=0;y<7;y++)for(let x=0;x<9;x++)
+      h+='<i style="animation-delay:'+((x+y)*0.062).toFixed(3)+'s"></i>';
+    g.innerHTML=h;
+  }
+},
+{
+  id:'curtain', cat:'special', title:'幕簾轉場', en:'Curtain Transition', trigger:'auto',
+  tags:['page-transition','stagger'],
+  desc:'數片色塊依序蓋滿畫面，在全黑的瞬間換掉內容，再依序退開。舊內容何時消失被完全藏在幕後。',
+  when:'頁面切換、章節分隔。是在無法用 View Transitions 時，遮住換頁閃爍最可靠的做法。',
+  html:'<div class="dm-cur"><div class="content">CONTENT</div><i></i><i></i><i></i><i></i><i></i></div>',
+  css:`.dm-cur{position:relative;width:210px;height:126px;border-radius:14px;overflow:hidden;
+  background:var(--surface2);border:1px solid var(--line2)}
+.dm-cur .content{position:absolute;inset:0;display:grid;place-items:center;
+  font:700 15px var(--mono);color:var(--tx2);letter-spacing:.14em;
+  animation:dmCurC 4s steps(1) infinite}
+.dm-cur i{position:absolute;top:0;bottom:0;width:20.5%;background:var(--ac3);display:block;
+  transform:translateY(101%);animation:dmCur 4s cubic-bezier(.65,0,.35,1) infinite}
+.dm-cur i:nth-child(2){left:0;animation-delay:0s}
+.dm-cur i:nth-child(3){left:20%;animation-delay:.07s}
+.dm-cur i:nth-child(4){left:40%;animation-delay:.14s}
+.dm-cur i:nth-child(5){left:60%;animation-delay:.21s}
+.dm-cur i:nth-child(6){left:80%;animation-delay:.28s}
+@keyframes dmCur{
+  0%{transform:translateY(101%)}
+  22%,45%{transform:translateY(0)}
+  70%,100%{transform:translateY(-101%)}}
+@keyframes dmCurC{0%,32%{opacity:1}33%{opacity:1;color:var(--ac)}100%{opacity:1;color:var(--ac)}}`
+},
+{
+  id:'dissolve', cat:'special', title:'像素溶解', en:'Pixel Dissolve', trigger:'auto',
+  tags:['random','grid'],
+  desc:'把畫面切成網格，每一格用隨機延遲淡出。隨機性讓它不像「動畫」，更像材質在崩解。',
+  when:'刪除、銷毀、資料清除的回饋。給了「東西真的沒了」的實感，比單純淡出有力得多。',
+  html:'<div class="dm-dis"></div>',
+  css:`.dm-dis{display:grid;grid-template-columns:repeat(12,1fr);width:192px;height:120px;
+  border-radius:12px;overflow:hidden}
+.dm-dis i{display:block;background:linear-gradient(135deg,var(--ac),var(--ac3));
+  animation:dmDis 3s ease-in-out infinite}
+@keyframes dmDis{0%,18%{opacity:1;transform:scale(1)}
+  46%,64%{opacity:0;transform:scale(.2)}
+  92%,100%{opacity:1;transform:scale(1)}}`,
+  codeJs:`// 隨機延遲是重點：整齊消失像轉場，隨機消失才像崩解
+cells.forEach(cell => {
+  cell.style.animationDelay = (Math.random() * 0.6).toFixed(3) + 's';
+});`,
+  js(stage,alive){
+    const g=stage.querySelector('.dm-dis');
+    let h='';
+    for(let i=0;i<12*8;i++)h+='<i style="animation-delay:'+(Math.random()*0.6).toFixed(3)+'s"></i>';
+    g.innerHTML=h;
+  }
+},
+{
+  id:'liquidnav', cat:'special', title:'彈性指示器', en:'Elastic Indicator', trigger:'auto',
+  tags:['scaleX','follow-through'],
+  desc:'指示器移動途中先橫向拉長、到位再收回。這一個 scaleX 就把「跟隨與重疊」法則用在了兩點之間的位移上。',
+  when:'頁籤、底部導覽、分段控制項。是少數能讓純功能元件顯得有個性的地方。',
+  html:'<div class="dm-ln"><b>首頁</b><b>探索</b><b>收藏</b><i></i></div>',
+  css:`.dm-ln{position:relative;display:flex;gap:4px;padding:5px;border-radius:999px;
+  background:var(--surface2);border:1px solid var(--line2)}
+.dm-ln b{position:relative;z-index:2;padding:8px 16px;border-radius:999px;
+  font:600 13px var(--sans);color:var(--tx2);animation:dmLnT 4.5s steps(1) infinite}
+.dm-ln b:nth-child(2){animation-delay:1.5s}
+.dm-ln b:nth-child(3){animation-delay:3s}
+.dm-ln i{position:absolute;left:5px;top:5px;bottom:5px;width:66px;border-radius:999px;
+  background:var(--ac);display:block;transform-origin:center;
+  animation:dmLn 4.5s cubic-bezier(.5,0,.25,1) infinite}
+@keyframes dmLn{
+  0%,22%{transform:translateX(0) scaleX(1)}
+  33%{transform:translateX(35px) scaleX(1.45)}
+  44%,55%{transform:translateX(70px) scaleX(1)}
+  66%{transform:translateX(105px) scaleX(1.45)}
+  77%,88%{transform:translateX(140px) scaleX(1)}
+  95%,100%{transform:translateX(0) scaleX(1)}}
+@keyframes dmLnT{0%,22%{color:var(--onac)}23%,100%{color:var(--tx2)}}`
+},
+{
+  id:'orbit', cat:'special', title:'軌道系統', en:'Orbit', trigger:'auto',
+  tags:['rotate','composition'],
+  desc:'父層負責旋轉軌道、子層反向旋轉抵銷自轉，物件就會沿圓周移動而保持正面朝上。組合式 transform 的經典題。',
+  when:'技術架構圖、整合生態的展示、載入中的多節點狀態。',
+  html:'<div class="dm-orb"><div class="core"></div><div class="r r1"><b></b></div><div class="r r2"><b></b></div><div class="r r3"><b></b></div></div>',
+  css:`.dm-orb{position:relative;width:150px;height:150px;display:grid;place-items:center}
+.dm-orb .core{width:32px;height:32px;border-radius:50%;background:var(--ac);
+  box-shadow:0 0 22px color-mix(in srgb,var(--ac) 55%,transparent)}
+.dm-orb .r{position:absolute;border-radius:50%;border:1px dashed var(--line2)}
+.dm-orb .r b{position:absolute;top:-7px;left:50%;margin-left:-7px;width:14px;height:14px;
+  border-radius:50%;display:block}
+.dm-orb .r1{width:78px;height:78px;animation:dmOrb 3.6s linear infinite}
+.dm-orb .r2{width:114px;height:114px;animation:dmOrb 6s linear infinite reverse}
+.dm-orb .r3{width:150px;height:150px;animation:dmOrb 9s linear infinite}
+.dm-orb .r1 b{background:var(--ac2)}
+.dm-orb .r2 b{background:var(--ac3)}
+.dm-orb .r3 b{background:var(--ac4)}
+@keyframes dmOrb{to{transform:rotate(1turn)}}`
+},
+
+/* ---------- 現代 CSS 轉場 ---------- */
+{
+  id:'startingstyle', cat:'modern', title:'進場也能轉場', en:'@starting-style', trigger:'auto',
+  tags:['@starting-style'],
+  desc:'宣告元素「剛出現在畫面上的那一刻」長什麼樣。過去元素剛插入 DOM 沒有前一個狀態可比，transition 根本不會觸發，只能靠強制 reflow 硬騙瀏覽器。',
+  when:'任何動態插入的元素：toast、下拉選單、剛載入完的卡片。這是十幾年來 CSS 進場動畫最大的一塊拼圖。',
+  html:'<div class="dm-ss"><div class="pool"></div><span></span></div>',
+  css:`.dm-ss{position:relative;width:100%;height:100%;display:grid;place-items:center}
+.dm-ss .pool{display:flex;flex-direction:column;gap:8px;align-items:center}
+.dm-ss .chip{padding:9px 17px;border-radius:999px;background:var(--ac);color:var(--onac);
+  font:700 12.5px var(--sans);
+  opacity:1;transform:none;
+  transition:opacity .45s,transform .45s cubic-bezier(.2,.85,.25,1)}
+@starting-style{
+  .dm-ss .chip{opacity:0;transform:translateY(16px) scale(.86)}
+}
+.dm-ss span{position:absolute;bottom:11px;font:500 11px var(--mono);color:var(--tx3)}`,
+  codeJs:`/* 舊寫法：元素剛插入沒有起始狀態，得強制 reflow 才騙得動 transition */
+el.classList.add('hidden');
+container.append(el);
+el.offsetHeight;                  // 少了這行就不會動，而且沒有任何錯誤訊息
+el.classList.remove('hidden');
+
+/* 現在：直接插入就好，起始狀態交給 CSS 宣告 */
+container.append(el);
+
+@starting-style {
+  .chip { opacity: 0; transform: translateY(16px) scale(.86) }
+}`,
+  js(stage,alive){
+    const pool=stage.querySelector('.pool');
+    stage.querySelector('span').textContent='反覆插入 DOM，動畫完全由 CSS 宣告';
+    const labels=['剛插入 DOM','又一個','第三個'];
+    let n=0;
+    const tick=()=>{
+      if(!alive())return;
+      if(n>=labels.length){pool.innerHTML='';n=0;return;}
+      const c=document.createElement('div');
+      c.className='chip';c.textContent=labels[n];
+      pool.appendChild(c);n++;
+    };
+    tick();
+    const iv=setInterval(()=>{alive()?tick():clearInterval(iv);},680);
+  }
+},
+{
+  id:'discrete', cat:'modern', title:'離散屬性轉場', en:'allow-discrete', trigger:'auto',
+  tags:['transition-behavior','display'],
+  desc:'display 這種「沒有中間值」的屬性過去完全不參與 transition。allow-discrete 讓它在轉場的頭尾切換，中間的過程交給其他屬性演完。',
+  when:'popover、<dialog>、任何要從 display:none 進出的東西。跟 @starting-style 湊成三件套之後，JS 只要 toggle 一個 class，兩個方向都會動。',
+  html:'<div class="dm-ad"><div class="panel"><b>Panel</b><i></i><i></i></div><span>display:none ⇄ grid，兩個方向都有動畫</span></div>',
+  css:`.dm-ad{position:relative;width:100%;height:100%;display:grid;place-items:center}
+.dm-ad .panel{display:none;width:168px;padding:14px;border-radius:14px;gap:7px;
+  background:var(--surface2);border:1px solid var(--line2);
+  opacity:0;transform:scale(.88) translateY(12px);
+  transition:opacity .35s,transform .35s cubic-bezier(.2,.85,.25,1),
+             display .35s allow-discrete}
+.dm-ad .panel.open{display:grid;opacity:1;transform:none}
+@starting-style{
+  .dm-ad .panel.open{opacity:0;transform:scale(.88) translateY(12px)}
+}
+.dm-ad b{font:700 13px var(--sans);color:var(--tx)}
+.dm-ad i{display:block;height:7px;border-radius:4px;background:var(--line2)}
+.dm-ad i:nth-of-type(2){width:62%}
+.dm-ad span{position:absolute;bottom:11px;font:500 11px var(--mono);color:var(--tx3)}`,
+  codeJs:`.panel{
+  display: none;
+  opacity: 0;
+  transition: opacity .35s,
+              display .35s allow-discrete;   /* 關鍵就這一行 */
+}
+.panel.open{ display: grid; opacity: 1 }
+@starting-style{ .panel.open{ opacity: 0 } }   /* 進場的起點 */
+
+/* 三件套湊齊之後就不再需要這種東西：
+   el.addEventListener('transitionend', () => el.style.display = 'none') */`,
+  js(stage,alive){
+    const p=stage.querySelector('.panel');
+    setTimeout(()=>{if(alive())p.classList.add('open');},240);
+    const iv=setInterval(()=>{alive()?p.classList.toggle('open'):clearInterval(iv);},1500);
+  }
+},
+{
+  id:'autoheight', cat:'modern', title:'height:auto 可補間', en:'calc-size()', trigger:'auto',
+  tags:['interpolate-size','calc-size'],
+  desc:'interpolate-size:allow-keywords 讓 auto、min-content 這些關鍵字變成可補間的值。展開高度終於不用先量 scrollHeight 再寫死 px。',
+  when:'手風琴、展開更多、聊天訊息串。取代本圖鑑「高度自動展開」那張用的 grid-template-rows: 0fr→1fr —— 但舊招在支援度不足的環境仍然是正解，別急著全站換掉。',
+  html:'<div class="dm-ah"><b>詳細資訊</b><div class="body"><p>高度不是寫死的，內容多長就展開多長，而且中間每一格都補得出來。</p></div></div>',
+  css:`.dm-ah{interpolate-size:allow-keywords;
+  width:206px;padding:13px 15px;border-radius:13px;
+  background:var(--surface2);border:1px solid var(--line2)}
+.dm-ah b{display:block;font:700 13px var(--sans);color:var(--tx);margin-bottom:2px}
+.dm-ah .body{height:0;overflow:hidden;
+  transition:height .45s cubic-bezier(.2,.8,.2,1)}
+.dm-ah.open .body{height:auto}
+.dm-ah p{margin:6px 0 0;font:400 12px/1.7 var(--sans);color:var(--tx2)}`,
+  codeJs:`:root{ interpolate-size: allow-keywords }   /* 打開關鍵字補間，會繼承下去 */
+
+.body      { height: 0;    transition: height .45s cubic-bezier(.2,.8,.2,1) }
+.open .body{ height: auto }                /* 以前這行不會動，現在會 */
+
+/* 只想針對單一屬性打開時用 calc-size()：
+   .open .body{ height: calc-size(auto, size) } */`,
+  js(stage,alive){
+    const el=stage.querySelector('.dm-ah');
+    setTimeout(()=>{if(alive())el.classList.add('open');},300);
+    const iv=setInterval(()=>{alive()?el.classList.toggle('open'):clearInterval(iv);},2000);
+  }
+},
+{
+  id:'linearspring', cat:'modern', title:'純 CSS 彈簧', en:'linear() Easing', trigger:'auto',
+  tags:['linear()','spring'],
+  desc:'linear() 用一串取樣點描述任意曲線。cubic-bezier 只有兩個控制點，最多過衝一次；linear() 可以來回震盪，也就是說彈簧終於不用寫 JavaScript。',
+  when:'需要彈性個性又不想引進動畫函式庫時。三條預設命名可以直接抄 —— 這組語彙正好對應 SwiftUI 的 .smooth / .snappy / .bouncy。',
+  html:`<div class="dm-ls">
+  <div><b>bezier</b><i class="bz"></i></div>
+  <div><b>smooth</b><i class="sm"></i></div>
+  <div><b>snappy</b><i class="sn"></i></div>
+  <div><b>bouncy</b><i class="bo"></i></div>
+</div>`,
+  css:`.dm-ls{display:grid;gap:9px}
+.dm-ls>div{position:relative;height:15px;display:flex;align-items:center}
+.dm-ls b{font:500 10px var(--mono);color:var(--tx3);width:56px;flex:none;letter-spacing:.04em}
+.dm-ls i{position:relative;width:186px;flex:none;height:2px;background:var(--line2);border-radius:2px}
+.dm-ls i::after{content:"";position:absolute;top:50%;left:0;margin-top:-6px;width:12px;height:12px;
+  border-radius:50%;background:var(--ac);
+  animation:dmLsRun 2s infinite;animation-timing-function:inherit}
+.dm-ls .bz{animation-timing-function:cubic-bezier(.34,1.56,.64,1)}
+.dm-ls .bz::after{background:var(--tx3)}
+.dm-ls .sm{animation-timing-function:linear(0,.004,.017,.038,.067,.104,.148,.199,.256,.318,.385,.455,.527,.6,.672,.741,.806,.865,.916,.958,.986,1)}
+.dm-ls .sn{animation-timing-function:linear(0,.019,.074,.161,.275,.409,.554,.7,.834,.943,1.017,1.055,1.062,1.048,1.026,1.007,.997,.995,.998,1)}
+.dm-ls .bo{animation-timing-function:linear(0,.033,.127,.271,.449,.642,.83,.995,1.124,1.208,1.245,1.239,1.198,1.134,1.06,.99,.934,.899,.887,.897,.925,.963,1.003,1.037,1.058,1.064,1.056,1.038,1.017,.998,.986,.982,.986,.995,1.004,1.01,1.011,1.007,1.001,.997,1)}
+.dm-ls .bo::after{background:var(--ac2)}
+@keyframes dmLsRun{0%,8%{transform:translateX(0)}82%,100%{transform:translateX(174px)}}`,
+  codeJs:`/* cubic-bezier 只有兩個控制點 —— 過衝一次就得回來，做不出震盪 */
+--ease-back: cubic-bezier(.34, 1.56, .64, 1);
+
+/* linear() 是一串取樣點，想震幾次都可以 */
+--spring-bouncy: linear(0, .033, .271, .642, .995, 1.208, 1.245,
+                        1.134, .99, .899, .897, .963, 1.037, 1.064,
+                        1.038, .998, .982, .995, 1.01, 1.001, 1);
+
+/* 取樣點通常不用手算，用 linear() 產生器把 stiffness / damping 轉出來即可 */`
+},
+{
+  id:'propgradient', cat:'modern', title:'自訂屬性可補間', en:'@property', trigger:'auto',
+  tags:['@property','gradient'],
+  desc:'沒註冊型別的自訂屬性對瀏覽器來說只是一串文字，動畫時會在 50% 直接跳過去。用 @property 宣告 syntax 之後它才變成真正的角度、顏色或長度。',
+  when:'漸層旋轉、顏色停駐點、任何「本來不可補間」的東西。左邊已註冊、右邊沒註冊，差別一眼可見。',
+  html:'<div class="dm-pg"><div class="b reg"><i>已註冊</i></div><div class="b raw"><i>未註冊</i></div></div>',
+  css:`@property --dmAngle{syntax:'<angle>';inherits:false;initial-value:0deg}
+.dm-pg{display:flex;gap:13px}
+.dm-pg .b{width:97px;height:106px;border-radius:16px;padding:2px}
+.dm-pg .reg{background:conic-gradient(from var(--dmAngle),var(--ac),var(--ac4),var(--ac3),var(--ac2),var(--ac));
+  animation:dmPgReg 4.5s linear infinite}
+.dm-pg .raw{background:conic-gradient(from var(--dmRaw,0deg),var(--ac),var(--ac4),var(--ac3),var(--ac2),var(--ac));
+  animation:dmPgRaw 4.5s linear infinite}
+.dm-pg i{display:grid;place-items:center;width:100%;height:100%;border-radius:14px;
+  background:var(--surface);font:600 11.5px var(--mono);color:var(--tx3);font-style:normal}
+@keyframes dmPgReg{to{--dmAngle:360deg}}
+@keyframes dmPgRaw{to{--dmRaw:360deg}}`,
+  codeJs:`@property --angle{
+  syntax: '<angle>';      /* 沒這行，下面的動畫會在 50% 直接跳過去 */
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.card{
+  background: conic-gradient(from var(--angle), #6ee7b7, #a78bfa, #6ee7b7);
+  animation: spin 4.5s linear infinite;
+}
+@keyframes spin{ to{ --angle: 360deg } }`
+},
+{
+  id:'multitrack', cat:'modern', title:'多軌道時間軸', en:'Multi-track Keyframes', trigger:'auto',
+  tags:['keyframes','SwiftUI'],
+  desc:'一組 @keyframes 裡所有屬性共用同一條時間軸。想讓旋轉跟位移各有各的節奏，CSS 得靠巢狀元素拆開 —— 因為多個 animation 同時寫 transform 會互相覆蓋。',
+  when:'有機感的持續動態、吉祥物、載入中的複合動畫。SwiftUI 的 KeyframeAnimator 用 KeyframeTrack 原生支援這件事，是少數 CSS 比較吃力的地方。',
+  html:`<div class="dm-mt">
+  <div class="row"><b>單軌</b><span class="t"><i class="one"></i></span></div>
+  <div class="row"><b>多軌</b><span class="t"><u><i class="two"></i></u></span></div>
+</div>`,
+  css:`.dm-mt{display:grid;gap:20px}
+.dm-mt .row{display:flex;align-items:center;gap:11px}
+.dm-mt b{font:500 10px var(--mono);color:var(--tx3);width:30px;flex:none}
+.dm-mt .t{position:relative;display:block;width:152px;height:34px;
+  border-bottom:1px dashed var(--line2)}
+.dm-mt i,.dm-mt u{position:absolute;left:0;top:0;display:block}
+.dm-mt i{width:34px;height:34px;border-radius:9px}
+.dm-mt .one{background:var(--tx3);animation:dmMtAll 2.4s ease-in-out infinite}
+.dm-mt u{animation:dmMtX 2.4s ease-in-out infinite}
+.dm-mt .two{position:static;background:var(--ac);
+  animation:dmMtRot 1.05s linear infinite,dmMtCol 3.3s ease-in-out infinite}
+@keyframes dmMtAll{
+  0%,100%{transform:translateX(0) rotate(0);background:var(--tx3)}
+  50%{transform:translateX(118px) rotate(180deg);background:var(--ac2)}}
+@keyframes dmMtX{0%,100%{transform:translateX(0)}50%{transform:translateX(118px)}}
+@keyframes dmMtRot{to{transform:rotate(1turn)}}
+@keyframes dmMtCol{0%,100%{background:var(--ac)}33%{background:var(--ac2)}66%{background:var(--ac3)}}`,
+  codeJs:`/* 這樣寫不會有兩條軌道 —— 後面的 transform 會蓋掉前面的 */
+animation: move 2.4s infinite, spin 1.05s infinite;   /* spin 贏，move 消失 */
+
+/* CSS 的解法：把不同屬性拆到不同層 */
+<u class="mover"><i class="spinner"></i></u>
+.mover  { animation: move 2.4s ease-in-out infinite }
+.spinner{ animation: spin 1.05s linear infinite,
+                     tint 3.3s ease-in-out infinite }   /* 顏色不衝突，可同層 */
+
+/* SwiftUI 原生就是多軌道，不用拆層：
+   KeyframeAnimator(initialValue: State()) { ... } keyframes: { _ in
+     KeyframeTrack(\\.offset) { ... }     // 各自一條時間軸
+     KeyframeTrack(\\.rotation) { ... }
+   } */`
+},
+
+/* ---------- View Transitions 進階 ---------- */
+{
+  id:'vt-custom', cat:'vt', title:'自訂新舊畫面', en:'Custom old / new', trigger:'click',
+  tags:['::view-transition-old','::view-transition-new'],
+  desc:'預設的轉場只是把舊畫面淡出、新畫面淡入。分別對 ::view-transition-old() 與 -new() 下動畫，就能讓舊的往左退、新的從右進。',
+  when:'頁籤切換、步驟流程、任何有方向感的內容替換。這是把「原生轉場」從堪用變好用的第一步。',
+  html:'<div class="dm-vtc"><div class="win"><div class="p">A</div></div><span>點一下切換</span></div>',
+  css:`.dm-vtc{position:relative;width:100%;height:100%;display:grid;place-items:center;cursor:pointer}
+.dm-vtc .win{position:relative;width:182px;height:104px;border-radius:15px;overflow:hidden}
+.dm-vtc .p{position:absolute;inset:0;display:grid;place-items:center;
+  font:800 34px var(--mono);color:var(--onac);
+  background:linear-gradient(135deg,var(--ac),var(--ac4));
+  view-transition-name:dmvtc-panel}
+.dm-vtc .p.b{background:linear-gradient(135deg,var(--ac2),var(--ac3))}
+.dm-vtc span{position:absolute;bottom:11px;font:500 11px var(--mono);color:var(--tx3)}
+::view-transition-old(dmvtc-panel){animation:dmVtcOut .42s cubic-bezier(.65,0,.35,1) both}
+::view-transition-new(dmvtc-panel){animation:dmVtcIn .42s cubic-bezier(.65,0,.35,1) both}
+@keyframes dmVtcOut{to{transform:translateX(-34%) scale(.92);opacity:0}}
+@keyframes dmVtcIn{from{transform:translateX(34%) scale(.92);opacity:0}}`,
+  codeJs:`.panel{ view-transition-name: panel }
+
+/* 舊畫面往左退 */
+::view-transition-old(panel){ animation: slideOut .42s cubic-bezier(.65,0,.35,1) both }
+/* 新畫面從右進 */
+::view-transition-new(panel){ animation: slideIn  .42s cubic-bezier(.65,0,.35,1) both }
+
+@keyframes slideOut{ to  { transform: translateX(-34%); opacity: 0 } }
+@keyframes slideIn { from{ transform: translateX( 34%); opacity: 0 } }
+
+// 這些 pseudo-element 在 top layer，不受容器的 overflow:hidden 影響 —— 位移別給太大`,
+  js(stage,alive){
+    const p=stage.querySelector('.p'),tip=stage.querySelector('span');
+    if(!document.startViewTransition){tip.textContent='此瀏覽器不支援 View Transitions';return;}
+    let b=false;
+    stage.onclick=()=>{
+      if(!alive())return;
+      vtRun(()=>{b=!b;p.classList.toggle('b',b);p.textContent=b?'B':'A';});
+    };
+  }
+},
+{
+  id:'vt-group', cat:'vt', title:'控制 morph 節奏', en:'::view-transition-group()', trigger:'click',
+  tags:['group','morph'],
+  desc:'同名元素之間的位置與尺寸變化由 group 這一層負責。對它下 animation-duration 與曲線，就能決定 morph 走得多快、要不要過衝。',
+  when:'共享元素轉場需要個性的時候。舊新畫面的內容淡入淡出歸 old/new 管，形狀怎麼飛歸 group 管，兩者可以分開調。',
+  html:'<div class="dm-vtg"><div class="area"><div class="box"></div></div><span>點一下移動</span></div>',
+  css:`.dm-vtg{position:relative;width:100%;height:100%;display:grid;place-items:center;cursor:pointer}
+.dm-vtg .area{position:relative;width:202px;height:112px;border-radius:14px;
+  border:1px dashed var(--line2)}
+.dm-vtg .box{position:absolute;left:9px;top:9px;width:58px;height:40px;border-radius:10px;
+  background:var(--ac);view-transition-name:dmvtg-box}
+.dm-vtg .area.alt .box{left:auto;right:9px;top:auto;bottom:9px;
+  width:40px;height:60px;border-radius:20px;background:var(--ac2)}
+.dm-vtg span{position:absolute;bottom:11px;font:500 11px var(--mono);color:var(--tx3)}
+::view-transition-group(dmvtg-box){
+  animation-duration:.62s;
+  animation-timing-function:cubic-bezier(.34,1.45,.64,1)}`,
+  codeJs:`/* 元素在兩個狀態的 left/top/width/height/border-radius 完全不同，
+   你只要換 class —— 中間怎麼飛過去由瀏覽器算 */
+::view-transition-group(box){
+  animation-duration: .62s;
+  animation-timing-function: cubic-bezier(.34, 1.45, .64, 1);   /* 帶點過衝 */
+}
+
+/* 分工：
+   group      → 位置與尺寸怎麼飛
+   image-pair → 新舊兩張圖怎麼混
+   old / new  → 各自的進退場 */`,
+  js(stage,alive){
+    const area=stage.querySelector('.area'),tip=stage.querySelector('span');
+    if(!document.startViewTransition){tip.textContent='此瀏覽器不支援 View Transitions';return;}
+    stage.onclick=()=>{if(alive())vtRun(()=>area.classList.toggle('alt'));};
+  }
+},
+{
+  id:'vt-types', cat:'vt', title:'方向感知轉場', en:'Transition Types', trigger:'click',
+  tags:['types','navigation'],
+  desc:'startViewTransition 可以帶 types，CSS 端用 :active-view-transition-type() 接。同一組元素，往前和往後可以走完全相反的動畫。',
+  when:'有前後關係的導覽：分頁、精靈流程、瀏覽紀錄。沒有方向感的轉場會讓使用者失去「我在哪」的感覺。',
+  html:`<div class="dm-vtt">
+  <div class="win"><div class="pg">1</div></div>
+  <div class="ctl"><button data-d="back">← 上一頁</button><button data-d="fwd">下一頁 →</button></div>
+</div>`,
+  css:`.dm-vtt{position:relative;width:100%;height:100%;display:grid;place-items:center;
+  align-content:center;gap:11px}
+.dm-vtt .win{position:relative;width:152px;height:76px;border-radius:13px;overflow:hidden}
+.dm-vtt .pg{position:absolute;inset:0;display:grid;place-items:center;
+  font:800 30px var(--mono);color:var(--onac);
+  background:linear-gradient(135deg,var(--ac4),var(--ac3));
+  view-transition-name:dmvtt-pg}
+.dm-vtt .ctl{display:flex;gap:8px}
+.dm-vtt button{border:1px solid var(--line2);background:var(--surface2);color:var(--tx2);
+  border-radius:9px;padding:5px 12px;font:600 11.5px var(--sans);cursor:pointer}
+.dm-vtt button:hover{color:var(--tx);border-color:var(--tx3)}
+:root:active-view-transition-type(dmvtt-fwd)::view-transition-old(dmvtt-pg){
+  animation:dmVttOutL .4s cubic-bezier(.65,0,.35,1) both}
+:root:active-view-transition-type(dmvtt-fwd)::view-transition-new(dmvtt-pg){
+  animation:dmVttInR .4s cubic-bezier(.65,0,.35,1) both}
+:root:active-view-transition-type(dmvtt-back)::view-transition-old(dmvtt-pg){
+  animation:dmVttOutR .4s cubic-bezier(.65,0,.35,1) both}
+:root:active-view-transition-type(dmvtt-back)::view-transition-new(dmvtt-pg){
+  animation:dmVttInL .4s cubic-bezier(.65,0,.35,1) both}
+@keyframes dmVttOutL{to{transform:translateX(-36%);opacity:0}}
+@keyframes dmVttInR{from{transform:translateX(36%);opacity:0}}
+@keyframes dmVttOutR{to{transform:translateX(36%);opacity:0}}
+@keyframes dmVttInL{from{transform:translateX(-36%);opacity:0}}`,
+  codeJs:`document.startViewTransition({
+  update: () => { page.textContent = next },
+  types: ['fwd']                      // 或 ['back']
+});
+
+/* CSS 端用 :active-view-transition-type() 分流 */
+:root:active-view-transition-type(fwd)::view-transition-old(pg){ animation: outLeft  .4s both }
+:root:active-view-transition-type(fwd)::view-transition-new(pg){ animation: inRight  .4s both }
+:root:active-view-transition-type(back)::view-transition-old(pg){ animation: outRight .4s both }
+:root:active-view-transition-type(back)::view-transition-new(pg){ animation: inLeft   .4s both }`,
+  js(stage,alive){
+    const pg=stage.querySelector('.pg');
+    if(!document.startViewTransition){
+      stage.querySelectorAll('button').forEach(b=>b.disabled=true);
+      pg.textContent='—';return;
+    }
+    let n=1;
+    stage.addEventListener('click',e=>{
+      const b=e.target.closest('button'); if(!b||!alive())return;
+      const fwd=b.dataset.d==='fwd';
+      vtRun(()=>{n=Math.max(1,n+(fwd?1:-1));pg.textContent=n;},[fwd?'dmvtt-fwd':'dmvtt-back']);
+    });
+  }
+},
+{
+  id:'vt-clash', cat:'vt', title:'撞名會靜默失效', en:'Name Collision', trigger:'click',
+  tags:['pitfall','debug'],
+  desc:'同一時間有兩個元素叫同一個 view-transition-name，整個轉場會被直接跳過 —— 畫面瞬間切換，主控台一片安靜。左邊命名唯一、右邊兩個同名，點一下看差別。',
+  when:'這張是排錯用的。轉場「沒作用又沒錯誤訊息」時第一個該查的就是撞名，尤其在元件被重複渲染的清單裡。',
+  html:`<div class="dm-vtx">
+  <div class="col"><b>命名唯一</b><div class="pair ok"><i></i><i></i></div><em>—</em></div>
+  <div class="col"><b>兩個同名</b><div class="pair bad"><i></i><i></i></div><em>—</em></div>
+</div>`,
+  css:`.dm-vtx{display:flex;gap:20px;justify-content:center;cursor:pointer}
+.dm-vtx .col{display:grid;gap:8px;justify-items:center}
+.dm-vtx b{font:600 11px var(--mono);color:var(--tx3)}
+.dm-vtx .pair{display:flex;gap:8px;width:112px;justify-content:flex-start}
+.dm-vtx .pair.shift{justify-content:flex-end}
+.dm-vtx i{width:34px;height:34px;border-radius:9px;display:block;background:var(--ac)}
+.dm-vtx .bad i{background:var(--ac2)}
+/* 只在自己要轉場的那一瞬間掛名（.arm）。常駐的重複名稱會讓「整份文件」的
+   每一個轉場都被跳過 —— 包括這頁其他張卡片的。 */
+.dm-vtx .ok.arm i:nth-child(1){view-transition-name:dmvtx-a}
+.dm-vtx .ok.arm i:nth-child(2){view-transition-name:dmvtx-b}
+.dm-vtx .bad.arm i{view-transition-name:dmvtx-dup}   /* ← 一次命中兩個元素 */
+.dm-vtx em{font:500 10.5px var(--mono);font-style:normal;color:var(--tx3);
+  min-height:15px;text-align:center}`,
+  codeJs:`/* 錯：selector 一次命中兩個元素，兩個都拿到同一個名字 */
+.card img{ view-transition-name: thumb }
+
+/* 對：只在真的要 morph 的那一個上面臨時掛名，用完拿掉 */
+el.style.viewTransitionName = 'thumb';
+const t = document.startViewTransition(update);
+t.finished.finally(() => el.style.viewTransitionName = '');
+
+/* 撞名時 ready 會 reject（InvalidStateError），finished 照常 resolve
+   —— 所以只 catch finished 是抓不到這個錯的 */`,
+  js(stage,alive){
+    const ok=stage.querySelector('.ok'),bad=stage.querySelector('.bad');
+    const st=[...stage.querySelectorAll('em')];
+    if(!document.startViewTransition){st.forEach(s=>s.textContent='不支援');return;}
+    const one=async(el,slot)=>{
+      slot.textContent='…';slot.style.color='';
+      el.classList.add('arm');                       // 掛名
+      const t=vtRun(()=>el.classList.toggle('shift'));
+      try{ await t.ready; slot.textContent='轉場完成 ✓'; slot.style.color='var(--ac)'; }
+      catch(err){ slot.textContent='跳過：'+err.name; slot.style.color='var(--ac2)'; }
+      await t.finished.catch(()=>{});
+      el.classList.remove('arm');                    // 用完立刻拿掉
+    };
+    const run=async()=>{
+      if(!alive())return;
+      /* 分頁在背景時瀏覽器一律跳過轉場，兩邊都會 reject —— 那不是撞名造成的，別誤導 */
+      if(document.hidden){
+        st.forEach(s=>{s.textContent='分頁在背景，轉場被跳過';s.style.color='var(--tx3)';});
+        return;
+      }
+      await one(ok,st[0]);
+      if(alive())await one(bad,st[1]);
+    };
+    stage.onclick=run;
+    document.addEventListener('visibilitychange',()=>{
+      if(alive()&&!document.hidden&&st[0].textContent.startsWith('分頁'))run();
+    });
+    setTimeout(()=>{if(alive())run();},500);
+  }
+},
+{
+  id:'vt-list', cat:'vt', title:'清單展開詳情', en:'List to Detail', trigger:'click',
+  tags:['dynamic name','morph'],
+  desc:'點下去的那一項，縮圖與標題臨時掛上 view-transition-name，轉場結束再拿掉。名字只在需要的那一瞬間存在，就不會跟清單裡其他項目撞名。',
+  when:'清單 → 詳情、商品 → 商品頁、相簿 → 大圖。這是原生 App 感最大的來源，而且不需要任何框架。',
+  html:`<div class="dm-vtl">
+  <ul class="list">
+    <li data-i="0"><span class="th"></span><span class="tt">薄荷綠</span></li>
+    <li data-i="1"><span class="th"></span><span class="tt">琥珀橘</span></li>
+    <li data-i="2"><span class="th"></span><span class="tt">紫羅蘭</span></li>
+  </ul>
+  <div class="detail" hidden><span class="th"></span><span class="tt"></span><em>點一下返回</em></div>
+</div>`,
+  css:`.dm-vtl{position:relative;width:100%;height:100%;display:grid;place-items:center}
+.dm-vtl ul{list-style:none;margin:0;padding:0;display:grid;gap:7px;width:188px}
+.dm-vtl li{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;
+  background:var(--surface2);border:1px solid var(--line);cursor:pointer}
+.dm-vtl li:hover{border-color:var(--line2)}
+.dm-vtl .th{width:30px;height:30px;border-radius:8px;flex:none;display:block}
+.dm-vtl .tt{font:600 12.5px var(--sans);color:var(--tx2)}
+.dm-vtl [data-i="0"] .th,.dm-vtl .detail.c0 .th{background:var(--ac)}
+.dm-vtl [data-i="1"] .th,.dm-vtl .detail.c1 .th{background:var(--ac2)}
+.dm-vtl [data-i="2"] .th,.dm-vtl .detail.c2 .th{background:var(--ac3)}
+.dm-vtl .detail{width:188px;padding:14px;border-radius:14px;display:grid;gap:9px;
+  justify-items:center;background:var(--surface2);border:1px solid var(--line2);cursor:pointer}
+.dm-vtl .detail .th{width:76px;height:76px;border-radius:18px}
+.dm-vtl .detail .tt{font:700 14px var(--sans);color:var(--tx)}
+.dm-vtl em{font:500 10.5px var(--mono);font-style:normal;color:var(--tx3)}
+.dm-vtl [hidden]{display:none}
+::view-transition-group(dmvtl-th),
+::view-transition-group(dmvtl-tt){animation-duration:.5s;
+  animation-timing-function:cubic-bezier(.2,.8,.2,1)}`,
+  codeJs:`function open(li){
+  const src = { th: li.querySelector('.th'), tt: li.querySelector('.tt') };
+  const dst = { th: detail.querySelector('.th'), tt: detail.querySelector('.tt') };
+
+  // 只在轉場當下掛名 —— 清單裡另外兩項不會撞到
+  src.th.style.viewTransitionName = dst.th.style.viewTransitionName = 'th';
+  src.tt.style.viewTransitionName = dst.tt.style.viewTransitionName = 'tt';
+
+  const t = document.startViewTransition(() => { list.hidden = true; detail.hidden = false });
+  t.finished.finally(() => {                      // 用完立刻清掉
+    [src.th, src.tt, dst.th, dst.tt].forEach(el => el.style.viewTransitionName = '');
+  });
+}`,
+  js(stage,alive){
+    const list=stage.querySelector('.list'),detail=stage.querySelector('.detail');
+    if(!document.startViewTransition){detail.remove();return;}
+    const names=(a,b,on)=>{
+      a.style.viewTransitionName=on?'dmvtl-th':'';
+      b.style.viewTransitionName=on?'dmvtl-tt':'';
+    };
+    const open=li=>{
+      const sth=li.querySelector('.th'),stt=li.querySelector('.tt');
+      const dth=detail.querySelector('.th'),dtt=detail.querySelector('.tt');
+      dtt.textContent=stt.textContent;
+      detail.className='detail c'+li.dataset.i;
+      names(sth,stt,true);names(dth,dtt,true);
+      const t=vtRun(()=>{list.hidden=true;detail.hidden=false;});
+      t.finished.finally(()=>{names(sth,stt,false);names(dth,dtt,false);});
+    };
+    const back=()=>{
+      const li=list.querySelector('li[data-i="'+detail.className.slice(-1)+'"]');
+      const sth=li.querySelector('.th'),stt=li.querySelector('.tt');
+      const dth=detail.querySelector('.th'),dtt=detail.querySelector('.tt');
+      names(sth,stt,true);names(dth,dtt,true);
+      const t=vtRun(()=>{list.hidden=false;detail.hidden=true;});
+      t.finished.finally(()=>{names(sth,stt,false);names(dth,dtt,false);});
+    };
+    list.addEventListener('click',e=>{
+      const li=e.target.closest('li'); if(li&&alive())open(li);
+    });
+    detail.addEventListener('click',()=>{if(alive())back();});
+  }
+},
+{
+  id:'vt-mpa', cat:'vt', title:'跨文件轉場', en:'Cross-document', trigger:'click',
+  tags:['MPA','navigation'],
+  desc:'@view-transition { navigation: auto } 一行就讓同源的「真實換頁」也有轉場。下面 iframe 裡是兩個獨立的 .html，沒有任何框架、沒有 SPA router。',
+  when:'部落格、文件站、電商、任何多頁式網站。過去要有 App 級轉場只能整站改 SPA，現在不用了。',
+  html:'<div class="dm-vtm"><iframe src="vt-a.html" title="跨文件轉場示範"></iframe><span></span></div>',
+  css:`.dm-vtm{position:relative;width:100%;height:100%}
+.dm-vtm iframe{width:100%;height:calc(100% - 19px);border:0;display:block;background:var(--bg2)}
+.dm-vtm span{position:absolute;left:0;right:0;bottom:0;height:19px;text-align:center;
+  font:500 10.5px/19px var(--mono);color:var(--tx3);background:var(--bg2);
+  border-top:1px solid var(--line)}`,
+  codeJs:`/* vt-a.html 與 vt-b.html 各自加這一段 —— 沒有 JavaScript */
+@view-transition { navigation: auto }
+
+/* 兩份文件裡同名的元素會自動 morph */
+.card { view-transition-name: mpa-card }
+
+::view-transition-group(mpa-card){
+  animation-duration: .55s;
+  animation-timing-function: cubic-bezier(.34, 1.4, .64, 1);
+}
+
+/* 限制：必須同源導覽；以 file:// 開啟時多數瀏覽器不會生效 */`,
+  js(stage,alive){
+    const f=stage.querySelector('iframe'),tip=stage.querySelector('span');
+    if(!document.startViewTransition){tip.textContent='此瀏覽器不支援 View Transitions';return;}
+    tip.textContent=location.protocol==='file:'
+      ? 'file:// 下跨文件轉場多半不生效，請用本機伺服器開啟'
+      : '點 iframe 裡的連結 —— 那是真的換頁';
+    f.addEventListener('load',()=>{
+      if(!alive())return;
+      try{
+        if(!f.contentDocument||!f.contentDocument.querySelector('.card'))throw 0;
+      }catch(e){
+        tip.textContent='找不到 vt-a.html / vt-b.html，請看下方程式碼';
+      }
+    });
+  }
+}
+
+/* === MORE DEMOS === */
+];
+
+/* ============================================================
+   引擎
+   ============================================================ */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function highlight(src){
+  return esc(src)
+    .replace(/(\/\*[\s\S]*?\*\/|\/\/[^\n]*)/g,'<span class="tk-c">$1</span>')
+    .replace(/('[^'\n]*'|&quot;[^&\n]*&quot;)/g,'<span class="tk-s">$1</span>')
+    .replace(/\b(const|let|var|function|return|if|else|for|of|new|=&gt;|null)\b/g,'<span class="tk-k">$1</span>')
+    .replace(/\b(\d+\.?\d*(?:px|ms|s|deg|turn|fr|%|em|vw|vh)?)\b/g,'<span class="tk-n">$1</span>')
+    .replace(/(@keyframes|animation|transform|transition|cubic-bezier|clip-path|filter)/g,'<span class="tk-a">$1</span>');
+}
+
+const TRIG={auto:'自動播放',hover:'滑鼠移入',click:'點擊',drag:'拖曳',scroll:'捲動'};
+
+/* ---- Prompt 產生 ---- */
+function buildPrompt(d,fwKey){
+  const fw=FRAMEWORKS[fwKey],cat=CATS.find(c=>c.id===d.cat)||{name:d.cat};
+  const L=[];
+  L.push('你是 '+fw.label+' 的動畫實作專家。請實作以下動畫技法。','');
+  L.push('## 技法',d.title+'（'+d.en+'）— 分類：'+cat.name,'');
+  L.push('## 要達成的視覺行為',d.desc,'');
+  L.push('## 適用情境',d.when,'');
+  L.push('## 觸發方式',TRIG[d.trigger||'auto'],'');
+  if(d.css){
+    L.push('## 參考規格');
+    L.push('下面是這個技法在網頁上的實作。請「不要」逐行翻譯，'+
+           '從中讀出位移量、時長、曲線與節奏，再用 '+fw.label+' 的慣用寫法重寫成等效的視覺行為。');
+    L.push('（`var(--ac)`、`var(--onac)` 之類是圖鑑自己的色票變數，換成你專案的顏色即可。）','');
+    L.push('```css',d.css.trim(),'```','');
+  }
+  if(d.codeJs){ L.push('## 參考邏輯','```js',d.codeJs.trim(),'```',''); }
+  L.push('## '+fw.label+' 專屬要求',fw.hint,'');
+  L.push('## 驗收條件',
+    '- 可以重複觸發，不累積狀態',
+    '- 尊重系統的「減少動態」偏好設定',
+    '- 不引入非必要的外部套件',
+    '- 附一段可直接執行的最小範例','');
+  L.push('## 輸出','只給程式碼與必要的一句說明，不要解釋原本那段 CSS。');
+  return L.join('\n');
+}
+
+/* 兩層都失敗時的最後退路：把內容攤開讓使用者自己複製。
+   clipboard API 需要文件有焦點，file://、背景視窗、Safari 都可能擋下來。 */
+function manualCopy(txt){
+  const w=document.createElement('div');
+  w.className='copyfall';
+  w.innerHTML='<div class="box"><p>瀏覽器擋下了自動複製（通常是視窗沒有焦點，或以 file:// 開啟）。'+
+              '下面的文字已全選，直接按 ⌘C／Ctrl+C。</p>'+
+              '<textarea readonly></textarea><button class="mini">關閉</button></div>';
+  w.querySelector('textarea').value=txt;
+  document.body.appendChild(w);
+  const ta=w.querySelector('textarea'); ta.focus(); ta.select();
+  const close=()=>w.remove();
+  w.querySelector('button').onclick=close;
+  w.addEventListener('click',e=>{if(e.target===w)close();});
+  addEventListener('keydown',function esc(e){
+    if(e.key==='Escape'){close();removeEventListener('keydown',esc);}
+  });
+}
+
+async function copyText(txt,btn){
+  let ok=false;
+  try{ await navigator.clipboard.writeText(txt); ok=true; }
+  catch(e){
+    /* 非安全環境或沒有焦點時 clipboard API 會被擋，先退回舊招 */
+    const ta=document.createElement('textarea');
+    ta.value=txt; ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:-9999px;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try{ ok=document.execCommand('copy'); }catch(_){}
+    ta.remove();
+  }
+  if(!ok)manualCopy(txt);
+  if(!btn)return ok;
+  const prev=btn.dataset.label||btn.textContent;
+  btn.dataset.label=prev;
+  btn.textContent=ok?'已複製 ✓':'複製失敗';
+  btn.classList.add(ok?'done':'fail');
+  clearTimeout(btn._t);
+  btn._t=setTimeout(()=>{btn.textContent=prev;btn.classList.remove('done','fail');},1500);
+  return ok;
+}
+
+/* 注入所有 demo 的 CSS */
+(function injectCSS(){
+  const st=document.createElement('style');
+  st.textContent=DEMOS.map(d=>d.css||'').join('\n');
+  document.head.appendChild(st);
+})();
+
+/* 建卡 */
+const gallery=$('#gallery');
+gallery.innerHTML=DEMOS.map((d,i)=>{
+  const cat=CATS.find(c=>c.id===d.cat)||{name:d.cat};
+  const codeBlocks=[];
+  if(d.css)codeBlocks.push('<div class="pre-label">CSS</div><pre>'+highlight(d.css)+'</pre>');
+  if(d.codeJs)codeBlocks.push('<div class="pre-label">JavaScript</div><pre>'+highlight(d.codeJs)+'</pre>');
+  return '<article class="card" data-i="'+i+'" data-cat="'+d.cat+'" data-k="'+
+    esc((d.title+' '+d.en+' '+d.desc+' '+d.when+' '+(d.tags||[]).join(' ')+' '+cat.name).toLowerCase())+'">'+
+    '<div class="stage" data-i="'+i+'"></div>'+
+    '<div class="cbody">'+
+      '<div class="ctitle"><span class="no">'+String(i+1).padStart(2,'0')+'</span>'+
+        '<h3>'+esc(d.title)+'</h3><span class="en">'+esc(d.en)+'</span></div>'+
+      '<p class="cdesc">'+esc(d.desc)+'</p>'+
+      '<p class="cwhen">'+esc(d.when)+'</p>'+
+      '<div class="tags"><span class="tag trig">'+TRIG[d.trigger||'auto']+'</span>'+
+        '<span class="tag">'+esc(cat.name)+'</span>'+
+        (d.tags||[]).map(t=>'<span class="tag">'+esc(t)+'</span>').join('')+'</div>'+
+    '</div>'+
+    '<div class="cfoot"><button class="mini" data-replay="'+i+'">↻ 重播</button>'+
+      '<button class="mini" data-prompt="'+i+'">⧉ 複製 Prompt</button></div>'+
+    (codeBlocks.length?'<details class="code"><summary>看程式碼</summary>'+codeBlocks.join('')+'</details>':'')+
+  '</article>';
+}).join('');
+
+/* 掛載 / 重播 */
+function mount(stage){
+  const d=DEMOS[+stage.dataset.i];
+  stage._gen=(stage._gen||0)+1;
+  const gen=stage._gen;
+  stage.onclick=null;stage.onpointermove=null;stage.onpointerdown=null;
+  stage.style.cursor='';
+  stage.innerHTML=d.html||'';
+  if(d.js){try{d.js(stage,()=>stage._gen===gen);}catch(e){console.error('[demo '+d.id+']',e);}}
+}
+/* 離開視窗就卸載：bump _gen 讓所有 rAF 迴圈與 interval 自行停止，
+   否則 64 個示範會同時跑（含 SVG filter、backdrop-filter、canvas），捲動直接掉幀 */
+function unmount(stage){
+  stage._gen=(stage._gen||0)+1;
+  stage.innerHTML='';
+}
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){ if(!e.target.children.length) mount(e.target); }
+    else if(e.target.children.length) unmount(e.target);
+  });
+},{rootMargin:'150px'});
+$$('.stage').forEach(s=>io.observe(s));
+
+gallery.addEventListener('click',e=>{
+  const r=e.target.closest('[data-replay]');
+  if(r){mount($('.stage[data-i="'+r.dataset.replay+'"]'));return;}
+  const p=e.target.closest('[data-prompt]');
+  if(p)copyText(buildPrompt(DEMOS[+p.dataset.prompt],curFw),p);
+});
+$('#replayAll').onclick=()=>$$('.stage').forEach(s=>{if(s.children.length)mount(s);});
+
+/* Prompt 目標框架 */
+let curFw=localStorage.getItem('dmFw');
+if(!FRAMEWORKS[curFw])curFw='flutter';
+$('#fw').innerHTML=Object.entries(FRAMEWORKS)
+  .map(([k,v])=>'<option value="'+k+'"'+(k===curFw?' selected':'')+'>'+esc(v.label)+'</option>').join('');
+$('#fw').addEventListener('change',e=>{
+  curFw=e.target.value;
+  try{localStorage.setItem('dmFw',curFw);}catch(_){}
+});
+$('#copyAll').addEventListener('click',e=>{
+  const list=$$('.card:not([hidden])').map(c=>DEMOS[+c.dataset.i]);
+  if(!list.length)return;
+  const txt=list.map(d=>buildPrompt(d,curFw)).join('\n\n---\n\n');
+  copyText(txt,e.currentTarget);
+});
+
+/* 篩選 */
+let curCat='all',curQ='';
+const counts=CATS.map(c=>DEMOS.filter(d=>d.cat===c.id).length);
+$('#chips').innerHTML='<button class="chip" data-cat="all" aria-pressed="true">全部<i>'+DEMOS.length+'</i></button>'+
+  CATS.map((c,i)=>'<button class="chip" data-cat="'+c.id+'" aria-pressed="false">'+c.name+'<i>'+counts[i]+'</i></button>').join('');
+function applyFilter(){
+  let n=0;
+  $$('.card').forEach(card=>{
+    const ok=(curCat==='all'||card.dataset.cat===curCat)&&(!curQ||card.dataset.k.includes(curQ));
+    card.hidden=!ok; if(ok)n++;
+  });
+  $('#empty').hidden=n>0;
+  const ca=$('#copyAll');
+  ca.textContent='複製全部（'+n+'）';
+  ca.dataset.label=ca.textContent;
+}
+applyFilter();
+$('#chips').addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b)return;
+  curCat=b.dataset.cat;
+  $$('.chip').forEach(c=>c.setAttribute('aria-pressed',c===b));
+  applyFilter();
+});
+$('#search').addEventListener('input',e=>{curQ=e.target.value.trim().toLowerCase();applyFilter();});
+
+/* 主題（預設日間）/ 減少動態 */
+let curTheme=localStorage.getItem('dmTheme');
+if(curTheme!=='dark')curTheme='light';
+function applyTheme(){
+  document.documentElement.dataset.theme=curTheme;
+  $('#themeBtn').textContent=curTheme==='light'?'☾':'☀︎';
+}
+applyTheme();
+$('#themeBtn').onclick=()=>{
+  curTheme=curTheme==='light'?'dark':'light';
+  applyTheme();
+  try{localStorage.setItem('dmTheme',curTheme);}catch(_){}
+};
+function setMotion(off){
+  document.documentElement.classList.toggle('no-motion',off);
+  $('#motionBtn').textContent=off?'恢復動態':'暫停動態';
+}
+$('#motionBtn').onclick=()=>setMotion(!document.documentElement.classList.contains('no-motion'));
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+  setMotion(true); $('#rmNotice').hidden=false;
+  $('#rmResume').onclick=()=>{setMotion(false);$('#rmNotice').hidden=true;};
+}
+
+$('#stCount').textContent=DEMOS.length;
+$('#stCat').textContent=CATS.length;
+</script>
