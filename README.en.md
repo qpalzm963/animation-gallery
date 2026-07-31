@@ -74,7 +74,8 @@ framework’s idioms.
 
 ## Features
 
-- Category filtering, keyword search
+- Category filtering, keyword search — understands scenario keywords and synonyms ("entrance", "loading", "slide" all work)
+- Every card is labeled with its rendering cost (Composite / Paint / Layout), with an explanatory tooltip
 - Replay a single card / replay all
 - UI in five languages — Traditional Chinese / Simplified Chinese / English / Japanese / Korean, toggle in the top right, remembers your choice
 - Deep links to every card — click a card’s number to copy its `#t-<id>` link and share a specific technique

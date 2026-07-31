@@ -29,7 +29,7 @@
   --bg:#0a0b0f; --bg2:#0e1016; --surface:#13151d; --surface2:#191c26;
   --line:#242835; --line2:#333849;
   --tx:#e9ecf5; --tx2:#a5adc2; --tx3:#6b7389;
-  --ac:#6ee7b7; --ac2:#fbbf77; --ac3:#a78bfa; --ac4:#7dd3fc;
+  --ac:#6ee7b7; --ac2:#fbbf77; --ac3:#a78bfa; --ac4:#7dd3fc; --red:#f28080;
   --onac:#0a0b0f;
   --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
   --sans:system-ui,-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
@@ -41,7 +41,7 @@ html[data-theme=light]{
   --bg:#f2f4f9; --bg2:#e4e8f2; --surface:#fff; --surface2:#f7f9fd;
   --line:#e0e4ee; --line2:#c3cad9;
   --tx:#101219; --tx2:#4b5369; --tx3:#858da3; --onac:#ffffff;
-  --ac:#0d9c74; --ac2:#b8710f; --ac3:#6941e0; --ac4:#0b7ea8;
+  --ac:#0d9c74; --ac2:#b8710f; --ac3:#6941e0; --ac4:#0b7ea8; --red:#c04545;
 }
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);
@@ -160,6 +160,10 @@ section.wrap{padding:80px 24px 56px}
 .tag{font:500 11px var(--mono);color:var(--tx3);border:1px solid var(--line);
   padding:2px 7px;border-radius:6px}
 .tag.trig{color:var(--ac2);border-color:color-mix(in srgb,var(--ac2) 35%,transparent)}
+.tag.pf{text-transform:capitalize;cursor:help}
+.tag.pf-composite{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 40%,transparent)}
+.tag.pf-paint{color:var(--ac2);border-color:color-mix(in srgb,var(--ac2) 40%,transparent)}
+.tag.pf-layout{color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,transparent)}
 .cfoot{display:flex;gap:8px;padding:11px 17px 15px;align-items:center}
 .mini{border:1px solid var(--line);background:transparent;color:var(--tx2);border-radius:8px;
   padding:5px 11px;font:500 12px var(--sans);cursor:pointer;transition:.15s}
@@ -2978,6 +2982,12 @@ const io=new IntersectionObserver(es=>{
 },{rootMargin:'150px'});
 
 /* 建卡（語言相關：標題／說明／標籤都跟著 curLang 走） */
+/* 搜尋索引附加詞：渲染成本、英文同義字、使用情境詞（五語都收，搜哪種語言都命中） */
+function searchExtra(d){
+  const scen=(DEMO_SCEN[d.id]||'').split(' ').filter(Boolean)
+    .flatMap(sc=>Object.values(SCEN_WORDS[sc]||{}));
+  return [PERF_OF[d.id]||'',DEMO_KW[d.id]||''].concat(scen).join(' ');
+}
 /* 依語系取卡片文字：zh/en 用內建欄位，其餘語言查 PACKS、缺字退回後備語言 */
 function demoText(d){
   const en=DEMO_EN[d.id]||{};
@@ -3000,7 +3010,7 @@ function renderGallery(){
     if(d.css)codeBlocks.push('<div class="pre-label">CSS</div><pre>'+highlight(d.css)+'</pre>');
     if(d.codeJs)codeBlocks.push('<div class="pre-label">JavaScript</div><pre>'+highlight(d.codeJs)+'</pre>');
     return '<article class="card" id="t-'+d.id+'" data-i="'+i+'" data-cat="'+d.cat+'" data-k="'+
-      esc((d.title+' '+d.en+' '+h3+' '+desc+' '+when+' '+(d.tags||[]).join(' ')+' '+cName).toLowerCase())+'">'+
+      esc((d.title+' '+d.en+' '+h3+' '+desc+' '+when+' '+(d.tags||[]).join(' ')+' '+cName+' '+searchExtra(d)).toLowerCase())+'">'+
       '<div class="stage" data-i="'+i+'"></div>'+
       '<div class="cbody">'+
         '<div class="ctitle"><span class="no" data-link="'+d.id+'" title="'+esc(t.linkTitle)+'">'+String(i+1).padStart(2,'0')+'</span>'+
@@ -3009,7 +3019,8 @@ function renderGallery(){
         '<p class="cwhen">'+esc(when)+'</p>'+
         '<div class="tags"><span class="tag trig">'+esc(TRIG[curLang][d.trigger||'auto'])+'</span>'+
           '<span class="tag">'+esc(cName)+'</span>'+
-          (d.tags||[]).map(tg=>'<span class="tag">'+esc(tg)+'</span>').join('')+'</div>'+
+          (d.tags||[]).map(tg=>'<span class="tag">'+esc(tg)+'</span>').join('')+
+          (PERF_OF[d.id]?'<span class="tag pf pf-'+PERF_OF[d.id]+'" title="'+esc(pick(PERF_INFO[PERF_OF[d.id]]))+'">'+PERF_OF[d.id]+'</span>':'')+'</div>'+
       '</div>'+
       '<div class="cfoot"><button class="mini" data-replay="'+i+'">'+esc(t.replay)+'</button>'+
         '<button class="mini" data-prompt="'+i+'">'+esc(t.copyPrompt)+'</button></div>'+
@@ -3157,6 +3168,95 @@ function setMotion(off){
   $('#motionBtn').textContent=off?UI[curLang].motionOn:UI[curLang].motionOff;
 }
 $('#motionBtn').onclick=()=>setMotion(!document.documentElement.classList.contains('no-motion'));
+
+/* ============ 渲染成本標註 ============
+   依「這張示範實際動畫到的屬性」分類，取最貴的階段（layout > paint > composite）。
+   人工校對過的例外：blurin 動了 letter-spacing 歸 layout；glass／goo 的 filter
+   在合成期仍需逐幀重繪歸 paint；文字逐幀改內容（counter／scramble…）歸 layout。 */
+const DEMO_PERF={
+ composite:('fade rise pop spin flipin easing spring overshoot anticipation stagger squash followthrough '
+  +'flip shared viewtransition reorder reveal parallax sticky splittext maskreveal marquee kinetic '
+  +'pathfollow magnetic trail inertia rubber ripple tilt cardflip cube layerdepth coverflow shimmer '
+  +'grain sprite dissolve orbit startingstyle discrete linearspring multitrack '
+  +'vt-custom vt-group vt-types vt-clash vt-list vt-mpa').split(' '),
+ paint:('wipein morphradius clipwipe checkmark gradmask pathmorph linedraw gradflow glow glass goo '
+  +'glitch chromatic wave curtain liquidnav propgradient scrolltimeline particles').split(' '),
+ layout:'blurin typewriter scramble counter varfont accordion autoheight scrollprog'.split(' ')
+};
+const PERF_OF={};for(const k in DEMO_PERF)for(const id of DEMO_PERF[k])PERF_OF[id]=k;
+const PERF_INFO={
+ composite:{zh:'渲染成本最低：只動 transform／opacity，交給合成器（GPU）處理',
+  cn:'渲染成本最低：只动 transform／opacity，交给合成器（GPU）处理',
+  en:'Cheapest: animates transform/opacity only — handled by the compositor (GPU)',
+  ja:'最も低コスト：transform／opacity のみ。コンポジタ（GPU）が処理します',
+  ko:'가장 저렴: transform/opacity만 움직여 컴포지터(GPU)가 처리합니다'},
+ paint:{zh:'會觸發重繪（Paint）：filter、clip-path、背景／陰影等，成本中等',
+  cn:'会触发重绘（Paint）：filter、clip-path、背景／阴影等，成本中等',
+  en:'Triggers repaint: filter, clip-path, background/shadow — moderate cost',
+  ja:'再描画（Paint）が発生：filter・clip-path・背景／影など。中程度のコスト',
+  ko:'리페인트(Paint) 발생: filter·clip-path·배경/그림자 등, 중간 비용'},
+ layout:{zh:'會觸發重排（Layout）：尺寸或文字內容逐幀變動，成本最高',
+  cn:'会触发重排（Layout）：尺寸或文字内容逐帧变动，成本最高',
+  en:'Triggers layout/reflow: size or text content changes every frame — most expensive',
+  ja:'レイアウト再計算が発生：サイズや文字内容が毎フレーム変化。最も高コスト',
+  ko:'레이아웃(리플로우) 발생: 크기·텍스트가 매 프레임 변해 가장 비쌉니다'}
+};
+
+/* ============ 搜尋強化：使用情境詞（五語）＋英文同義字 ============
+   不佔 UI，只進 data-k 搜尋索引：搜「入場」「loading」「頁面轉場」「slide」都找得到。 */
+const SCEN_WORDS={
+ enter:{zh:'入場 進場 出現 入口',en:'entrance enter appear',ja:'入場 登場',ko:'등장 진입'},
+ exit:{zh:'離場 退場 消失 離開',en:'exit leave disappear',ja:'退場 消える',ko:'퇴장 사라짐'},
+ feedback:{zh:'回饋 互動 按下',en:'feedback press interaction',ja:'フィードバック 押下',ko:'피드백 누름'},
+ loading:{zh:'載入 等待 讀取',en:'loading wait',ja:'ローディング 読み込み',ko:'로딩 대기'},
+ transition:{zh:'頁面轉場 切換 導航',en:'page-transition navigation',ja:'画面遷移 遷移',ko:'화면 전환'},
+ scroll:{zh:'捲動 滾動',en:'scroll scrolling',ja:'スクロール',ko:'스크롤'},
+ attention:{zh:'強調 提示 注意',en:'attention emphasis highlight',ja:'強調 注目',ko:'강조 주목'}
+};
+const DEMO_SCEN={
+ fade:'enter exit',rise:'enter',pop:'enter attention',spin:'loading',blurin:'enter',flipin:'enter',
+ wipein:'enter',easing:'',spring:'feedback',overshoot:'enter attention',anticipation:'feedback',
+ stagger:'enter',squash:'feedback',followthrough:'enter',flip:'transition',shared:'transition',
+ viewtransition:'transition',reorder:'transition',morphradius:'feedback attention',accordion:'feedback',
+ reveal:'enter scroll',parallax:'scroll',scrollprog:'scroll',sticky:'scroll',scrolltimeline:'scroll',
+ typewriter:'enter attention',scramble:'attention',splittext:'enter',maskreveal:'enter',
+ counter:'attention',marquee:'attention',varfont:'feedback attention',kinetic:'attention',
+ linedraw:'enter attention',pathfollow:'attention',clipwipe:'enter transition',
+ checkmark:'feedback attention',gradmask:'enter',pathmorph:'feedback',magnetic:'feedback',
+ trail:'feedback',inertia:'feedback',rubber:'feedback',particles:'attention feedback',
+ ripple:'feedback',tilt:'feedback',cardflip:'feedback transition',cube:'transition',
+ layerdepth:'feedback',coverflow:'feedback',shimmer:'loading',gradflow:'attention',glow:'attention',
+ grain:'attention',glass:'attention',goo:'attention',glitch:'attention',chromatic:'attention',
+ sprite:'attention',wave:'attention loading',curtain:'transition',dissolve:'transition',
+ liquidnav:'feedback transition',orbit:'attention loading',startingstyle:'enter',
+ discrete:'enter exit',autoheight:'feedback',linearspring:'feedback',propgradient:'attention',
+ multitrack:'enter','vt-custom':'transition','vt-group':'transition','vt-types':'transition',
+ 'vt-clash':'transition','vt-list':'transition','vt-mpa':'transition'
+};
+const DEMO_KW={
+ fade:'crossfade',rise:'slide slide-up fade-up',pop:'scale zoom',spin:'rotate rotation spinner',
+ blurin:'blur focus',flipin:'flip 3d',wipein:'wipe clip reveal',easing:'ease curve bezier',
+ spring:'bounce physics',overshoot:'bounce back',stagger:'delay cascade',squash:'stretch',
+ followthrough:'overlap',flip:'first-last-invert-play shared layout',shared:'shared-element hero',
+ viewtransition:'view-transition',reorder:'sort shuffle list',morphradius:'morph shape',
+ accordion:'expand collapse height-auto',reveal:'scroll-reveal fade-in',scrollprog:'progress',
+ sticky:'pin pinned',scrolltimeline:'scroll-driven',typewriter:'typing caret',
+ scramble:'decode matrix',splittext:'letters stagger-text',maskreveal:'mask',counter:'count-up number',
+ marquee:'ticker loop',varfont:'variable-font weight',kinetic:'typography',linedraw:'svg stroke draw',
+ pathfollow:'offset-path motion-path',clipwipe:'clip-path circle',checkmark:'check success',
+ gradmask:'gradient wipe',pathmorph:'morph svg d',magnetic:'magnet hover',trail:'cursor follow',
+ inertia:'momentum drag flick',rubber:'rubberband elastic overscroll',particles:'confetti',
+ ripple:'material touch',tilt:'3d hover glare',cardflip:'flip-card',cube:'3d rotate',
+ layerdepth:'mouse-parallax depth',coverflow:'carousel picker wheel',
+ shimmer:'skeleton placeholder pulse',gradflow:'animated-gradient mesh',glow:'pulse breathing',
+ grain:'noise film texture',glass:'glassmorphism frosted backdrop',goo:'gooey metaball blob liquid',
+ glitch:'distortion vhs',chromatic:'aberration rgb-split',sprite:'frame-by-frame steps flipbook',
+ wave:'grid dots ripple-grid',curtain:'shutter panels',dissolve:'pixelate mosaic',
+ liquidnav:'tab indicator elastic',orbit:'circular satellite',startingstyle:'entry display',
+ discrete:'display-none transition',autoheight:'height-auto calc-size',
+ linearspring:'css-spring linear-easing',propgradient:'property gradient-angle',
+ multitrack:'multiple-keyframes tracks'
+};
 
 /* ============ 語言包（简中／日本語／한국어，由 scratchpad 的 pack-*.json 產生） ============ */
 /* __PACKS_START__ */
