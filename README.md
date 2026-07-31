@@ -1,6 +1,6 @@
 # 動畫表現方式圖鑑 Motion Design Field Guide
 
-[English](README.en.md) ｜ 繁體中文
+繁體中文 ｜ [简体中文](README.zh-CN.md) ｜ [English](README.en.md) ｜ [日本語](README.ja.md) ｜ [한국어](README.ko.md)
 
 [![GitHub stars](https://img.shields.io/github/stars/qpalzm963/animation-gallery?style=social)](https://github.com/qpalzm963/animation-gallery/stargazers)
 
@@ -25,6 +25,16 @@ open index.html
 # 或起個本機伺服器（View Transitions 的部分示範需要 http:// 而非 file://）
 python3 -m http.server 8991
 ```
+
+## 畫面預覽
+
+| 淺色主題 | 深色主題（`?theme=dark`） |
+|---|---|
+| ![淺色主題](assets/home-light.png) | ![深色主題](assets/home-dark.png) |
+
+介面支援五種語言，網址帶 `?lang=` 就能直接分享指定語言，例如[日本語版](https://qpalzm963.github.io/animation-gallery/?lang=ja)：
+
+![日文介面](assets/lang-ja.png)
 
 ## 內容
 

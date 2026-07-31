@@ -1,6 +1,6 @@
 # Motion Design Field Guide 動畫表現方式圖鑑
 
-English ｜ [繁體中文](README.md)
+English ｜ [繁體中文](README.md) ｜ [简体中文](README.zh-CN.md) ｜ [日本語](README.ja.md) ｜ [한국어](README.ko.md)
 
 [![GitHub stars](https://img.shields.io/github/stars/qpalzm963/animation-gallery?style=social)](https://github.com/qpalzm963/animation-gallery/stargazers)
 
@@ -27,6 +27,16 @@ open index.html
 # or run a local server (some View Transitions demos need http:// rather than file://)
 python3 -m http.server 8991
 ```
+
+## Screenshots
+
+| Light theme | Dark theme (`?theme=dark`) |
+|---|---|
+| ![Light theme](assets/home-light.png) | ![Dark theme](assets/home-dark.png) |
+
+The UI ships in five languages — add `?lang=` to share a specific one, e.g. the [Japanese version](https://qpalzm963.github.io/animation-gallery/?lang=ja):
+
+![Japanese UI](assets/lang-ja.png)
 
 ## Contents
 

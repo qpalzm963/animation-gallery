@@ -3130,7 +3130,10 @@ function renderTheory(){
 }
 
 /* 主題（預設日間）/ 減少動態 */
+/* 網址參數 ?theme=dark&lang=ja 可直接指定主題與語言（分享用；不覆寫既存偏好） */
+const QS=new URLSearchParams(location.search);
 let curTheme=localStorage.getItem('dmTheme');
+if(QS.get('theme')==='dark'||QS.get('theme')==='light')curTheme=QS.get('theme');
 if(curTheme!=='dark')curTheme='light';
 function applyTheme(){
   document.documentElement.dataset.theme=curTheme;
@@ -3166,6 +3169,7 @@ const PACKS={"cn":{"ui":{"heroTitle":"动画表现方式<em>图鉴</em>","lede":
 
 /* 語系（預設繁中，記住選擇） */
 let curLang=localStorage.getItem('dmLang');
+if(QS.get('lang'))curLang=QS.get('lang');
 if(!HTML_LANG[curLang]||(curLang!=='zh'&&curLang!=='en'&&!PACKS[curLang]))curLang='zh';
 function applyLang(){
   const t=UI[curLang];
