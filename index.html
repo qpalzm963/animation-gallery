@@ -161,6 +161,9 @@ section.wrap{padding:80px 24px 56px}
   padding:2px 7px;border-radius:6px}
 .tag.trig{color:var(--ac2);border-color:color-mix(in srgb,var(--ac2) 35%,transparent)}
 .tag.pf{text-transform:capitalize;cursor:help}
+.pfpop{position:fixed;z-index:80;background:var(--surface);border:1px solid var(--line2);
+  border-radius:10px;padding:9px 12px;font:400 12px/1.6 var(--sans);color:var(--tx2);
+  box-shadow:0 10px 30px rgba(0,0,0,.22);max-width:280px}
 .tag.pf-composite{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 40%,transparent)}
 .tag.pf-paint{color:var(--ac2);border-color:color-mix(in srgb,var(--ac2) 40%,transparent)}
 .tag.pf-layout{color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,transparent)}
@@ -3001,6 +3004,7 @@ function demoText(d){
     when:p.when||(cn?d.when:(en.when||d.when))};
 }
 function renderGallery(){
+  if(typeof closePfPop==='function')closePfPop();
   const t=UI[curLang];
   gallery.innerHTML=DEMOS.map((d,i)=>{
     const cat=CATS.find(c=>c.id===d.cat)||{name:d.cat};
@@ -3048,7 +3052,29 @@ function unmount(stage){
   stage.innerHTML='';
 }
 
+/* 效能徽章說明：hover 走 title，點擊（含觸控）彈出小卡 */
+let pfPop=null;
+function closePfPop(){ if(pfPop){pfPop.remove();pfPop=null;} }
+document.addEventListener('click',e=>{ if(pfPop&&!e.target.closest('.tag.pf'))closePfPop(); });
+addEventListener('scroll',closePfPop,{passive:true});
+
 gallery.addEventListener('click',e=>{
+  const pf=e.target.closest('.tag.pf');
+  if(pf){
+    const same=pfPop&&pfPop._for===pf;
+    closePfPop();
+    if(!same){
+      pfPop=document.createElement('div');
+      pfPop.className='pfpop';
+      pfPop.textContent=pf.title;
+      document.body.appendChild(pfPop);
+      const rc=pf.getBoundingClientRect();
+      pfPop.style.left=Math.max(12,Math.min(rc.left,innerWidth-pfPop.offsetWidth-12))+'px';
+      pfPop.style.top=(rc.bottom+8)+'px';
+      pfPop._for=pf;
+    }
+    return;
+  }
   const r=e.target.closest('[data-replay]');
   if(r){mount($('.stage[data-i="'+r.dataset.replay+'"]'));return;}
   const p=e.target.closest('[data-prompt]');
