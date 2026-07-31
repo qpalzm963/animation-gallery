@@ -76,7 +76,7 @@ framework’s idioms.
 
 - Category filtering, keyword search — understands scenario keywords and synonyms ("entrance", "loading", "slide" all work)
 - Every card is labeled with its rendering cost (Composite / Paint / Layout), with an explanatory tooltip
-- Replay a single card / replay all
+- Replay a single card / replay all — with motion paused, replaying one card plays just that one while everything else stays still
 - UI in five languages — Traditional Chinese / Simplified Chinese / English / Japanese / Korean, toggle in the top right, remembers your choice
 - Deep links to every card — click a card’s number to copy its `#t-<id>` link and share a specific technique
 - Dark / light theme toggle (defaults to light), remembers your choice

@@ -208,7 +208,8 @@ details.code pre+pre{border-top:1px dashed var(--line)}
 footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--tx3);font-size:13px}
 footer b{color:var(--tx2)}
 .defs{position:absolute;width:0;height:0;overflow:hidden}
-html.no-motion .stage *{animation-play-state:paused!important;transition:none!important}
+/* 暫停動態時全部靜止，但按過「重播」的那張會拿到 .solo —— 單獨播它，其餘維持不動 */
+html.no-motion .stage:not(.solo) *{animation-play-state:paused!important;transition:none!important}
 @media (max-width:640px){
   .hero{padding:52px 0 34px}
   section{padding:52px 0 40px}
@@ -3078,7 +3079,16 @@ gallery.addEventListener('click',e=>{
     return;
   }
   const r=e.target.closest('[data-replay]');
-  if(r){mount($('.stage[data-i="'+r.dataset.replay+'"]'));return;}
+  if(r){
+    const st=$('.stage[data-i="'+r.dataset.replay+'"]');
+    /* 暫停動態時仍要看得到這一張：只讓它單獨播，同時只會有一張 */
+    if(document.documentElement.classList.contains('no-motion')){
+      $$('.stage.solo').forEach(s=>{if(s!==st)s.classList.remove('solo');});
+      st.classList.add('solo');
+    }
+    mount(st);
+    return;
+  }
   const p=e.target.closest('[data-prompt]');
   if(p){copyText(buildPrompt(DEMOS[+p.dataset.prompt],curFw),p);return;}
   const ln=e.target.closest('[data-link]');
@@ -3193,6 +3203,7 @@ $('#themeBtn').onclick=()=>{
 };
 function setMotion(off){
   document.documentElement.classList.toggle('no-motion',off);
+  $$('.stage.solo').forEach(s=>s.classList.remove('solo'));   /* 切換時清掉單播狀態 */
   $('#motionBtn').textContent=off?UI[curLang].motionOn:UI[curLang].motionOff;
 }
 $('#motionBtn').onclick=()=>setMotion(!document.documentElement.classList.contains('no-motion'));
