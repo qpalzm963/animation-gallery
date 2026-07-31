@@ -10,7 +10,9 @@ Transitions、捲動時間軸、液態融合、故障藝術這類比較少見的
 
 ## 線上瀏覽
 
-打開 [`index.html`](index.html) 即可，不需要建置或安裝任何東西：
+**https://qpalzm963.github.io/animation-gallery/**
+
+或打開 [`index.html`](index.html)，不需要建置或安裝任何東西：
 
 ```bash
 open index.html
