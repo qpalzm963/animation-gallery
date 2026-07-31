@@ -1,5 +1,7 @@
 # 動畫表現方式圖鑑 Motion Design Field Guide
 
+[English](README.en.md) ｜ 繁體中文
+
 [![GitHub stars](https://img.shields.io/github/stars/qpalzm963/animation-gallery?style=social)](https://github.com/qpalzm963/animation-gallery/stargazers)
 
 一份單頁互動圖鑑，收錄 **76 個網頁動畫技法** —— 從最常見的淡入位移，到 FLIP、View
@@ -58,6 +60,7 @@ CSS），prompt 帶的是**視覺規格**而不是要求逐行翻譯 CSS，並�
 
 - 分類篩選、關鍵字搜尋
 - 單卡重播 / 全部重播
+- 中文／English 雙語介面（右上角切換），選擇會記住
 - 深色／淺色主題切換（預設淺色），選擇會記住
 - `prefers-reduced-motion` 偵測，會自動暫停示範動畫並提供「還是想看」的選項
 - 離屏自動卸載，避免大量示範同時運行拖垮效能

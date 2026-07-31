@@ -195,9 +195,8 @@ html.no-motion .stage *{animation-play-state:paused!important;transition:none!im
 <header class="hero">
   <div class="wrap">
     <div class="eyebrow">Motion Design Field Guide</div>
-    <h1>動畫表現方式<em>圖鑑</em></h1>
-    <p class="lede">從最常見的淡入位移，到 FLIP、捲動時間軸、液態融合、故障藝術這類比較少見的手法。
-      每一張卡片都是<strong>真的在動</strong>的實作，附上什麼時候該用、以及可以直接抄走的核心程式碼。</p>
+    <h1 id="heroTitle"></h1>
+    <p class="lede" id="heroLede"></p>
     <div class="stats">
       <div class="stat"><b id="stCount">—</b><span>TECHNIQUES</span></div>
       <div class="stat"><b id="stCat">—</b><span>CATEGORIES</span></div>
@@ -211,116 +210,32 @@ html.no-motion .stage *{animation-play-state:paused!important;transition:none!im
   <div class="wrap">
     <div class="chips" id="chips"></div>
     <div class="tools">
-      <input class="search" id="search" type="search" placeholder="搜尋技法／關鍵字…" autocomplete="off">
-      <span class="fwlab">Prompt 目標</span>
-      <select class="fw" id="fw" title="複製 Prompt 時要產生哪個框架的版本"></select>
-      <button class="iconbtn" id="copyAll">複製全部</button>
-      <button class="iconbtn" id="replayAll">全部重播</button>
-      <button class="iconbtn" id="motionBtn">暫停動態</button>
-      <button class="iconbtn" id="themeBtn" title="切換深淺色">☾</button>
+      <input class="search" id="search" type="search" autocomplete="off">
+      <span class="fwlab" id="fwlab"></span>
+      <select class="fw" id="fw"></select>
+      <button class="iconbtn" id="copyAll"></button>
+      <button class="iconbtn" id="replayAll"></button>
+      <button class="iconbtn" id="motionBtn"></button>
+      <button class="iconbtn" id="themeBtn">☾</button>
+      <button class="iconbtn" id="langBtn"></button>
     </div>
   </div>
 </div>
 
 <main>
   <section class="wrap">
-    <div class="shead"><span class="n">01</span><h2>技法圖鑑</h2></div>
-    <p class="sdesc">用上方分類或搜尋來過濾。滑鼠移到卡片上、或按「重播」可以重看一次；有些技法需要 hover、點擊或拖曳才會觸發，標籤會註明。</p>
+    <div class="shead"><span class="n" id="s01n"></span><h2 id="s01h"></h2></div>
+    <p class="sdesc" id="s01d"></p>
     <div id="gallery"></div>
-    <p class="empty" id="empty" hidden>找不到符合的技法。</p>
+    <p class="empty" id="empty" hidden></p>
   </section>
 
   <section class="theory">
-    <div class="wrap">
-      <div class="shead"><span class="n">02</span><h2>動畫十二法則 → 介面對照</h2></div>
-      <p class="sdesc">1930 年代迪士尼歸納出的十二法則，是所有動畫表現的底層文法。它們不是懷舊，換成介面語彙後每一條都還在用。</p>
-      <div class="laws">
-        <div class="law"><b><i>01</i>擠壓與伸展 Squash &amp; Stretch</b><p>按鈕按下時微微變扁、放開時回彈。體積守恆的形變讓元件有材質與重量，而不是一張貼紙。</p></div>
-        <div class="law"><b><i>02</i>預備動作 Anticipation</b><p>選單展開前先反向縮一下。給眼睛一個「要發生事情了」的提示，之後的主動作才跟得上。</p></div>
-        <div class="law"><b><i>03</i>演出布局 Staging</b><p>一次只讓一件事成為主角。同時三個東西在動＝沒有東西在動，使用者的視線會不知道要放哪。</p></div>
-        <div class="law"><b><i>04</i>連續／關鍵影格 Pose to Pose</b><p>介面幾乎全是 pose to pose：定義 A 狀態與 B 狀態，中間交給補間。CSS transition 就是這個思維。</p></div>
-        <div class="law"><b><i>05</i>跟隨與重疊 Follow Through</b><p>卡片停了，裡面的文字晚 40–80ms 才停。物件不會整齊劃一地同時煞車，錯開才有生命。</p></div>
-        <div class="law"><b><i>06</i>慢進慢出 Slow In &amp; Out</b><p>現實中沒有等速運動。<code>linear</code> 只留給無限旋轉的 loading 與跑馬燈，其餘一律用 ease。</p></div>
-        <div class="law"><b><i>07</i>弧線 Arc</b><p>自然的運動走曲線。直線位移看起來機械，用 <code>offset-path</code> 或分離 X/Y 的不同 easing 就能造出弧。</p></div>
-        <div class="law"><b><i>08</i>次要動作 Secondary Action</b><p>主動作之外的小細節：卡片升起時陰影同步變深變散。它強化主動作，不能搶戲。</p></div>
-        <div class="law"><b><i>09</i>時間掌控 Timing</b><p>時長就是重量。同樣的位移，300ms 是輕巧、800ms 是笨重。改時間比改曲線更能改變個性。</p></div>
-        <div class="law"><b><i>10</i>誇張 Exaggeration</b><p>超過目標再回彈，比精準到位更有說服力。overshoot 曲線 <code>cubic-bezier(.34,1.56,.64,1)</code> 就是這條法則。</p></div>
-        <div class="law"><b><i>11</i>立體感 Solid Drawing</b><p>3D 轉場一定要給 <code>perspective</code>，否則翻轉看起來像被壓扁的紙片，不是有厚度的物件。</p></div>
-        <div class="law"><b><i>12</i>吸引力 Appeal</b><p>動畫是產品的口音。整站共用同一組 easing 與時長階梯，使用者才會覺得「這個 app 有個性」。</p></div>
-      </div>
-
-      <div class="shead" style="margin-top:52px"><span class="n">03</span><h2>跨平台對照</h2></div>
-      <p class="sdesc">同一個表現，在三個平台上叫什麼名字。這張表的用途不是查 API，而是避免「把 CSS 的寫法硬翻成 Flutter」——
-        每個平台都有自己更順的路。</p>
-      <div class="tblwrap">
-      <table class="tbl">
-        <tr><th>概念</th><th>CSS / Web</th><th>Flutter</th><th>SwiftUI</th></tr>
-        <tr><td>緩動曲線</td><td><code>cubic-bezier()</code> / <code>linear()</code></td><td><code>Curves.easeOutCubic</code>（內建 40+ 條具名曲線）</td><td><code>.easeOut</code>、語意化的 <code>.smooth</code> / <code>.snappy</code> / <code>.bouncy</code></td></tr>
-        <tr><td>關鍵影格</td><td><code>@keyframes</code>（所有屬性共用一條時間軸）</td><td><code>TweenSequence</code> + <code>Interval</code></td><td><code>KeyframeAnimator</code>（每個屬性一條 <code>KeyframeTrack</code>）</td></tr>
-        <tr><td>狀態改變自動補間</td><td><code>transition</code></td><td><code>AnimatedContainer</code> / <code>TweenAnimationBuilder</code>（implicit）</td><td><code>.animation(_:value:)</code></td></tr>
-        <tr><td>手動控制播放</td><td>Web Animations API</td><td><code>AnimationController</code>（explicit，記得 <code>dispose</code>）</td><td><code>withAnimation</code> + 自訂狀態</td></tr>
-        <tr><td>共享元素轉場</td><td>FLIP 手刻 / View Transitions API</td><td><code>Hero</code>（同一個 tag 就完成，幾乎免費）</td><td><code>matchedGeometryEffect</code>、<code>.navigationTransition(.zoom)</code></td></tr>
-        <tr><td>彈簧物理</td><td><code>linear()</code> 近似 / JS 逐幀模擬</td><td><code>SpringSimulation</code> + <code>SpringDescription</code></td><td><code>.spring(response:dampingFraction:)</code></td></tr>
-        <tr><td>錯位延遲</td><td><code>animation-delay</code></td><td>單一 controller + <code>Interval</code> 切段</td><td><code>.delay()</code> / <code>PhaseAnimator</code></td></tr>
-        <tr><td>捲動驅動</td><td><code>animation-timeline: scroll()</code> / <code>view()</code></td><td><code>ScrollController</code> + <code>AnimatedBuilder</code></td><td><code>scrollTransition</code>（三段式 phase）</td></tr>
-        <tr><td>材質模糊</td><td><code>backdrop-filter</code></td><td><code>BackdropFilter</code></td><td><code>.ultraThinMaterial</code>、<code>.glassEffect()</code>（iOS 26）</td></tr>
-        <tr><td>自訂繪圖</td><td>Canvas 2D / SVG</td><td><code>CustomPainter</code> + <code>PathMetric</code></td><td><code>Canvas</code> + <code>Path</code></td></tr>
-        <tr><td>Shader / 濾鏡</td><td>SVG filter / WebGL</td><td><code>FragmentProgram</code>（<code>.frag</code>，Impeller）</td><td><code>.colorEffect</code> / <code>.distortionEffect</code> / <code>.layerEffect</code></td></tr>
-        <tr><td>頁面轉場</td><td>View Transitions API</td><td><code>PageRouteBuilder</code> + <code>Hero</code></td><td>NavigationStack 轉場、<code>.zoom</code></td></tr>
-        <tr><td>可中斷的手勢轉場</td><td>全部手刻</td><td>要自己接手勢與 controller</td><td>系統內建，是 iOS 的招牌</td></tr>
-      </table>
-      </div>
-
-      <div class="shead" style="margin-top:52px"><span class="n">04</span><h2>其他平台獨有的表現方式</h2></div>
-      <p class="sdesc">這些在網頁上沒有對等物，不是「還沒做」而是心智模型不同。做跨平台產品時值得知道自己少了什麼、
-        或多了什麼。</p>
-      <div class="laws">
-        <div class="law"><b><span class="plat sw">SwiftUI</span>KeyframeAnimator 多軌道</b><p>每個屬性各有一條獨立時間軸。CSS 一組 <code>@keyframes</code> 綁死所有屬性，想拆只能靠巢狀元素。</p></div>
-        <div class="law"><b><span class="plat sw">SwiftUI</span>PhaseAnimator 階段序列</b><p>用一串離散階段驅動，每次切換自動補間。Web 要自己寫一個 state machine 再切 class。</p></div>
-        <div class="law"><b><span class="plat sw">SwiftUI</span>scrollTransition 的 phase</b><p><code>.topLeading</code> / <code>.identity</code> / <code>.bottomTrailing</code> 三段式，比 IntersectionObserver 的「進來了沒」細緻得多。</p></div>
-        <div class="law"><b><span class="plat sw">SwiftUI</span>.symbolEffect()</b><p>SF Symbols 內建 bounce / pulse / variableColor / replace。Web 完全沒有「圖示自帶動畫」這個概念。</p></div>
-        <div class="law"><b><span class="plat sw">SwiftUI</span>語意化 spring</b><p><code>.smooth</code> / <code>.snappy</code> / <code>.bouncy</code> 把物理參數包成設計語彙。CSS 只能用 <code>linear()</code> 逼近，沒有共同命名。</p></div>
-        <div class="law"><b><span class="plat sw">SwiftUI</span>.contentTransition(.numericText())</b><p>系統級的數字捲動。本圖鑑那張「數字滾動」是自己用 rAF 刻的。</p></div>
-        <div class="law"><b><span class="plat sw">SwiftUI</span>.sensoryFeedback 觸覺同步</b><p>動畫表現的第四個維度。Web 只有很弱的 Vibration API，而且桌機沒有。</p></div>
-        <div class="law"><b><span class="plat sw">SwiftUI</span>Liquid Glass</b><p><code>GlassEffectContainer</code> + <code>glassEffectID</code>（iOS 26）是系統級的液態融合：可互動、隨手勢折射、還會 morph。本圖鑑的「液態融合」只是用 SVG 濾鏡模擬視覺。</p></div>
-        <div class="law"><b><span class="plat fl">Flutter</span>Hero</b><p>兩個路由的元件放同一個 tag，共享元素轉場就完成了。Web 要手刻 FLIP，或用還在普及中的 View Transitions。</p></div>
-        <div class="law"><b><span class="plat fl">Flutter</span>Curves 全家族</b><p>40+ 條具名曲線（<code>easeOutBack</code>、<code>elasticIn</code>、<code>bounceOut</code>…）。不用背 cubic-bezier 的四個數字。</p></div>
-        <div class="law"><b><span class="plat fl">Flutter</span>Impeller 的 shader 預熱</b><p><code>.frag</code> 在編譯期就編好，不像 Web 首次執行 shader 會卡一下。</p></div>
-      </div>
-
-      <div class="shead" style="margin-top:52px"><span class="n">05</span><h2>時長與曲線速查</h2></div>
-      <p class="sdesc">不知道該設幾毫秒的時候，先從這張表抄，再依實際感覺微調。原則：進場快、退場更快，距離越遠時間越長但成長是次線性的。</p>
-      <table class="tbl">
-        <tr><th>情境</th><th>建議時長</th><th>曲線</th><th>為什麼</th></tr>
-        <tr><td>hover / 按下回饋</td><td>80–150ms</td><td><code>ease-out</code></td><td>必須跟手。超過 200ms 就會被感知成「卡」。</td></tr>
-        <tr><td>小元件開合<br>（tooltip、下拉）</td><td>150–250ms</td><td>進 <code>ease-out</code><br>出 <code>ease-in</code></td><td>進場要立刻可見所以先快後慢；退場使用者已不在乎，慢起快走直接讓開。</td></tr>
-        <tr><td>卡片展開 / 抽屜 / Modal</td><td>250–400ms</td><td><code>cubic-bezier(.2,.8,.2,1)</code></td><td>面積大、位移大，需要時間交代空間關係。</td></tr>
-        <tr><td>頁面轉場</td><td>400–600ms</td><td><code>cubic-bezier(.65,0,.35,1)</code></td><td>兩端都慢，中段快，像鏡頭推移而不是瞬移。</td></tr>
-        <tr><td>大物件位移 / 拖曳釋放</td><td>spring</td><td>剛性 0.08 / 阻尼 0.75</td><td>有慣性的東西不該有固定時長，物理模擬比 duration 準。</td></tr>
-        <tr><td>Loading / 跑馬燈</td><td>1.2–2.5s loop</td><td><code>linear</code></td><td>無限循環一旦有 ease 就會出現「心跳」節點，反而顯得不順。</td></tr>
-        <tr><td>列表逐項進場</td><td>每項 delay 30–60ms</td><td><code>ease-out</code></td><td>間隔太大會讓最後一項等太久；超過 8 項就該分批或改用單一群組動畫。</td></tr>
-      </table>
-
-      <div class="rules">
-        <div class="rule"><b>只動 transform 與 opacity</b><span>這兩個屬性可以完全交給 GPU 合成。動 <code>width/top/margin</code> 會觸發 layout，60fps 立刻崩。</span></div>
-        <div class="rule"><b>退場永遠比進場快</b><span>常見比例 2:1。進場是邀請、退場是讓路，使用者不想等一個他已經關掉的東西。</span></div>
-        <div class="rule"><b>可被打斷</b><span>使用者中途改變主意時，動畫要從當下狀態接續，而不是播完再反應。Web Animations API 比 CSS 好處理這件事。</span></div>
-        <div class="rule"><b>尊重 reduced-motion</b><span>前庭功能敏感者會因為視差與大位移暈眩。用 <code>@media (prefers-reduced-motion:reduce)</code> 降級成單純淡入，不要整個關掉。</span></div>
-        <div class="rule"><b>動畫是狀態的解釋</b><span>好的動畫在回答「這個東西從哪來、要去哪」。回答不出來的動畫就是裝飾，該砍。</span></div>
-        <div class="rule"><b>一致性大於精彩</b><span>整站 3 條 easing、4 個時長級距就夠了。每個元件自訂曲線＝沒有設計系統。</span></div>
-      </div>
-      <div class="notice" id="rmNotice" hidden>
-        <span>偵測到你的系統偏好「減少動態」，頁面已自動暫停所有示範動畫。</span>
-        <button class="mini" id="rmResume">還是想看</button>
-      </div>
-    </div>
+    <div class="wrap" id="theoryWrap"></div>
   </section>
 </main>
 
-<footer><div class="wrap">
-  單一 HTML 檔、零相依套件、全部原生 CSS / Web Animations API / Canvas。<br>
-  <b>每張卡片附的程式碼就是這一頁實際套用的程式碼</b>，可以直接複製。
-</div></footer>
+<footer><div class="wrap" id="footerText"></div></footer>
 
 <script>
 /* ============================================================
@@ -341,6 +256,246 @@ const CATS = [
   {id:'vt',      name:'View Transitions'}
 ];
 
+const CAT_EN = {
+  basic:'Basics', timing:'Timing & Easing', layout:'Layout Transitions',
+  scroll:'Scroll-driven', text:'Text Animation', svg:'Drawing & Masks',
+  physics:'Physics & Interaction', depth:'Space & 3D', surface:'Light & Material',
+  special:'Experimental', modern:'Modern CSS Transitions', vt:'View Transitions'
+};
+function catName(cat){ return curLang==='en' ? (CAT_EN[cat.id]||cat.name) : cat.name; }
+function pick(v){ return typeof v==='string' ? v : v[curLang]; }
+
+const TRIG = {zh:{auto:'自動播放',hover:'滑鼠移入',click:'點擊',drag:'拖曳',scroll:'捲動'},
+              en:{auto:'Auto-play',hover:'Hover',click:'Click',drag:'Drag',scroll:'Scroll'}};
+
+/* ============================================================
+   介面文字（雙語）
+
+   卡片內容（title/en/desc/when）走 DEMOS + DEMO_EN；這裡放的是頁面其餘
+   固定文字：hero、工具列、章節標題與說明、動畫理論區塊的資料、頁尾。
+   ============================================================ */
+const UI = {
+  zh:{
+    heroTitle:'動畫表現方式<em>圖鑑</em>',
+    lede:'從最常見的淡入位移，到 FLIP、捲動時間軸、液態融合、故障藝術這類比較少見的手法。'
+       +'每一張卡片都是<strong>真的在動</strong>的實作，附上什麼時候該用、以及可以直接抄走的核心程式碼。',
+    searchPh:'搜尋技法／關鍵字…', fwLab:'Prompt 目標', fwTitle:'複製 Prompt 時要產生哪個框架的版本',
+    copyAll:n=>'複製全部（'+n+'）', replayAll:'全部重播',
+    motionOff:'暫停動態', motionOn:'恢復動態', themeTitle:'切換深淺色',
+    langBtn:'EN', langTitle:'Switch to English',
+    all:'全部', empty:'找不到符合的技法。',
+    s01n:'01', s01h:'技法圖鑑',
+    s01d:'用上方分類或搜尋來過濾。滑鼠移到卡片上、或按「重播」可以重看一次；有些技法需要 hover、點擊或拖曳才會觸發，標籤會註明。',
+    viewCode:'看程式碼', replay:'↻ 重播', copyPrompt:'⧉ 複製 Prompt',
+    copied:'已複製 ✓', copyFail:'複製失敗',
+    copyfallMsg:'瀏覽器擋下了自動複製（通常是視窗沒有焦點，或以 file:// 開啟）。下面的文字已全選，直接按 ⌘C／Ctrl+C。',
+    copyfallClose:'關閉',
+    rmNotice:'偵測到你的系統偏好「減少動態」，頁面已自動暫停所有示範動畫。', rmResume:'還是想看',
+    footer:'單一 HTML 檔、零相依套件、全部原生 CSS / Web Animations API / Canvas。<br>'
+         +'<b>每張卡片附的程式碼就是這一頁實際套用的程式碼</b>，可以直接複製。',
+    s02n:'02', s02h:'動畫十二法則 → 介面對照',
+    s02d:'1930 年代迪士尼歸納出的十二法則，是所有動畫表現的底層文法。它們不是懷舊，換成介面語彙後每一條都還在用。',
+    s03n:'03', s03h:'跨平台對照',
+    s03d:'同一個表現，在三個平台上叫什麼名字。這張表的用途不是查 API，而是避免「把 CSS 的寫法硬翻成 Flutter」——每個平台都有自己更順的路。',
+    s04n:'04', s04h:'其他平台獨有的表現方式',
+    s04d:'這些在網頁上沒有對等物，不是「還沒做」而是心智模型不同。做跨平台產品時值得知道自己少了什麼、或多了什麼。',
+    s05n:'05', s05h:'時長與曲線速查',
+    s05d:'不知道該設幾毫秒的時候，先從這張表抄，再依實際感覺微調。原則：進場快、退場更快，距離越遠時間越長但成長是次線性的。',
+    durTh:['情境','建議時長','曲線','為什麼'], crossTh:['概念','CSS / Web','Flutter','SwiftUI'],
+  },
+  en:{
+    heroTitle:'Web Animation <em>Field Guide</em>',
+    lede:'From the most common fades and offsets to rarer techniques like FLIP, scroll timelines, gooey blobs, and glitch art. '
+       +'Every card is a <strong>real, running</strong> implementation, with notes on when to use it and the core code you can copy straight out.',
+    searchPh:'Search techniques / keywords…', fwLab:'Prompt for', fwTitle:'Which framework to generate the copied prompt for',
+    copyAll:n=>'Copy All ('+n+')', replayAll:'Replay All',
+    motionOff:'Pause Motion', motionOn:'Resume Motion', themeTitle:'Toggle theme',
+    langBtn:'中文', langTitle:'切換成中文',
+    all:'All', empty:'No matching techniques found.',
+    s01n:'01', s01h:'Technique Gallery',
+    s01d:'Filter with the categories or search above. Hover a card, or press Replay, to watch it again — some techniques need hover, click, or drag to trigger, and the tag will say which.',
+    viewCode:'View source', replay:'↻ Replay', copyPrompt:'⧉ Copy Prompt',
+    copied:'Copied ✓', copyFail:'Copy failed',
+    copyfallMsg:'Your browser blocked the automatic copy (usually because the window isn’t focused, or the page was opened via file://). The text below is already selected — just press ⌘C / Ctrl+C.',
+    copyfallClose:'Close',
+    rmNotice:'Detected your system’s “reduce motion” preference — all demo animations have been paused automatically.', rmResume:'Show me anyway',
+    footer:'A single HTML file, zero dependencies, all native CSS / Web Animations API / Canvas.<br>'
+         +'<b>The code shown on each card is the exact code running on this page</b> — copy it directly.',
+    s02n:'02', s02h:'The 12 Principles → Interface Equivalents',
+    s02d:'Disney’s twelve principles of animation, codified in the 1930s, are the underlying grammar of all motion design. They’re not nostalgia — translated into interface vocabulary, every one of them still applies.',
+    s03n:'03', s03h:'Cross-Platform Reference',
+    s03d:'Same behavior, different name on each of three platforms. This table isn’t for looking up APIs — it’s to stop you from translating CSS literally into Flutter. Every platform has its own more natural path.',
+    s04n:'04', s04h:'Platform-Exclusive Techniques',
+    s04d:'These have no equivalent on the web — not because nobody’s built it, but because the mental model is different. Worth knowing what you’re missing (or gaining) when building cross-platform.',
+    s05n:'05', s05h:'Duration & Easing Cheat Sheet',
+    s05d:'When you don’t know how many milliseconds to use, start by copying this table, then adjust to taste. The rule: entrances are fast, exits are faster, and duration grows sub-linearly with distance.',
+    durTh:['Situation','Suggested duration','Curve','Why'], crossTh:['Concept','CSS / Web','Flutter','SwiftUI'],
+  }
+};
+
+/* 動畫十二法則（12）：{title:{zh,en}, desc:{zh,en}} */
+const LAWS = [
+  {title:{zh:'擠壓與伸展 Squash & Stretch',en:'Squash & Stretch'},
+   desc:{zh:'按鈕按下時微微變扁、放開時回彈。體積守恆的形變讓元件有材質與重量，而不是一張貼紙。',
+         en:'A button flattens slightly on press and springs back on release. Volume-conserving deformation gives a component material and weight instead of feeling like a sticker.'}},
+  {title:{zh:'預備動作 Anticipation',en:'Anticipation'},
+   desc:{zh:'選單展開前先反向縮一下。給眼睛一個「要發生事情了」的提示，之後的主動作才跟得上。',
+         en:'A menu shrinks slightly in the opposite direction before it opens. It cues the eye that something is about to happen, so the main action reads as intentional.'}},
+  {title:{zh:'演出布局 Staging',en:'Staging'},
+   desc:{zh:'一次只讓一件事成為主角。同時三個東西在動＝沒有東西在動，使用者的視線會不知道要放哪。',
+         en:'Only one thing should be the protagonist at a time. Three things moving at once effectively means nothing is moving — the eye has nowhere to land.'}},
+  {title:{zh:'連續／關鍵影格 Pose to Pose',en:'Pose to Pose'},
+   desc:{zh:'介面幾乎全是 pose to pose：定義 A 狀態與 B 狀態，中間交給補間。CSS transition 就是這個思維。',
+         en:'Interfaces are almost entirely pose to pose: define state A and state B, and let tweening handle the middle. This is exactly the thinking behind CSS transition.'}},
+  {title:{zh:'跟隨與重疊 Follow Through',en:'Follow Through'},
+   desc:{zh:'卡片停了，裡面的文字晚 40–80ms 才停。物件不會整齊劃一地同時煞車，錯開才有生命。',
+         en:'A card stops, and the text inside it stops 40–80ms later. Objects don’t brake in perfect unison — the offset is what makes it feel alive.'}},
+  {title:{zh:'慢進慢出 Slow In & Out',en:'Slow In & Out'},
+   desc:{zh:'現實中沒有等速運動。<code>linear</code> 只留給無限旋轉的 loading 與跑馬燈，其餘一律用 ease。',
+         en:'Nothing in the real world moves at constant speed. Reserve <code>linear</code> for infinite spinners and marquees — use ease for everything else.'}},
+  {title:{zh:'弧線 Arc',en:'Arc'},
+   desc:{zh:'自然的運動走曲線。直線位移看起來機械，用 <code>offset-path</code> 或分離 X/Y 的不同 easing 就能造出弧。',
+         en:'Natural motion travels in curves. A straight-line move reads as mechanical — use <code>offset-path</code>, or different easing on X and Y, to bend it into an arc.'}},
+  {title:{zh:'次要動作 Secondary Action',en:'Secondary Action'},
+   desc:{zh:'主動作之外的小細節：卡片升起時陰影同步變深變散。它強化主動作，不能搶戲。',
+         en:'A small detail beyond the main action: a shadow deepening and softening as a card lifts. It reinforces the main action — it should never upstage it.'}},
+  {title:{zh:'時間掌控 Timing',en:'Timing'},
+   desc:{zh:'時長就是重量。同樣的位移，300ms 是輕巧、800ms 是笨重。改時間比改曲線更能改變個性。',
+         en:'Duration is weight. The same movement at 300ms feels light; at 800ms it feels heavy. Changing the duration shifts personality more than changing the curve does.'}},
+  {title:{zh:'誇張 Exaggeration',en:'Exaggeration'},
+   desc:{zh:'超過目標再回彈，比精準到位更有說服力。overshoot 曲線 <code>cubic-bezier(.34,1.56,.64,1)</code> 就是這條法則。',
+         en:'Overshooting the target and settling back reads as more convincing than landing precisely. The overshoot curve <code>cubic-bezier(.34,1.56,.64,1)</code> is this principle in code.'}},
+  {title:{zh:'立體感 Solid Drawing',en:'Solid Drawing'},
+   desc:{zh:'3D 轉場一定要給 <code>perspective</code>，否則翻轉看起來像被壓扁的紙片，不是有厚度的物件。',
+         en:'A 3D transition always needs <code>perspective</code>, or a flip just looks like a flattened sheet of paper rather than an object with depth.'}},
+  {title:{zh:'吸引力 Appeal',en:'Appeal'},
+   desc:{zh:'動畫是產品的口音。整站共用同一組 easing 與時長階梯，使用者才會覺得「這個 app 有個性」。',
+         en:'Motion is a product’s accent. Sharing one easing set and duration ladder across the whole site is what makes users feel “this app has a personality”.'}},
+];
+
+/* 跨平台概念對照（13 列）：concept 需翻譯，其餘欄位是程式碼/術語，兩語共用 */
+const CROSS_TABLE = [
+  {concept:{zh:'緩動曲線',en:'Easing curve'}, css:'<code>cubic-bezier()</code> / <code>linear()</code>',
+   flutter:{zh:'<code>Curves.easeOutCubic</code>（內建 40+ 條具名曲線）',en:'<code>Curves.easeOutCubic</code> (40+ built-in named curves)'},
+   swiftui:{zh:'<code>.easeOut</code>、語意化的 <code>.smooth</code> / <code>.snappy</code> / <code>.bouncy</code>',en:'<code>.easeOut</code>, or the semantic <code>.smooth</code> / <code>.snappy</code> / <code>.bouncy</code>'}},
+  {concept:{zh:'關鍵影格',en:'Keyframes'},
+   css:{zh:'<code>@keyframes</code>（所有屬性共用一條時間軸）',en:'<code>@keyframes</code> (all properties share one timeline)'},
+   flutter:'<code>TweenSequence</code> + <code>Interval</code>',
+   swiftui:{zh:'<code>KeyframeAnimator</code>（每個屬性一條 <code>KeyframeTrack</code>）',en:'<code>KeyframeAnimator</code> (one <code>KeyframeTrack</code> per property)'}},
+  {concept:{zh:'狀態改變自動補間',en:'Implicit state tweening'}, css:'<code>transition</code>',
+   flutter:'<code>AnimatedContainer</code> / <code>TweenAnimationBuilder</code>（implicit）',
+   swiftui:'<code>.animation(_:value:)</code>'},
+  {concept:{zh:'手動控制播放',en:'Manual playback control'}, css:'Web Animations API',
+   flutter:{zh:'<code>AnimationController</code>（explicit，記得 <code>dispose</code>）',en:'<code>AnimationController</code> (explicit — remember <code>dispose</code>)'},
+   swiftui:{zh:'<code>withAnimation</code> + 自訂狀態',en:'<code>withAnimation</code> + custom state'}},
+  {concept:{zh:'共享元素轉場',en:'Shared-element transition'}, css:{zh:'FLIP 手刻 / View Transitions API',en:'Hand-rolled FLIP / View Transitions API'},
+   flutter:{zh:'<code>Hero</code>（同一個 tag 就完成，幾乎免費）',en:'<code>Hero</code> (same tag and you’re done — nearly free)'},
+   swiftui:'<code>matchedGeometryEffect</code>, <code>.navigationTransition(.zoom)</code>'},
+  {concept:{zh:'彈簧物理',en:'Spring physics'}, css:{zh:'<code>linear()</code> 近似 / JS 逐幀模擬',en:'<code>linear()</code> approximation / JS frame-by-frame simulation'},
+   flutter:'<code>SpringSimulation</code> + <code>SpringDescription</code>',
+   swiftui:'<code>.spring(response:dampingFraction:)</code>'},
+  {concept:{zh:'錯位延遲',en:'Stagger'}, css:'<code>animation-delay</code>',
+   flutter:{zh:'單一 controller + <code>Interval</code> 切段',en:'Single controller sliced with <code>Interval</code>'},
+   swiftui:'<code>.delay()</code> / <code>PhaseAnimator</code>'},
+  {concept:{zh:'捲動驅動',en:'Scroll-driven'}, css:'<code>animation-timeline: scroll()</code> / <code>view()</code>',
+   flutter:'<code>ScrollController</code> + <code>AnimatedBuilder</code>',
+   swiftui:{zh:'<code>scrollTransition</code>（三段式 phase）',en:'<code>scrollTransition</code> (three-stage phase)'}},
+  {concept:{zh:'材質模糊',en:'Material blur'}, css:'<code>backdrop-filter</code>',
+   flutter:'<code>BackdropFilter</code>',
+   swiftui:'<code>.ultraThinMaterial</code>, <code>.glassEffect()</code> (iOS 26)'},
+  {concept:{zh:'自訂繪圖',en:'Custom drawing'}, css:'Canvas 2D / SVG',
+   flutter:'<code>CustomPainter</code> + <code>PathMetric</code>',
+   swiftui:'<code>Canvas</code> + <code>Path</code>'},
+  {concept:{zh:'Shader / 濾鏡',en:'Shaders / filters'}, css:'SVG filter / WebGL',
+   flutter:'<code>FragmentProgram</code> (<code>.frag</code>, Impeller)',
+   swiftui:'<code>.colorEffect</code> / <code>.distortionEffect</code> / <code>.layerEffect</code>'},
+  {concept:{zh:'頁面轉場',en:'Page transitions'}, css:'View Transitions API',
+   flutter:'<code>PageRouteBuilder</code> + <code>Hero</code>',
+   swiftui:{zh:'NavigationStack 轉場、<code>.zoom</code>',en:'NavigationStack transitions, <code>.zoom</code>'}},
+  {concept:{zh:'可中斷的手勢轉場',en:'Interruptible gesture transitions'}, css:{zh:'全部手刻',en:'All hand-rolled'},
+   flutter:{zh:'要自己接手勢與 controller',en:'Wire up gestures and a controller yourself'},
+   swiftui:{zh:'系統內建，是 iOS 的招牌',en:'Built into the system — a signature iOS feature'}},
+];
+
+/* 其他平台獨有的表現方式（11）：{plat:'sw'|'fl', title, desc} */
+const OTHER_PLATFORM = [
+  {plat:'sw', title:{zh:'KeyframeAnimator 多軌道',en:'KeyframeAnimator multi-track'},
+   desc:{zh:'每個屬性各有一條獨立時間軸。CSS 一組 <code>@keyframes</code> 綁死所有屬性，想拆只能靠巢狀元素。',
+         en:'Each property gets its own independent timeline. CSS ties every property to one <code>@keyframes</code> block — splitting them apart means nesting elements.'}},
+  {plat:'sw', title:{zh:'PhaseAnimator 階段序列',en:'PhaseAnimator phase sequence'},
+   desc:{zh:'用一串離散階段驅動，每次切換自動補間。Web 要自己寫一個 state machine 再切 class。',
+         en:'Driven by a series of discrete phases that auto-tween on each change. On the web you’d write your own state machine and toggle classes.'}},
+  {plat:'sw', title:{zh:'scrollTransition 的 phase',en:'scrollTransition’s phase'},
+   desc:{zh:'<code>.topLeading</code> / <code>.identity</code> / <code>.bottomTrailing</code> 三段式，比 IntersectionObserver 的「進來了沒」細緻得多。',
+         en:'A three-stage <code>.topLeading</code> / <code>.identity</code> / <code>.bottomTrailing</code> model — much more granular than IntersectionObserver’s in-or-out boolean.'}},
+  {plat:'sw', title:{zh:'.symbolEffect()',en:'.symbolEffect()'},
+   desc:{zh:'SF Symbols 內建 bounce / pulse / variableColor / replace。Web 完全沒有「圖示自帶動畫」這個概念。',
+         en:'SF Symbols ship with built-in bounce / pulse / variableColor / replace. The web has no concept of an icon carrying its own animation.'}},
+  {plat:'sw', title:{zh:'語意化 spring',en:'Semantic spring presets'},
+   desc:{zh:'<code>.smooth</code> / <code>.snappy</code> / <code>.bouncy</code> 把物理參數包成設計語彙。CSS 只能用 <code>linear()</code> 逼近，沒有共同命名。',
+         en:'<code>.smooth</code> / <code>.snappy</code> / <code>.bouncy</code> package physics parameters as design vocabulary. CSS can only approximate this with <code>linear()</code>, with no shared naming.'}},
+  {plat:'sw', title:{zh:'.contentTransition(.numericText())',en:'.contentTransition(.numericText())'},
+   desc:{zh:'系統級的數字捲動。本圖鑑那張「數字滾動」是自己用 rAF 刻的。',
+         en:'System-level number scrubbing. This gallery’s “Number Counter” card is hand-rolled with rAF instead.'}},
+  {plat:'sw', title:{zh:'.sensoryFeedback 觸覺同步',en:'.sensoryFeedback haptic sync'},
+   desc:{zh:'動畫表現的第四個維度。Web 只有很弱的 Vibration API，而且桌機沒有。',
+         en:'A fourth dimension of motion design. The web only has the weak Vibration API, and it doesn’t exist on desktop at all.'}},
+  {plat:'sw', title:'Liquid Glass',
+   desc:{zh:'<code>GlassEffectContainer</code> + <code>glassEffectID</code>（iOS 26）是系統級的液態融合：可互動、隨手勢折射、還會 morph。本圖鑑的「液態融合」只是用 SVG 濾鏡模擬視覺。',
+         en:'<code>GlassEffectContainer</code> + <code>glassEffectID</code> (iOS 26) is system-level liquid glass: interactive, refracting under gestures, and it morphs. This gallery’s “Gooey / Metaball” card only simulates the look with an SVG filter.'}},
+  {plat:'fl', title:'Hero',
+   desc:{zh:'兩個路由的元件放同一個 tag，共享元素轉場就完成了。Web 要手刻 FLIP，或用還在普及中的 View Transitions。',
+         en:'Give components on two routes the same tag and the shared-element transition is done. The web needs a hand-rolled FLIP, or the still-spreading View Transitions API.'}},
+  {plat:'fl', title:{zh:'Curves 全家族',en:'The full Curves family'},
+   desc:{zh:'40+ 條具名曲線（<code>easeOutBack</code>、<code>elasticIn</code>、<code>bounceOut</code>…）。不用背 cubic-bezier 的四個數字。',
+         en:'40+ named curves (<code>easeOutBack</code>, <code>elasticIn</code>, <code>bounceOut</code>…). No need to memorize four cubic-bezier numbers.'}},
+  {plat:'fl', title:{zh:'Impeller 的 shader 預熱',en:'Impeller’s shader pre-warming'},
+   desc:{zh:'<code>.frag</code> 在編譯期就編好，不像 Web 首次執行 shader 會卡一下。',
+         en:'<code>.frag</code> shaders compile ahead of time, unlike the web where the first run of a shader can cause a stutter.'}},
+];
+
+/* 時長與曲線速查表（7 列） */
+const DURATION_TABLE = [
+  {when:{zh:'hover / 按下回饋',en:'hover / press feedback'}, dur:'80–150ms', curve:'<code>ease-out</code>',
+   why:{zh:'必須跟手。超過 200ms 就會被感知成「卡」。',en:'Has to feel attached to the pointer. Past 200ms it reads as lag.'}},
+  {when:{zh:'小元件開合<br>（tooltip、下拉）',en:'small toggles<br>(tooltip, dropdown)'}, dur:'150–250ms',
+   curve:{zh:'進 <code>ease-out</code><br>出 <code>ease-in</code>',en:'in <code>ease-out</code><br>out <code>ease-in</code>'},
+   why:{zh:'進場要立刻可見所以先快後慢；退場使用者已不在乎，慢起快走直接讓開。',en:'Entrances need to feel instant, so fast-then-slow; on exit the user’s already moved on, so slow-then-fast just gets it out of the way.'}},
+  {when:{zh:'卡片展開 / 抽屜 / Modal',en:'card expand / drawer / modal'}, dur:'250–400ms', curve:'<code>cubic-bezier(.2,.8,.2,1)</code>',
+   why:{zh:'面積大、位移大，需要時間交代空間關係。',en:'Large area, large movement — it needs time to establish the spatial relationship.'}},
+  {when:{zh:'頁面轉場',en:'page transition'}, dur:'400–600ms', curve:'<code>cubic-bezier(.65,0,.35,1)</code>',
+   why:{zh:'兩端都慢，中段快，像鏡頭推移而不是瞬移。',en:'Slow at both ends, fast in the middle — feels like a camera move, not a jump cut.'}},
+  {when:{zh:'大物件位移 / 拖曳釋放',en:'large-object movement / drag release'}, dur:'spring',
+   curve:{zh:'剛性 0.08 / 阻尼 0.75',en:'stiffness 0.08 / damping 0.75'},
+   why:{zh:'有慣性的東西不該有固定時長，物理模擬比 duration 準。',en:'Anything with inertia shouldn’t have a fixed duration — a physics simulation is more honest than a number.'}},
+  {when:{zh:'Loading / 跑馬燈',en:'loading / marquee'}, dur:'1.2–2.5s loop', curve:'<code>linear</code>',
+   why:{zh:'無限循環一旦有 ease 就會出現「心跳」節點，反而顯得不順。',en:'Any easing on an infinite loop creates a “heartbeat” node at the seam, which reads as less smooth, not more.'}},
+  {when:{zh:'列表逐項進場',en:'list items entering'}, dur:{zh:'每項 delay 30–60ms',en:'30–60ms delay per item'}, curve:'<code>ease-out</code>',
+   why:{zh:'間隔太大會讓最後一項等太久；超過 8 項就該分批或改用單一群組動畫。',en:'Too wide a gap makes the last item wait forever; past 8 items, batch them or switch to a single group animation.'}},
+];
+
+/* 六條鐵律 */
+const RULES = [
+  {title:{zh:'只動 transform 與 opacity',en:'Only animate transform and opacity'},
+   desc:{zh:'這兩個屬性可以完全交給 GPU 合成。動 <code>width/top/margin</code> 會觸發 layout，60fps 立刻崩。',
+         en:'These two can be handed entirely to GPU compositing. Animating <code>width/top/margin</code> triggers layout, and 60fps falls apart immediately.'}},
+  {title:{zh:'退場永遠比進場快',en:'Exits are always faster than entrances'},
+   desc:{zh:'常見比例 2:1。進場是邀請、退場是讓路，使用者不想等一個他已經關掉的東西。',
+         en:'A common ratio is 2:1. An entrance is an invitation; an exit is getting out of the way — no one wants to wait on something they already dismissed.'}},
+  {title:{zh:'可被打斷',en:'Interruptible'},
+   desc:{zh:'使用者中途改變主意時，動畫要從當下狀態接續，而不是播完再反應。Web Animations API 比 CSS 好處理這件事。',
+         en:'When the user changes their mind mid-motion, the animation should continue from its current state, not wait to finish first. The Web Animations API handles this better than CSS.'}},
+  {title:{zh:'尊重 reduced-motion',en:'Respect reduced-motion'},
+   desc:{zh:'前庭功能敏感者會因為視差與大位移暈眩。用 <code>@media (prefers-reduced-motion:reduce)</code> 降級成單純淡入，不要整個關掉。',
+         en:'Users with vestibular sensitivity can get dizzy from parallax and large movement. Use <code>@media (prefers-reduced-motion:reduce)</code> to degrade to a plain fade — don’t turn motion off entirely.'}},
+  {title:{zh:'動畫是狀態的解釋',en:'Motion explains state'},
+   desc:{zh:'好的動畫在回答「這個東西從哪來、要去哪」。回答不出來的動畫就是裝飾，該砍。',
+         en:'Good motion answers “where did this come from, where is it going”. If it can’t answer that, it’s decoration — cut it.'}},
+  {title:{zh:'一致性大於精彩',en:'Consistency beats cleverness'},
+   desc:{zh:'整站 3 條 easing、4 個時長級距就夠了。每個元件自訂曲線＝沒有設計系統。',
+         en:'Three easing curves and four duration steps are enough for an entire site. A custom curve per component means you don’t actually have a design system.'}},
+];
+
 /* ============================================================
    Prompt 產生器的框架設定
 
@@ -350,20 +505,32 @@ const CATS = [
    ============================================================ */
 const FRAMEWORKS = {
   flutter:{
-    label:'Flutter 3.41（stable）',
-    hint:'優先用 implicit animation（AnimatedContainer、AnimatedOpacity、TweenAnimationBuilder）；真的需要精細控制才開 AnimationController，而且一定要在 dispose() 釋放，State 要 mixin TickerProviderStateMixin。錯位延遲用「單一 controller + Interval 切段」，不要開 N 個 controller。共享元素轉場用 Hero。彈性優先挑 Curves 裡現成的具名曲線（easeOutBack、elasticOut…）或 SpringSimulation，不要自己算貝茲數字。繪圖類用 CustomPainter 搭配 PathMetric。用 AnimatedBuilder 時務必傳 child，否則整棵子樹每幀重建。'
+    label:{zh:'Flutter 3.41（stable）', en:'Flutter 3.41 (stable)'},
+    hint:{
+      zh:'優先用 implicit animation（AnimatedContainer、AnimatedOpacity、TweenAnimationBuilder）；真的需要精細控制才開 AnimationController，而且一定要在 dispose() 釋放，State 要 mixin TickerProviderStateMixin。錯位延遲用「單一 controller + Interval 切段」，不要開 N 個 controller。共享元素轉場用 Hero。彈性優先挑 Curves 裡現成的具名曲線（easeOutBack、elasticOut…）或 SpringSimulation，不要自己算貝茲數字。繪圖類用 CustomPainter 搭配 PathMetric。用 AnimatedBuilder 時務必傳 child，否則整棵子樹每幀重建。',
+      en:'Prefer implicit animation (AnimatedContainer, AnimatedOpacity, TweenAnimationBuilder) first; only reach for AnimationController when you need fine control, and always release it in dispose() with the State mixing in TickerProviderStateMixin. For stagger, use a single controller sliced with Interval — don’t open N controllers. Use Hero for shared-element transitions. For spring/bounce, prefer a named curve already in Curves (easeOutBack, elasticOut…) or SpringSimulation instead of hand-rolling bezier numbers. For custom drawing, use CustomPainter with PathMetric. When using AnimatedBuilder, always pass child or the whole subtree rebuilds every frame.'
+    }
   },
   swiftui:{
-    label:'SwiftUI（iOS 17+）',
-    hint:'用 .animation(_:value:)，不要用已棄用的無 value 版本（它會動到不該動的東西）。多階段動畫用 PhaseAnimator；每個屬性需要各自時間軸時用 KeyframeAnimator 的 KeyframeTrack。彈性優先用語意化預設 .smooth / .snappy / .bouncy，而不是自己填 response 與 dampingFraction。共享元素用 matchedGeometryEffect —— 兩邊的 id 與 @Namespace 必須完全一致，不一致會靜默不 morph。捲動效果用 scrollTransition 的 phase。材質用 .ultraThinMaterial，或 iOS 26 的 .glassEffect() / GlassEffectContainer，不要自刻模糊。'
+    label:{zh:'SwiftUI（iOS 17+）', en:'SwiftUI (iOS 17+)'},
+    hint:{
+      zh:'用 .animation(_:value:)，不要用已棄用的無 value 版本（它會動到不該動的東西）。多階段動畫用 PhaseAnimator；每個屬性需要各自時間軸時用 KeyframeAnimator 的 KeyframeTrack。彈性優先用語意化預設 .smooth / .snappy / .bouncy，而不是自己填 response 與 dampingFraction。共享元素用 matchedGeometryEffect —— 兩邊的 id 與 @Namespace 必須完全一致，不一致會靜默不 morph。捲動效果用 scrollTransition 的 phase。材質用 .ultraThinMaterial，或 iOS 26 的 .glassEffect() / GlassEffectContainer，不要自刻模糊。',
+      en:'Use .animation(_:value:) — not the deprecated value-less overload, which animates things it shouldn’t. For multi-step animation use PhaseAnimator; when each property needs its own timeline, use KeyframeAnimator’s KeyframeTrack. For spring, prefer the semantic presets .smooth / .snappy / .bouncy over hand-tuning response and dampingFraction. For shared elements use matchedGeometryEffect — the id and @Namespace must match exactly on both ends, or it silently fails to morph. For scroll effects use scrollTransition’s phase. For material, use .ultraThinMaterial, or iOS 26’s .glassEffect() / GlassEffectContainer — don’t hand-roll a blur.'
+    }
   },
   framer:{
-    label:'React + Framer Motion',
-    hint:'用 motion 元件搭配 variants 管理狀態，不要在 style 裡手動插值。佈局變化用 layout；共享元素用 layoutId。離場動畫用 AnimatePresence，子元素一定要有穩定的 key，缺 key 離場動畫不會觸發。彈性用 type:"spring" 的 stiffness / damping，不要用 duration 去模擬。錯位用 staggerChildren 與 delayChildren。尊重 useReducedMotion()。'
+    label:{zh:'React + Framer Motion', en:'React + Framer Motion'},
+    hint:{
+      zh:'用 motion 元件搭配 variants 管理狀態，不要在 style 裡手動插值。佈局變化用 layout；共享元素用 layoutId。離場動畫用 AnimatePresence，子元素一定要有穩定的 key，缺 key 離場動畫不會觸發。彈性用 type:"spring" 的 stiffness / damping，不要用 duration 去模擬。錯位用 staggerChildren 與 delayChildren。尊重 useReducedMotion()。',
+      en:'Use motion components with variants to manage state instead of hand-interpolating inline styles. For layout changes use layout; for shared elements use layoutId. For exit animations use AnimatePresence, and every child needs a stable key — without one, exit animations simply don’t fire. For spring, use type:"spring" with stiffness / damping instead of faking it with duration. For stagger use staggerChildren and delayChildren. Respect useReducedMotion().'
+    }
   },
   css:{
-    label:'純 CSS / Web',
-    hint:'維持純 CSS，真的需要才動 JavaScript。優先只動 transform 與 opacity。可用的現代能力：@starting-style（進場）、transition-behavior: allow-discrete（display）、interpolate-size / calc-size()（height:auto）、linear()（彈簧與彈跳）、@property（讓自訂屬性可補間）、View Transitions API（狀態與頁面轉場）。@keyframes 與 view-transition-name 都是全域的，命名務必加專屬前綴 —— 同名會靜默覆蓋或讓轉場整個失效，而且沒有任何錯誤訊息。'
+    label:{zh:'純 CSS / Web', en:'Plain CSS / Web'},
+    hint:{
+      zh:'維持純 CSS，真的需要才動 JavaScript。優先只動 transform 與 opacity。可用的現代能力：@starting-style（進場）、transition-behavior: allow-discrete（display）、interpolate-size / calc-size()（height:auto）、linear()（彈簧與彈跳）、@property（讓自訂屬性可補間）、View Transitions API（狀態與頁面轉場）。@keyframes 與 view-transition-name 都是全域的，命名務必加專屬前綴 —— 同名會靜默覆蓋或讓轉場整個失效，而且沒有任何錯誤訊息。',
+      en:'Stay in plain CSS; only reach for JavaScript when you actually need it. Prefer animating only transform and opacity. Modern capabilities available: @starting-style (entrances), transition-behavior: allow-discrete (display), interpolate-size / calc-size() (height:auto), linear() (springs and bounces), @property (making custom properties tweenable), and the View Transitions API (state and page transitions). @keyframes and view-transition-name are both global — always namespace them, since a collision silently overrides the earlier one or breaks the whole transition, with no error at all.'
+    }
   }
 };
 
@@ -2476,6 +2643,167 @@ t.finished.finally(() => el.style.viewTransitionName = '');
 ];
 
 /* ============================================================
+   English translations for each demo's desc/when.
+   Kept as a separate lookup (id → {desc, when}) instead of adding fields to
+   every DEMOS entry — the technical CSS/JS payloads are language-agnostic,
+   so only the human-facing copy needs a second version.
+   ============================================================ */
+const DEMO_EN = {
+  fade:{desc:'Only animates opacity. The cheapest, safest option — the fallback every other technique degrades to.',
+    when:'For content swaps where spatial continuity doesn’t matter. Feels flat on its own, usually paired with a small offset.'},
+  rise:{desc:'opacity paired with an 8–24px offset. Keep the offset small — anything larger reads as flying in rather than appearing.',
+    when:'The default for almost every content entrance: lists, cards, section headings.'},
+  pop:{desc:'Scales from 0.85 to 1 with an overshoot curve. Don’t start at 0 — that reads as materializing from nothing, not popping in.',
+    when:'Modals, tooltips, notifications, like buttons. Small components that need to grab attention.'},
+  spin:{desc:'Continuous rotation is one of the few places linear is correct. Add easing and every lap gets a little hitch instead of feeling smooth.',
+    when:'Loading states with an unknown duration. If you know the progress, use a progress bar instead — a spinner only says “still alive”.'},
+  blurin:{desc:'filter: blur(12px) converging to 0, mimicking a lens racking focus. Visually heavy, and blur is an expensive filter.',
+    when:'Hero visuals, images finishing load. Keep it to one per screen and never in a long list.'},
+  flipin:{desc:'Flips in around the X axis. The parent needs perspective, or it just reads as a vertical squash.',
+    when:'Data cards, stat updates, flip-style content swaps.'},
+  wipein:{desc:'clip-path’s inset opens progressively while the content itself stays put. Feels more like a reveal than opacity alone.',
+    when:'Image entrances, headline reveals, tab content swaps. The direction should match the user’s reading flow.'},
+  easing:{desc:'Same distance, same duration — only the curve changes. Nearly all of the personality difference comes from this line, not the amount of movement.',
+    when:'When deciding your design system’s easing ladder, run candidate curves side by side. Far more accurate than reading the numbers.'},
+  spring:{desc:'No duration — only stiffness and damping, recalculated every frame. Picks up naturally even if the target changes mid-flight.',
+    when:'Drag-and-release, gesture-driven interactions, anything the user might change their mind about mid-motion.'},
+  overshoot:{desc:'cubic-bezier’s y value exceeds 1, so the motion overshoots the target before settling back. Top row lands precisely; bottom row overshoots.',
+    when:'Components that need a “springy” personality. Avoid it on text layouts — letters wobbling makes them hard to read.'},
+  anticipation:{desc:'A small wind-up in the opposite direction before the main action. Top row just goes; bottom row winds up first — and reads as intentional.',
+    when:'Important, one-off transitions. Skip it for list items — repeated too often it just feels fussy.'},
+  stagger:{desc:'Same animation, each item starting a beat later. ~40ms feels best — much more drags, much less reads as simultaneous.',
+    when:'Lists, card grids, menu items. Past 8 items, cap the delay growth or the last item waits forever.'},
+  squash:{desc:'Squashes on landing, stretches on the way up, volume roughly conserved. This is what makes an object read as having mass, not being a rigid body.',
+    when:'Mascots, gamified elements, button press feedback (keep the amount under 3%).'},
+  followthrough:{desc:'The container stops first; the content inside stops 60ms later. The difference is subtle, but remove it and the motion instantly feels stiff.',
+    when:'Card expansions, drawer slide-outs — any transition with a parent/child structure.'},
+  flip:{desc:'First / Last / Invert / Play. Measure the position before and after the move, use transform to fake it back to the start, then let it play — you get a layout-change animation without ever touching layout.',
+    when:'Whenever an element actually changes position in the DOM: reordering, changing columns, entering/leaving a container. The root technique behind layout animation.'},
+  shared:{desc:'The same object moves continuously between two screens and changes size. The user doesn’t feel like the page changed — just that it got bigger.',
+    when:'Thumbnail → detail page, list item → fullscreen. One of the biggest contributors to a “native app” feel.'},
+  viewtransition:{desc:'The browser natively snapshots the old and new screens and cross-fades them; elements tagged with view-transition-name morph automatically. Essentially FLIP built into the platform.',
+    when:'SPA navigation, state swaps. Supported in Chrome / Edge / Safari 18+; unsupported browsers just skip it.'},
+  reorder:{desc:'When the order changes, every item slides from its old position to its new one via FLIP. Without this animation, users completely lose track of the row they were looking at.',
+    when:'Sort toggles, filtering, drag-to-reorder, live leaderboards.'},
+  morphradius:{desc:'border-radius’s eight values can be tweened independently — organic, flowing shapes without any SVG.',
+    when:'Decorative background shapes, avatar containers, brand-flavored blobs. Pure CSS, very cheap.'},
+  accordion:{desc:'height: auto can’t be tweened. Animating grid-template-rows from 0fr to 1fr works — currently the cleanest pure-CSS solution.',
+    when:'Accordions, “show more”, collapsible form sections. Replaces the old trick of measuring scrollHeight and hardcoding pixels.'},
+  reveal:{desc:'The entrance animation only plays once an element enters the viewport. Use IntersectionObserver, not a scroll listener — the former is decided by the browser on the compositor thread and won’t slow scrolling down.',
+    when:'Content sections on long pages, marketing pages. unobserve after one play — replaying every time you scroll back is annoying.'},
+  parallax:{desc:'Layers at different depths move at different rates — slower for far, faster for near — to fake depth. Keep the ratio spread between 0.1–0.4; wider than that induces dizziness.',
+    when:'Hero sections, brand story pages. Always disable it under prefers-reduced-motion — this is one of the techniques most likely to trigger motion sickness.'},
+  scrollprog:{desc:'Maps scroll position to 0–1 and drives any visual property from it. The animation’s “timeline” becomes a “position axis” the user fully controls.',
+    when:'Long-form reading progress, chapter navigation, narrative pages that treat scroll as a playhead.'},
+  sticky:{desc:'The visual is pinned with position: sticky while the text beside it keeps scrolling; whichever section is in view swaps the pinned state. Scroll becomes the narrative’s metronome.',
+    when:'Product walkthroughs, data stories, tutorial steps. The backbone of scrollytelling.'},
+  scrolltimeline:{desc:'CSS swaps @keyframes’ timeline for the scroll axis directly — zero JavaScript, and it runs on the compositor thread so it never drops frames no matter how fast you scroll.',
+    when:'Anything tied to scroll position. A native replacement for most scroll-linked JS that quietly falls back to the static state when unsupported.'},
+  typewriter:{desc:'steps() makes the width jump cell by cell, paired with a blinking caret. The pure-CSS version needs a monospace font, with width measured in ch units.',
+    when:'Terminal UIs, the feel of a live AI response, homepage taglines. Use it on long text and people lose patience.'},
+  scramble:{desc:'Each character jumps randomly first, then “locks in” to the correct one in sequence. Locking left to right is what gives it a sense of decoding.',
+    when:'Tech-flavored headlines, a “loading complete” reveal, password/code-style UI.'},
+  splittext:{desc:'Splits text into individual spans, each entering with its own delay. Keep whitespace and line-break semantics intact when splitting, or screen readers will read the sentence as scattered letters.',
+    when:'Headline reveals, brand intros. Always keep the original sentence in an aria-label on the wrapper for assistive tech.'},
+  maskreveal:{desc:'An overflow: hidden wrapper with the inner line pushed up from below. Text looks like it’s growing up from behind an invisible line — carries far more weight than a plain fade.',
+    when:'Large headlines, chapter titles, cinematic openings. Leave enough line-height or the top gets clipped.'},
+  counter:{desc:'The value tweens from 0 to the target, easing out toward the end — a constant-speed tick reads as broken, not like a statistic.',
+    when:'Dashboards, revealed scores, fundraising totals. Fix the digit width or the whole row jitters.'},
+  marquee:{desc:'The content is duplicated once and the whole strip moves -50% before snapping back to 0 — since both copies are identical, the seam is invisible. Must use linear.',
+    when:'Logo walls, announcement bars, tag clouds. Pausing on hover is basic courtesy — otherwise users can’t actually read it.'},
+  varfont:{desc:'A variable font’s weight and width are continuous axes you can tween directly. Previously you could only hard-cut between a handful of discrete weights — now it can actually “gain weight”.',
+    when:'Headlines that need to breathe, hover feedback, weight-encoded data viz. Requires a system or loaded font with a variable axis.'},
+  kinetic:{desc:'The text itself is the protagonist: size, position, and rhythm shift with meaning. The key is pacing — how long each word lingers has to match the tone you’re imagining.',
+    when:'Opening titles, statement pages, video title cards. Low information density, high emotional density.'},
+  linedraw:{desc:'Set dasharray to the path’s total length, then animate dashoffset from that length down to 0 — the dash gap “walks” the whole path and looks like it’s being drawn.',
+    when:'Logo intros, chart lines entering, illustration outlines. Get the path length from path.getTotalLength().'},
+  pathfollow:{desc:'offset-path moves an element along any curve; offset-rotate keeps it facing the tangent direction automatically. The most direct implementation of the arc principle.',
+    when:'Navigation hints, gamified paths, loop decorations while loading. Pure CSS, no SVG animation needed.'},
+  clipwipe:{desc:'clip-path’s circle() expands from radius 0 at the trigger point until it covers everything. Material Design’s signature transition, and the most common custom View Transitions effect.',
+    when:'Light/dark theme toggles, fullscreen menus expanding from a button. Center the circle on wherever the user just clicked.'},
+  checkmark:{desc:'The circle draws first, the checkmark after, with a 150ms overlap between the two. The order and overlap decide whether it reads as “confirmed” or “celebrated”.',
+    when:'Form submission success, payment complete, to-do checks. One of the micro-interactions most worth polishing.'},
+  gradmask:{desc:'A gradient used as a moving mask, giving a soft edge instead of a hard cut. Costs a bit more than clip-path, but the quality difference is large.',
+    when:'Text revealing in segments, soft image reveals, the fading tail of streamed output.'},
+  pathmorph:{desc:'Directly tweens the path’s d attribute. Requires both shapes to have the same number and type of commands, or you need to align the point count first.',
+    when:'Icon transitions (play ↔ pause, menu ↔ close), shape swaps in data graphics.'},
+  magnetic:{desc:'Once the cursor enters range, the element shifts toward it by a fraction of the distance (usually ~30%). Makes the button look like it wants to be pressed.',
+    when:'Primary CTA buttons, interactive portfolio elements. One or two per page at most — a whole screen of magnetic elements turns into noise.'},
+  trail:{desc:'Each dot chases the one before it with linear interpolation: pos += (target - pos) * 0.3. A smaller coefficient means stickier, longer trails.',
+    when:'Portfolios, experimental sites. Only enable it with a precise pointer (pointer: fine) — touch devices don’t have a cursor.'},
+  inertia:{desc:'Remembers the velocity at release, then keeps gliding each frame multiplied by a friction coefficient (~0.94) until the speed becomes imperceptible.',
+    when:'Custom carousels, map panning, draggable canvases. Without inertia, dragging feels stuck to your finger.'},
+  rubber:{desc:'Past the boundary, displacement is compressed like a square root — the further you drag, the less it adds — then springs back on release. This is the feel of scrolling past the end on iOS.',
+    when:'Custom scroll containers, pull-to-dismiss drawers, carousel ends. Gives a tactile answer to “can I keep going?”.'},
+  particles:{desc:'A few hundred independently-moving points, redrawn every frame on canvas. The DOM can’t handle this volume — switch to canvas past ~60 animated elements.',
+    when:'Ambient backgrounds, celebration confetti, particle-ized data points. Remember to cancelAnimationFrame on unmount or the background keeps draining battery.'},
+  ripple:{desc:'A circle expands from the actual touch point while scaling up and fading out. The key is centering it on the click coordinates, not the component’s center — that’s what makes it feel like feedback.',
+    when:'Buttons, list items, any large clickable area. The cheapest way to say “I got that”.'},
+  tilt:{desc:'Applies rotateX / rotateY based on cursor position while a highlight sweeps in the opposite direction. The highlight is what sells the physical-material feel.',
+    when:'Portfolio cards, product cards, membership cards. Keep the angle within ±12° — beyond that it goes from “3D” to “broken”.'},
+  cardflip:{desc:'Two faces stacked, with the back pre-rotated 180°, and the whole container rotates. backface-visibility: hidden hides whichever face is turned away from the camera.',
+    when:'Memory games, front/back info swaps, “see details” on stat cards. Flip around Y rather than X — that’s how books actually turn.'},
+  cube:{desc:'Six faces, each rotated and pushed out with translateZ by half the edge length, parent set to preserve-3d. The most basic assembly for CSS 3D.',
+    when:'Loading states, logos, multi-facet data swaps. On mobile watch out — 3D compositing layers are memory-hungry.'},
+  layerdepth:{desc:'As the cursor moves, layers at different depths shift in opposite directions by different amounts — faking a change in viewing angle from a flat image.',
+    when:'Hero illustrations, product photography, layered card interiors. The offset distribution has to match the visual sense of near/far or it feels off.'},
+  coverflow:{desc:'Items rotate around the Y axis and push back, forming an arc. The depth difference alone communicates which one is currently selected — no extra marker needed.',
+    when:'Cover browsing, card pickers, date wheels. The visual prototype of the iOS picker.'},
+  shimmer:{desc:'A diagonal highlight sweeps across gray blocks. Its job isn’t to look nice — it’s to announce “this is loading, not empty”.',
+    when:'While data is loading. Match the skeleton’s shape to the real content, or you get an ugly reflow when it arrives.'},
+  gradflow:{desc:'The gradient is made several times larger than its container, then background-position is moved. Nothing is actually “animating”, yet the whole surface feels like it’s breathing.',
+    when:'Hero backgrounds, an “AI generating” state, brand ambience. Keep it slow (8s+) — fast reads as noisy.'},
+  glow:{desc:'box-shadow’s blur radius and opacity change in sync. The rhythm is deliberately close to human breathing (once every 3–4s) — that’s what reads as calm rather than anxious.',
+    when:'Recording, an AI listening state, an idle voice assistant. A frantic flicker is a warning; a slow breath is waiting.'},
+  grain:{desc:'SVG’s feTurbulence generates a noise layer laid on top, given a subtle shift. Digital gradients are too clean — grain is what gives them physicality.',
+    when:'Editorial layouts, music/photo products. Keep opacity to 6–12%; beyond that it just looks dirty.'},
+  glass:{desc:'backdrop-filter blurs whatever’s “behind” the element. It establishes hierarchy: the blurred layer sits behind, the clear one sits in front.',
+    when:'Floating toolbars, modal backdrops, iOS-style sheets. backdrop-filter is expensive — don’t use it in a scrolling long list.'},
+  goo:{desc:'Gaussian blur first, then feColorMatrix pushes the alpha contrast to an extreme, so the blurred edge gets “cut” back to a hard edge — shapes close enough end up sticking together.',
+    when:'Expanding floating action buttons, organic-feeling loaders, brand flourishes. The filter is expensive — keep the area small.'},
+  glitch:{desc:'The same text stacked three times; two pseudo-elements use clip-path to slice into different horizontal bands, offset left/right, then jump the cuts rapidly.',
+    when:'Gaming, music, hacker-style visuals. Keep it brief and infrequent — prolonged flickering is uncomfortable and can trigger photosensitivity.'},
+  chromatic:{desc:'Shifts the red and cyan channels a few pixels in opposite directions, mimicking lens-edge dispersion. Very cheap, very strong atmosphere.',
+    when:'Subtle headline unrest, hover feedback, retro CRT texture. 1–3px of offset is enough.'},
+  sprite:{desc:'Lines up each frame in a strip and uses steps() to make the offset “jump” instead of “slide” — a direct translation of traditional cel animation into CSS.',
+    when:'Pixel art, hand-drawn frame-by-frame, a GIF replacement (smaller file, controllable playback). Frame count and duration must divide evenly or it stutters.'},
+  wave:{desc:'Sets delay as a function of coordinates (e.g. (x+y) × 0.06s) so a whole grid of elements ripples outward instead of moving independently.',
+    when:'Data-grid loading, audio visualization, background decoration. The most direct example of “writing an equation with delay”.'},
+  curtain:{desc:'Several color panels sequentially cover the screen, swap the content the instant it’s fully black, then peel back in sequence. Exactly when the old content disappears stays hidden behind the curtain.',
+    when:'Page transitions, chapter breaks. The most reliable way to hide a navigation flash when View Transitions isn’t an option.'},
+  dissolve:{desc:'The screen is cut into a grid, and each cell fades out on a random delay. The randomness is what keeps it from reading as “an animation” and more like a material disintegrating.',
+    when:'Delete, destroy, data-clear feedback. Gives a much stronger sense of “it’s really gone” than a plain fade.'},
+  liquidnav:{desc:'The indicator stretches horizontally mid-move, then snaps back into shape on arrival. A single scaleX applies the follow-through-and-overlap principle to movement between two points.',
+    when:'Tabs, bottom navigation, segmented controls. One of the rare places a purely functional component can still have personality.'},
+  orbit:{desc:'The parent rotates the orbit while the child counter-rotates to cancel its own spin, so the object travels in a circle while staying face-forward. A classic exercise in composed transforms.',
+    when:'Technical architecture diagrams, integration ecosystem showcases, multi-node loading states.'},
+  startingstyle:{desc:'Declares what an element looks like the instant it appears on screen. Previously, an element freshly inserted into the DOM had no prior state to compare against, so transition simply wouldn’t fire — the only workaround was forcing a reflow to trick the browser.',
+    when:'Any dynamically inserted element: toasts, dropdowns, freshly-loaded cards. The single biggest missing piece in CSS entrance animation for over a decade.'},
+  discrete:{desc:'Properties with “no in-between value”, like display, used to be entirely excluded from transitions. allow-discrete lets it flip at the start and end of the transition, while other properties handle the in-between.',
+    when:'Popovers, <dialog>, anything moving in or out of display: none. Paired with @starting-style as a trio, JS only needs to toggle one class and both directions animate.'},
+  autoheight:{desc:'interpolate-size: allow-keywords turns keywords like auto and min-content into tweenable values. Expanding height finally doesn’t require measuring scrollHeight and hardcoding pixels.',
+    when:'Accordions, “show more”, chat message threads. Replaces this gallery’s “Auto Height” card, which uses grid-template-rows: 0fr→1fr — though that older trick is still the right call in environments with insufficient support, so don’t rush to replace it site-wide.'},
+  linearspring:{desc:'linear() describes any curve with a string of sample points. cubic-bezier only has two control points and can overshoot at most once; linear() can oscillate back and forth — meaning a spring finally doesn’t need any JavaScript.',
+    when:'When you want springy personality without pulling in an animation library. The three preset names are ready to copy — this vocabulary maps directly onto SwiftUI’s .smooth / .snappy / .bouncy.'},
+  propgradient:{desc:'An unregistered custom property is just a string of text to the browser, so it jumps straight to 50% mid-animation. Declaring its syntax with @property is what turns it into an actual angle, color, or length.',
+    when:'Rotating gradients, color stops, anything that “used to be untweenable”. Left is registered, right isn’t — the difference is obvious at a glance.'},
+  multitrack:{desc:'Every property inside one @keyframes block shares a single timeline. Giving rotation and movement their own separate rhythms means splitting them across nested elements in CSS — because multiple animations writing transform at once just overwrite each other.',
+    when:'Organic, ongoing motion, mascots, composite loading states. SwiftUI’s KeyframeAnimator supports this natively via KeyframeTrack — one of the few places CSS genuinely struggles.'},
+  'vt-custom':{desc:'The default transition just fades the old screen out and the new one in. Animating ::view-transition-old() and -new() separately lets the old slide out left while the new slides in from the right.',
+    when:'Tab switches, step flows, any content swap with a sense of direction. The first step from “usable” to “good” for the native transition.'},
+  'vt-group':{desc:'The position and size change between same-named elements is handled by the group layer. Setting animation-duration and easing on it decides how fast the morph runs and whether it overshoots.',
+    when:'Whenever a shared-element transition needs personality. Old/new content fade is handled by old/new; how the shape flies is handled by group — they can be tuned independently.'},
+  'vt-types':{desc:'startViewTransition can carry types, picked up on the CSS side with :active-view-transition-type(). The same set of elements can play completely opposite animations going forward versus backward.',
+    when:'Navigation with a sense of order: pagination, wizard flows, browsing history. A transition with no sense of direction makes users lose track of where they are.'},
+  'vt-clash':{desc:'Two elements sharing the same view-transition-name at the same time causes the whole transition to be skipped outright — the screen just cuts, and the console stays silent. Left is uniquely named, right has a duplicate — click to see the difference.',
+    when:'This card is for debugging. When a transition “does nothing and throws no error”, name collisions are the first thing to check — especially in lists where components get re-rendered.'},
+  'vt-list':{desc:'Clicking an item temporarily tags its thumbnail and title with view-transition-name, then removes it once the transition ends. The name only exists for the instant it’s needed, so it never collides with other items in the list.',
+    when:'List → detail, product → product page, album → full image. The single biggest contributor to a native-app feel, and it needs zero framework.'},
+  'vt-mpa':{desc:'One line — @view-transition { navigation: auto } — gives even a real, same-origin page navigation a transition. The iframe below holds two independent .html files: no framework, no SPA router.',
+    when:'Blogs, docs sites, e-commerce — any multi-page site. Getting app-level transitions used to mean rewriting the whole site as an SPA. Not anymore.'}
+};
+
+/* ============================================================
    引擎
    ============================================================ */
 const $=(s,r=document)=>r.querySelector(s);
@@ -2491,43 +2819,68 @@ function highlight(src){
     .replace(/(@keyframes|animation|transform|transition|cubic-bezier|clip-path|filter)/g,'<span class="tk-a">$1</span>');
 }
 
-const TRIG={auto:'自動播放',hover:'滑鼠移入',click:'點擊',drag:'拖曳',scroll:'捲動'};
-
 /* ---- Prompt 產生 ---- */
 function buildPrompt(d,fwKey){
-  const fw=FRAMEWORKS[fwKey],cat=CATS.find(c=>c.id===d.cat)||{name:d.cat};
+  const fw=FRAMEWORKS[fwKey], cat=CATS.find(c=>c.id===d.cat)||{name:d.cat};
+  const en=DEMO_EN[d.id]||{desc:d.desc,when:d.when};
+  const label=fw.label[curLang], hint=fw.hint[curLang];
+  const desc=curLang==='en'?en.desc:d.desc, when=curLang==='en'?en.when:d.when;
+  const trig=TRIG[curLang][d.trigger||'auto'], cName=catName(cat);
   const L=[];
-  L.push('你是 '+fw.label+' 的動畫實作專家。請實作以下動畫技法。','');
-  L.push('## 技法',d.title+'（'+d.en+'）— 分類：'+cat.name,'');
-  L.push('## 要達成的視覺行為',d.desc,'');
-  L.push('## 適用情境',d.when,'');
-  L.push('## 觸發方式',TRIG[d.trigger||'auto'],'');
-  if(d.css){
-    L.push('## 參考規格');
-    L.push('下面是這個技法在網頁上的實作。請「不要」逐行翻譯，'+
-           '從中讀出位移量、時長、曲線與節奏，再用 '+fw.label+' 的慣用寫法重寫成等效的視覺行為。');
-    L.push('（`var(--ac)`、`var(--onac)` 之類是圖鑑自己的色票變數，換成你專案的顏色即可。）','');
-    L.push('```css',d.css.trim(),'```','');
+  if(curLang==='en'){
+    L.push('You are an animation implementation expert for '+label+'. Implement the following technique.','');
+    L.push('## Technique', d.en+' — Category: '+cName, '');
+    L.push('## Visual behavior to achieve', desc, '');
+    L.push('## When to use it', when, '');
+    L.push('## Trigger', trig, '');
+    if(d.css){
+      L.push('## Reference spec');
+      L.push('Below is this technique’s web implementation. Please do “not” translate it line by line — '+
+             'read the offsets, duration, curve, and rhythm out of it, then rewrite it as equivalent visual behavior using '+label+'’s idioms.');
+      L.push('(`var(--ac)`, `var(--onac)`, etc. are this gallery’s own color-token variables — swap in your project’s colors.)','');
+      L.push('```css',d.css.trim(),'```','');
+    }
+    if(d.codeJs){ L.push('## Reference logic','```js',d.codeJs.trim(),'```',''); }
+    L.push('## '+label+'-specific requirements', hint, '');
+    L.push('## Acceptance criteria',
+      '- Repeatable without accumulating state',
+      '- Respects the system’s “reduce motion” preference',
+      '- No unnecessary external dependencies',
+      '- Include a minimal, directly runnable example','');
+    L.push('## Output','Code only, plus one necessary sentence — don’t explain the original CSS.');
+  } else {
+    L.push('你是 '+label+' 的動畫實作專家。請實作以下動畫技法。','');
+    L.push('## 技法',d.title+'（'+d.en+'）— 分類：'+cName,'');
+    L.push('## 要達成的視覺行為',desc,'');
+    L.push('## 適用情境',when,'');
+    L.push('## 觸發方式',trig,'');
+    if(d.css){
+      L.push('## 參考規格');
+      L.push('下面是這個技法在網頁上的實作。請「不要」逐行翻譯，'+
+             '從中讀出位移量、時長、曲線與節奏，再用 '+label+' 的慣用寫法重寫成等效的視覺行為。');
+      L.push('（`var(--ac)`、`var(--onac)` 之類是圖鑑自己的色票變數，換成你專案的顏色即可。）','');
+      L.push('```css',d.css.trim(),'```','');
+    }
+    if(d.codeJs){ L.push('## 參考邏輯','```js',d.codeJs.trim(),'```',''); }
+    L.push('## '+label+' 專屬要求',hint,'');
+    L.push('## 驗收條件',
+      '- 可以重複觸發，不累積狀態',
+      '- 尊重系統的「減少動態」偏好設定',
+      '- 不引入非必要的外部套件',
+      '- 附一段可直接執行的最小範例','');
+    L.push('## 輸出','只給程式碼與必要的一句說明，不要解釋原本那段 CSS。');
   }
-  if(d.codeJs){ L.push('## 參考邏輯','```js',d.codeJs.trim(),'```',''); }
-  L.push('## '+fw.label+' 專屬要求',fw.hint,'');
-  L.push('## 驗收條件',
-    '- 可以重複觸發，不累積狀態',
-    '- 尊重系統的「減少動態」偏好設定',
-    '- 不引入非必要的外部套件',
-    '- 附一段可直接執行的最小範例','');
-  L.push('## 輸出','只給程式碼與必要的一句說明，不要解釋原本那段 CSS。');
   return L.join('\n');
 }
 
 /* 兩層都失敗時的最後退路：把內容攤開讓使用者自己複製。
    clipboard API 需要文件有焦點，file://、背景視窗、Safari 都可能擋下來。 */
 function manualCopy(txt){
+  const t=UI[curLang];
   const w=document.createElement('div');
   w.className='copyfall';
-  w.innerHTML='<div class="box"><p>瀏覽器擋下了自動複製（通常是視窗沒有焦點，或以 file:// 開啟）。'+
-              '下面的文字已全選，直接按 ⌘C／Ctrl+C。</p>'+
-              '<textarea readonly></textarea><button class="mini">關閉</button></div>';
+  w.innerHTML='<div class="box"><p>'+esc(t.copyfallMsg)+'</p>'+
+              '<textarea readonly></textarea><button class="mini">'+esc(t.copyfallClose)+'</button></div>';
   w.querySelector('textarea').value=txt;
   document.body.appendChild(w);
   const ta=w.querySelector('textarea'); ta.focus(); ta.select();
@@ -2553,46 +2906,63 @@ async function copyText(txt,btn){
   }
   if(!ok)manualCopy(txt);
   if(!btn)return ok;
+  const t=UI[curLang];
   const prev=btn.dataset.label||btn.textContent;
   btn.dataset.label=prev;
-  btn.textContent=ok?'已複製 ✓':'複製失敗';
+  btn.textContent=ok?t.copied:t.copyFail;
   btn.classList.add(ok?'done':'fail');
   clearTimeout(btn._t);
   btn._t=setTimeout(()=>{btn.textContent=prev;btn.classList.remove('done','fail');},1500);
   return ok;
 }
 
-/* 注入所有 demo 的 CSS */
+/* 注入所有 demo 的 CSS（語言無關，只需注入一次） */
 (function injectCSS(){
   const st=document.createElement('style');
   st.textContent=DEMOS.map(d=>d.css||'').join('\n');
   document.head.appendChild(st);
 })();
 
-/* 建卡 */
 const gallery=$('#gallery');
-gallery.innerHTML=DEMOS.map((d,i)=>{
-  const cat=CATS.find(c=>c.id===d.cat)||{name:d.cat};
-  const codeBlocks=[];
-  if(d.css)codeBlocks.push('<div class="pre-label">CSS</div><pre>'+highlight(d.css)+'</pre>');
-  if(d.codeJs)codeBlocks.push('<div class="pre-label">JavaScript</div><pre>'+highlight(d.codeJs)+'</pre>');
-  return '<article class="card" data-i="'+i+'" data-cat="'+d.cat+'" data-k="'+
-    esc((d.title+' '+d.en+' '+d.desc+' '+d.when+' '+(d.tags||[]).join(' ')+' '+cat.name).toLowerCase())+'">'+
-    '<div class="stage" data-i="'+i+'"></div>'+
-    '<div class="cbody">'+
-      '<div class="ctitle"><span class="no">'+String(i+1).padStart(2,'0')+'</span>'+
-        '<h3>'+esc(d.title)+'</h3><span class="en">'+esc(d.en)+'</span></div>'+
-      '<p class="cdesc">'+esc(d.desc)+'</p>'+
-      '<p class="cwhen">'+esc(d.when)+'</p>'+
-      '<div class="tags"><span class="tag trig">'+TRIG[d.trigger||'auto']+'</span>'+
-        '<span class="tag">'+esc(cat.name)+'</span>'+
-        (d.tags||[]).map(t=>'<span class="tag">'+esc(t)+'</span>').join('')+'</div>'+
-    '</div>'+
-    '<div class="cfoot"><button class="mini" data-replay="'+i+'">↻ 重播</button>'+
-      '<button class="mini" data-prompt="'+i+'">⧉ 複製 Prompt</button></div>'+
-    (codeBlocks.length?'<details class="code"><summary>看程式碼</summary>'+codeBlocks.join('')+'</details>':'')+
-  '</article>';
-}).join('');
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){ if(!e.target.children.length) mount(e.target); }
+    else if(e.target.children.length) unmount(e.target);
+  });
+},{rootMargin:'150px'});
+
+/* 建卡（語言相關：標題／說明／標籤都跟著 curLang 走） */
+function renderGallery(){
+  const t=UI[curLang];
+  gallery.innerHTML=DEMOS.map((d,i)=>{
+    const cat=CATS.find(c=>c.id===d.cat)||{name:d.cat};
+    const en=DEMO_EN[d.id]||{desc:d.desc,when:d.when};
+    const desc=curLang==='en'?en.desc:d.desc, when=curLang==='en'?en.when:d.when;
+    const cName=catName(cat);
+    const h3=curLang==='en'?d.en:d.title, sub=curLang==='en'?d.title:d.en;
+    const codeBlocks=[];
+    if(d.css)codeBlocks.push('<div class="pre-label">CSS</div><pre>'+highlight(d.css)+'</pre>');
+    if(d.codeJs)codeBlocks.push('<div class="pre-label">JavaScript</div><pre>'+highlight(d.codeJs)+'</pre>');
+    return '<article class="card" data-i="'+i+'" data-cat="'+d.cat+'" data-k="'+
+      esc((d.title+' '+d.en+' '+desc+' '+when+' '+(d.tags||[]).join(' ')+' '+cName).toLowerCase())+'">'+
+      '<div class="stage" data-i="'+i+'"></div>'+
+      '<div class="cbody">'+
+        '<div class="ctitle"><span class="no">'+String(i+1).padStart(2,'0')+'</span>'+
+          '<h3>'+esc(h3)+'</h3><span class="en">'+esc(sub)+'</span></div>'+
+        '<p class="cdesc">'+esc(desc)+'</p>'+
+        '<p class="cwhen">'+esc(when)+'</p>'+
+        '<div class="tags"><span class="tag trig">'+esc(TRIG[curLang][d.trigger||'auto'])+'</span>'+
+          '<span class="tag">'+esc(cName)+'</span>'+
+          (d.tags||[]).map(tg=>'<span class="tag">'+esc(tg)+'</span>').join('')+'</div>'+
+      '</div>'+
+      '<div class="cfoot"><button class="mini" data-replay="'+i+'">'+esc(t.replay)+'</button>'+
+        '<button class="mini" data-prompt="'+i+'">'+esc(t.copyPrompt)+'</button></div>'+
+      (codeBlocks.length?'<details class="code"><summary>'+esc(t.viewCode)+'</summary>'+codeBlocks.join('')+'</details>':'')+
+    '</article>';
+  }).join('');
+  io.disconnect();
+  $$('.stage').forEach(s=>io.observe(s));
+}
 
 /* 掛載 / 重播 */
 function mount(stage){
@@ -2605,18 +2975,11 @@ function mount(stage){
   if(d.js){try{d.js(stage,()=>stage._gen===gen);}catch(e){console.error('[demo '+d.id+']',e);}}
 }
 /* 離開視窗就卸載：bump _gen 讓所有 rAF 迴圈與 interval 自行停止，
-   否則 64 個示範會同時跑（含 SVG filter、backdrop-filter、canvas），捲動直接掉幀 */
+   否則 76 個示範會同時跑（含 SVG filter、backdrop-filter、canvas），捲動直接掉幀 */
 function unmount(stage){
   stage._gen=(stage._gen||0)+1;
   stage.innerHTML='';
 }
-const io=new IntersectionObserver(es=>{
-  es.forEach(e=>{
-    if(e.isIntersecting){ if(!e.target.children.length) mount(e.target); }
-    else if(e.target.children.length) unmount(e.target);
-  });
-},{rootMargin:'150px'});
-$$('.stage').forEach(s=>io.observe(s));
 
 gallery.addEventListener('click',e=>{
   const r=e.target.closest('[data-replay]');
@@ -2629,8 +2992,10 @@ $('#replayAll').onclick=()=>$$('.stage').forEach(s=>{if(s.children.length)mount(
 /* Prompt 目標框架 */
 let curFw=localStorage.getItem('dmFw');
 if(!FRAMEWORKS[curFw])curFw='flutter';
-$('#fw').innerHTML=Object.entries(FRAMEWORKS)
-  .map(([k,v])=>'<option value="'+k+'"'+(k===curFw?' selected':'')+'>'+esc(v.label)+'</option>').join('');
+function renderFw(){
+  $('#fw').innerHTML=Object.entries(FRAMEWORKS)
+    .map(([k,v])=>'<option value="'+k+'"'+(k===curFw?' selected':'')+'>'+esc(v.label[curLang])+'</option>').join('');
+}
 $('#fw').addEventListener('change',e=>{
   curFw=e.target.value;
   try{localStorage.setItem('dmFw',curFw);}catch(_){}
@@ -2642,11 +3007,13 @@ $('#copyAll').addEventListener('click',e=>{
   copyText(txt,e.currentTarget);
 });
 
-/* 篩選 */
+/* 分類篩選 */
 let curCat='all',curQ='';
-const counts=CATS.map(c=>DEMOS.filter(d=>d.cat===c.id).length);
-$('#chips').innerHTML='<button class="chip" data-cat="all" aria-pressed="true">全部<i>'+DEMOS.length+'</i></button>'+
-  CATS.map((c,i)=>'<button class="chip" data-cat="'+c.id+'" aria-pressed="false">'+c.name+'<i>'+counts[i]+'</i></button>').join('');
+function renderChips(){
+  const counts=CATS.map(c=>DEMOS.filter(d=>d.cat===c.id).length);
+  $('#chips').innerHTML='<button class="chip" data-cat="all" aria-pressed="'+(curCat==='all')+'">'+esc(UI[curLang].all)+'<i>'+DEMOS.length+'</i></button>'+
+    CATS.map((c,i)=>'<button class="chip" data-cat="'+c.id+'" aria-pressed="'+(curCat===c.id)+'">'+esc(catName(c))+'<i>'+counts[i]+'</i></button>').join('');
+}
 function applyFilter(){
   let n=0;
   $$('.card').forEach(card=>{
@@ -2655,10 +3022,9 @@ function applyFilter(){
   });
   $('#empty').hidden=n>0;
   const ca=$('#copyAll');
-  ca.textContent='複製全部（'+n+'）';
+  ca.textContent=UI[curLang].copyAll(n);
   ca.dataset.label=ca.textContent;
 }
-applyFilter();
 $('#chips').addEventListener('click',e=>{
   const b=e.target.closest('.chip'); if(!b)return;
   curCat=b.dataset.cat;
@@ -2667,6 +3033,45 @@ $('#chips').addEventListener('click',e=>{
 });
 $('#search').addEventListener('input',e=>{curQ=e.target.value.trim().toLowerCase();applyFilter();});
 
+/* 動畫理論區塊（12 法則、跨平台對照、平台獨有表現、時長速查、六鐵律） */
+let rmShown=false;
+function renderTheory(){
+  const t=UI[curLang];
+  const lawsHtml=LAWS.map((l,i)=>'<div class="law"><b><i>'+String(i+1).padStart(2,'0')+'</i>'+pick(l.title)+'</b><p>'+pick(l.desc)+'</p></div>').join('');
+  const crossRows=CROSS_TABLE.map(r=>'<tr><td>'+pick(r.concept)+'</td><td>'+pick(r.css)+'</td><td>'+pick(r.flutter)+'</td><td>'+pick(r.swiftui)+'</td></tr>').join('');
+  const otherHtml=OTHER_PLATFORM.map(o=>'<div class="law"><b><span class="plat '+o.plat+'">'+(o.plat==='sw'?'SwiftUI':'Flutter')+'</span>'+pick(o.title)+'</b><p>'+pick(o.desc)+'</p></div>').join('');
+  const durRows=DURATION_TABLE.map(r=>'<tr><td>'+pick(r.when)+'</td><td>'+pick(r.dur)+'</td><td>'+pick(r.curve)+'</td><td>'+pick(r.why)+'</td></tr>').join('');
+  const rulesHtml=RULES.map(r=>'<div class="rule"><b>'+pick(r.title)+'</b><span>'+pick(r.desc)+'</span></div>').join('');
+
+  $('#theoryWrap').innerHTML=
+    '<div class="shead"><span class="n">'+t.s02n+'</span><h2>'+esc(t.s02h)+'</h2></div>'+
+    '<p class="sdesc">'+esc(t.s02d)+'</p>'+
+    '<div class="laws">'+lawsHtml+'</div>'+
+
+    '<div class="shead" style="margin-top:52px"><span class="n">'+t.s03n+'</span><h2>'+esc(t.s03h)+'</h2></div>'+
+    '<p class="sdesc">'+esc(t.s03d)+'</p>'+
+    '<div class="tblwrap"><table class="tbl">'+
+      '<tr><th>'+t.crossTh.map(esc).join('</th><th>')+'</th></tr>'+crossRows+
+    '</table></div>'+
+
+    '<div class="shead" style="margin-top:52px"><span class="n">'+t.s04n+'</span><h2>'+esc(t.s04h)+'</h2></div>'+
+    '<p class="sdesc">'+esc(t.s04d)+'</p>'+
+    '<div class="laws">'+otherHtml+'</div>'+
+
+    '<div class="shead" style="margin-top:52px"><span class="n">'+t.s05n+'</span><h2>'+esc(t.s05h)+'</h2></div>'+
+    '<p class="sdesc">'+esc(t.s05d)+'</p>'+
+    '<table class="tbl">'+
+      '<tr><th>'+t.durTh.map(esc).join('</th><th>')+'</th></tr>'+durRows+
+    '</table>'+
+
+    '<div class="rules">'+rulesHtml+'</div>'+
+    '<div class="notice" id="rmNotice"'+(rmShown?'':' hidden')+'>'+
+      '<span>'+esc(t.rmNotice)+'</span><button class="mini" id="rmResume">'+esc(t.rmResume)+'</button>'+
+    '</div>';
+
+  $('#rmResume').onclick=()=>{setMotion(false);rmShown=false;$('#rmNotice').hidden=true;};
+}
+
 /* 主題（預設日間）/ 減少動態 */
 let curTheme=localStorage.getItem('dmTheme');
 if(curTheme!=='dark')curTheme='light';
@@ -2674,7 +3079,6 @@ function applyTheme(){
   document.documentElement.dataset.theme=curTheme;
   $('#themeBtn').textContent=curTheme==='light'?'☾':'☀︎';
 }
-applyTheme();
 $('#themeBtn').onclick=()=>{
   curTheme=curTheme==='light'?'dark':'light';
   applyTheme();
@@ -2682,12 +3086,49 @@ $('#themeBtn').onclick=()=>{
 };
 function setMotion(off){
   document.documentElement.classList.toggle('no-motion',off);
-  $('#motionBtn').textContent=off?'恢復動態':'暫停動態';
+  $('#motionBtn').textContent=off?UI[curLang].motionOn:UI[curLang].motionOff;
 }
 $('#motionBtn').onclick=()=>setMotion(!document.documentElement.classList.contains('no-motion'));
+
+/* 語系（預設繁中，記住選擇） */
+let curLang=localStorage.getItem('dmLang');
+if(curLang!=='en')curLang='zh';
+function applyLang(){
+  const t=UI[curLang];
+  document.documentElement.lang=curLang==='en'?'en':'zh-Hant';
+  $('#heroTitle').innerHTML=t.heroTitle;
+  $('#heroLede').innerHTML=t.lede;
+  $('#search').placeholder=t.searchPh;
+  $('#fwlab').textContent=t.fwLab;
+  $('#fw').title=t.fwTitle;
+  $('#replayAll').textContent=t.replayAll;
+  $('#motionBtn').textContent=document.documentElement.classList.contains('no-motion')?t.motionOn:t.motionOff;
+  $('#themeBtn').title=t.themeTitle;
+  $('#langBtn').textContent=t.langBtn;
+  $('#langBtn').title=t.langTitle;
+  $('#s01n').textContent=t.s01n;
+  $('#s01h').textContent=t.s01h;
+  $('#s01d').textContent=t.s01d;
+  $('#empty').textContent=t.empty;
+  $('#footerText').innerHTML=t.footer;
+  renderFw();
+  renderChips();
+  renderGallery();
+  renderTheory();
+  applyFilter();
+}
+$('#langBtn').onclick=()=>{
+  curLang=curLang==='en'?'zh':'en';
+  try{localStorage.setItem('dmLang',curLang);}catch(_){}
+  applyLang();
+};
+
+/* 初始化順序：語言／主題先套用（會把整個頁面渲染出來），reduced-motion 最後檢查，
+   因為它要在卡片已經存在的狀態下才能正確暫停示範。 */
+applyTheme();
+applyLang();
 if(matchMedia('(prefers-reduced-motion: reduce)').matches){
-  setMotion(true); $('#rmNotice').hidden=false;
-  $('#rmResume').onclick=()=>{setMotion(false);$('#rmNotice').hidden=true;};
+  setMotion(true); rmShown=true; $('#rmNotice').hidden=false;
 }
 
 $('#stCount').textContent=DEMOS.length;
