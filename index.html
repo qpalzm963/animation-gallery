@@ -100,7 +100,10 @@ a.iconbtn svg{display:block}
 .fwlab{font:500 12px var(--mono);color:var(--tx3);white-space:nowrap}
 
 /* ---------- sections ---------- */
-section{padding:56px 0}
+/* 上內距刻意大於下內距：上緣頂著 sticky 工具列，需要多一點呼吸空間。
+   section.wrap 要單獨寫：.wrap 的 padding:0 24px 優先度較高，會蓋掉元素選擇器 */
+section{padding:80px 0 56px}
+section.wrap{padding:80px 24px 56px}
 .shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
 .shead h2{font-size:22px;font-weight:700}
 .shead .n{font:600 12px var(--mono);color:var(--ac);letter-spacing:.1em}
@@ -199,7 +202,8 @@ footer b{color:var(--tx2)}
 html.no-motion .stage *{animation-play-state:paused!important;transition:none!important}
 @media (max-width:640px){
   .hero{padding:52px 0 34px}
-  section{padding:40px 0}
+  section{padding:52px 0 40px}
+  section.wrap{padding:52px 16px 40px}
   .wrap{padding:0 16px}
   #gallery{grid-template-columns:1fr}
 }
@@ -3174,7 +3178,12 @@ const PACKS={"cn":{"ui":{"heroTitle":"动画表现方式<em>图鉴</em>","lede":
 /* 語系（預設繁中，記住選擇） */
 let curLang=localStorage.getItem('dmLang');
 if(QS.get('lang'))curLang=QS.get('lang');
-if(!HTML_LANG[curLang]||(curLang!=='zh'&&curLang!=='en'&&!PACKS[curLang]))curLang='zh';
+if(!curLang){
+  /* 首次造訪：跟隨瀏覽器語言；比對不到語言包就用英文 */
+  const nl=(navigator.language||'').toLowerCase();
+  curLang=nl.startsWith('zh') ? (/(tw|hk|mo|hant)/.test(nl)?'zh':'cn') : nl.slice(0,2);
+}
+if(!HTML_LANG[curLang]||(curLang!=='zh'&&curLang!=='en'&&!PACKS[curLang]))curLang='en';
 function applyLang(){
   const t=UI[curLang];
   document.documentElement.lang=HTML_LANG[curLang]||'en';
