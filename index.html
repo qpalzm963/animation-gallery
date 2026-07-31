@@ -161,8 +161,10 @@ section.wrap{padding:80px 24px 56px}
   padding:2px 7px;border-radius:6px}
 .tag.trig{color:var(--ac2);border-color:color-mix(in srgb,var(--ac2) 35%,transparent)}
 .tag.pf{text-transform:capitalize;cursor:help}
-.pfpop{position:fixed;z-index:80;background:var(--surface);border:1px solid var(--line2);
-  border-radius:10px;padding:9px 12px;font:400 12px/1.6 var(--sans);color:var(--tx2);
+/* pointer-events:none 是必要的：小卡浮在卡片按鈕上方，會攔截「重播 / 複製 Prompt」的點擊 */
+.pfpop{position:fixed;z-index:80;pointer-events:none;background:var(--surface);
+  border:1px solid var(--line2);border-radius:10px;padding:9px 12px;
+  font:400 12px/1.6 var(--sans);color:var(--tx2);
   box-shadow:0 10px 30px rgba(0,0,0,.22);max-width:280px}
 .tag.pf-composite{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 40%,transparent)}
 .tag.pf-paint{color:var(--ac2);border-color:color-mix(in srgb,var(--ac2) 40%,transparent)}
