@@ -4,6 +4,8 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/qpalzm963/animation-gallery?style=social)](https://github.com/qpalzm963/animation-gallery/stargazers)
 
+[![動畫表現方式圖鑑預覽](og.png)](https://qpalzm963.github.io/animation-gallery/)
+
 一份單頁互動圖鑑，收錄 **76 個網頁動畫技法** —— 從最常見的淡入位移，到 FLIP、View
 Transitions、捲動時間軸、液態融合、故障藝術這類比較少見的手法。每一張卡片都是**真的在
 動**的實作：滑鼠移到卡片上或按「重播」可以重看一次，附上什麼時候該用、以及可以直接抄走

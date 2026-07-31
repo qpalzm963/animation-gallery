@@ -4,6 +4,8 @@ English ｜ [繁體中文](README.md)
 
 [![GitHub stars](https://img.shields.io/github/stars/qpalzm963/animation-gallery?style=social)](https://github.com/qpalzm963/animation-gallery/stargazers)
 
+[![Motion Design Field Guide preview](og.png)](https://qpalzm963.github.io/animation-gallery/)
+
 A single-page interactive field guide covering **76 web animation techniques** — from the most
 common fades and offsets to rarer ones like FLIP, View Transitions, scroll timelines, gooey
 blobs, and glitch art. Every card is a **real, running** implementation: hover it, or press
