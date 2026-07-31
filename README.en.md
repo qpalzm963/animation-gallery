@@ -64,14 +64,15 @@ framework’s idioms.
 
 - Category filtering, keyword search
 - Replay a single card / replay all
-- Bilingual UI — Chinese / English toggle in the top right, remembers your choice
+- UI in five languages — Traditional Chinese / Simplified Chinese / English / Japanese / Korean, toggle in the top right, remembers your choice
+- Deep links to every card — click a card’s number to copy its `#t-<id>` link and share a specific technique
 - Dark / light theme toggle (defaults to light), remembers your choice
 - `prefers-reduced-motion` detection — automatically pauses demo animations with a “show me anyway” option
 - Off-screen auto-unmount, so a large number of demos never run at once and tank performance
 
 ## License
 
-Personal learning and reference use — the code is free to reuse.
+[MIT](LICENSE) — free to use, modify, and redistribute.
 
 ---
 
