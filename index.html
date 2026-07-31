@@ -132,7 +132,8 @@ section{padding:56px 0}
 .rule span{font-size:13px;color:var(--tx2)}
 
 /* ---------- gallery ---------- */
-#gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(322px,1fr));gap:18px}
+/* align-items:start：展開「看程式碼」時只長高自己那張卡，不把同列其他卡撐出空洞 */
+#gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(322px,1fr));gap:18px;align-items:start}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
   display:flex;flex-direction:column;overflow:hidden;transition:border-color .2s,transform .2s}
 .card:hover{border-color:var(--line2)}
