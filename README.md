@@ -1,5 +1,7 @@
 # 動畫表現方式圖鑑 Motion Design Field Guide
 
+[![GitHub stars](https://img.shields.io/github/stars/qpalzm963/animation-gallery?style=social)](https://github.com/qpalzm963/animation-gallery/stargazers)
+
 一份單頁互動圖鑑，收錄 **76 個網頁動畫技法** —— 從最常見的淡入位移，到 FLIP、View
 Transitions、捲動時間軸、液態融合、故障藝術這類比較少見的手法。每一張卡片都是**真的在
 動**的實作：滑鼠移到卡片上或按「重播」可以重看一次，附上什麼時候該用、以及可以直接抄走
@@ -63,3 +65,7 @@ CSS），prompt 帶的是**視覺規格**而不是要求逐行翻譯 CSS，並�
 ## 授權
 
 個人學習與參考用途，程式碼可自由取用。
+
+---
+
+覺得有幫助的話，麻煩點個右上角的 ⭐ Star，讓更多人看到這份圖鑑。
