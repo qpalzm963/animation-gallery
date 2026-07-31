@@ -7,9 +7,7 @@
 [![动画表现方式图鉴预览](og.png)](https://qpalzm963.github.io/animation-gallery/)
 
 一份单页交互图鉴，收录 **76 个网页动画技法** —— 从最常见的淡入位移，到 FLIP、View
-Transitions、滚动时间轴、液态融合、故障艺术这类比较少见的手法。每一张卡片都是**真的在
-动**的实现：鼠标移到卡片上或按“重播”可以重看一次，附上什么时候该用、以及可以直接抄走
-的核心代码。
+Transitions、滚动时间轴、液态融合、故障艺术这类比较少见的手法。每一张卡片都是**真的在动**的实现：鼠标移到卡片上或按“重播”可以重看一次，附上什么时候该用、以及可以直接抄走的核心代码。
 
 **单个 HTML 文件、零依赖、全部原生 CSS / Web Animations API / Canvas / SVG。**
 示范用的代码片段就是实际注入页面的那份字符串 —— 你看到的就是真的在跑的。
@@ -58,14 +56,12 @@ python3 -m http.server 8991
 另外收录：
 
 - **动画十二法则 → 界面对照** — 迪士尼十二法则换成界面语汇
-- **跨平台对照** — CSS / Web、Flutter、SwiftUI 的概念对照表，以及各平台独有的表现方式
-  （SwiftUI 的 `KeyframeAnimator`、`PhaseAnimator`、Liquid Glass；Flutter 的 `Hero`、`Curves`）
+- **跨平台对照** — CSS / Web、Flutter、SwiftUI 的概念对照表，以及各平台独有的表现方式（SwiftUI 的 `KeyframeAnimator`、`PhaseAnimator`、Liquid Glass；Flutter 的 `Hero`、`Curves`）
 - **时长与曲线速查表**
 
 ## Prompt 产生器
 
-每张卡片可以一键复制一段结构化 prompt，贴给任何 AI coding agent 就能产出该技法在目标
-框架的道地实现。工具列选择目标框架（Flutter / SwiftUI / React + Framer Motion / 纯
+每张卡片可以一键复制一段结构化 prompt，贴给任何 AI coding agent 就能产出该技法在目标框架的道地实现。工具列选择目标框架（Flutter / SwiftUI / React + Framer Motion / 纯
 CSS），prompt 带的是**视觉规格**而不是要求逐行翻译 CSS，并会附上该框架的惯用写法提醒。
 
 ## 功能
